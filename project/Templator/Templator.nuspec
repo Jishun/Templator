@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Templator</id>
+    <version>1.0.0.0</version>
+    <title>Templator</title>
+    <authors>Jishun Duan</authors>
+    <owners>Jishun Duan</owners>
+    <licenseUrl>https://github.com/djsxp/cpsdbhelper/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/djsxp/cpsdbhelper</projectUrl>
+    <iconUrl>https://github.com/djsxp/cpsdbhelper</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An addvanced text based replacing-template engin designed for using simplified dictionary input</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright Jishun Duan, 2011-2015</copyright>
+    <tags>Template, Parse, String Replace</tags>
+  </metadata>
+</package>

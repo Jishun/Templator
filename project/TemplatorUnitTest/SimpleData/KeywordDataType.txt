@@ -1,0 +1,17 @@
+﻿{{User(Holder Name)[DateTime(dd/MM/yyyy)]}}
+{HolderName: "2015-09-10"}
+10/09/2015
+1
+
+
+{{User(Holder Name)[Number(0.00)]}}
+{HolderName: 1}
+1.00
+1
+
+
+{{User(Holder Name)[Bool()]}}
+{HolderName: 11234}
+
+1
+

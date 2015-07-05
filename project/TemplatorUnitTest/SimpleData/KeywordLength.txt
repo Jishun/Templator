@@ -1,0 +1,12 @@
+﻿{{User(Holder Name)[Length(10)]}}
+{HolderName: "2015-09-10"}
+2015-09-10
+1
+
+
+{{User(Holder Name)[Length(11)]}}
+{HolderName: "2015-09-10"}
+
+1
+
+Invalid Field length: 'HolderName', value: 2015-09-10, valid length: 11.$$'HolderName' is required

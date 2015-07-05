@@ -1,0 +1,3 @@
+[submodule "DotNetUtils"]
+	path = DotNetUtils
+	url = git@github.com:djsxp/DotNetUtils.git

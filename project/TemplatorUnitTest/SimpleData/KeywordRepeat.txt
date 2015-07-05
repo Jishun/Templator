@@ -1,0 +1,57 @@
+﻿{{User(Repeat)[Collection()]}}{{ItemName}},{{User(Repeat)[CollectionEnd()]}}
+{Repeat:[{ItemName: "Name1"},{ItemName: "Name2"}]}
+Name1,Name2,
+1
+Repeat
+
+{{User(Repeat)[Collection()]}}{{ItemName}},{{User(Repeat)[CollectionEnd()]}}
+{}
+
+1
+Repeat
+'Repeat' is required$$'ItemName' is required
+{{User(Repeat)[Collection()]}}{{(ItemName)[Optional]}},{{User(Repeat)[CollectionEnd()]}}
+{}
+,
+1
+Repeat
+'Repeat' is required
+{{User(Repeat)[Collection(),Optional]}}{{(ItemName)[]}},{{User(Repeat)[CollectionEnd()]}}
+{}
+,
+1
+Repeat
+
+{{Level0ItemName}}{{User(Repeat)[CollectionBegin()]}}{{Level1ItemName}}{{(Repeat2)[Collection]}}{{Level2ItemName}}{{(Repeat2)[CollectionEnd]}}{{User(Repeat)[CollectionEnd()]}}{{Level0ItemName2}}
+{Level0ItemName: "Level0",Level0ItemName2: "Level02",Repeat: [{Level1ItemName:"Level1", Repeat2:[{Level2ItemName: "level21"}, {Level2ItemName:"Level22"}]}]}
+Level0Level1level21Level22Level02
+3
+Repeat,Repeat2
+
+xml
+<x>{{Level0ItemName}}{{User(Repeat)[Collection()]}}{{Level1ItemName}}{{(Repeat2)[Collection]}}{{Level2ItemName}}{{(Repeat2)[CollectionEnd]}}{{User(Repeat)[CollectionEnd()]}}{{Level0ItemName2}}</x>
+{Level0ItemName: "Level0",Level0ItemName2: "Level02",Repeat: [{Level1ItemName:"Level1", Repeat2:[{Level2ItemName: "level21"}, {Level2ItemName:"Level22"}]}]}
+<x>Level0Level1level21Level22Level02</x>
+3
+Repeat,Repeat2
+
+xml
+<x><zz att="{{Level0ItemName2}}">{{Level0ItemName}}</zz><xx Bindings="{{User(Repeat)[Collection()]}}">{{Level1ItemName}}{{(Repeat2)[Collection]}}{{Level2ItemName}}{{(Repeat2)[CollectionEnd]}}</xx></x>
+{Level0ItemName: "Level0",Level0ItemName2: "Level02",Repeat: [{Level1ItemName:"Level1", Repeat2:[{Level2ItemName: "level21"}, {Level2ItemName:"Level22"}]}]}
+<x> <zz att="Level02">Level0</zz> <xx>Level1level21Level22</xx></x>
+3
+Repeat,Repeat2
+
+xml
+<x><zz Bindings="{{User(Repeat)[Collection()]}}" att="{{Level1ItemName2}}">{{Level1ItemName}}</zz></x>
+{Repeat: [{Level1ItemName:"Level1", Level1ItemName2:"Level12"},{Level1ItemName:"Level21", Level1ItemName2:"Level122"}]}
+<x> <zz att="Level12">Level1</zz> <zz att="Level122">Level21</zz> </x>
+1
+Repeat
+
+xml
+<x><zz Bindings="{{User(Repeat)[Collection()]}}" att="{{Level1ItemName2}}"><c Bindings="{{(Repeat2)[Collection,If]}}"></c></zz></x>
+{Repeat: [{Level1ItemName:"Level1", Level1ItemName2:"Level12", Repeat2:[{},{}]},{Level1ItemName:"Level21", Level1ItemName2:"Level122"}]}
+<x> <zz att="Level12"><c></c><c></c></zz> <zz att="Level122"/> </x>
+1
+Repeat
