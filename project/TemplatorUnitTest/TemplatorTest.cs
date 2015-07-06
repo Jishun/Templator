@@ -111,7 +111,7 @@ namespace TemplatorUnitTest
 
             public override string ToString()
             {
-                return _fileName;
+                return Id.ToString();
             }
         }
     }

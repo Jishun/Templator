@@ -15,6 +15,7 @@ namespace Templator
         public HolderParseState State;
 
         public TemplatorXmlParsingContext XmlContext;
+        public TemplatorParsingContext Context;
         public Stack<TemplatorParsingContext> Stack = new Stack<TemplatorParsingContext>();
         public Stack<TemplatorXmlParsingContext> XmlStack = new Stack<TemplatorXmlParsingContext>();
 
@@ -27,7 +28,7 @@ namespace Templator
         {
             get { return XmlStack.Peek(); }
         }
-        public TemplatorParsingContext Context
+        public TemplatorParsingContext ParentContext
         {
             get { return Stack.Peek(); }
         }
@@ -172,6 +173,7 @@ namespace Templator
             Stack.Clear();
             XmlStack.Clear();
             XmlContext = null;
+            Context = null;
         }
 
         public virtual IDictionary<string, TextHolder> ParseXml(XElement rootElement, IDictionary<string, object> input)
@@ -191,9 +193,9 @@ namespace Templator
 
         public void ParseXmlInternal(XElement element)
         {
-            if (XmlContext.OnParsingElement != null)
+            if (XmlContext.OnBeforeParsingElement != null)
             {
-                XmlContext.OnParsingElement(this);
+                XmlContext.OnBeforeParsingElement(this);
             }
             PushXmlContext(element);
             foreach (var a in element.Attributes().OrderBy(a => a.Name != Config.XmlReservedAttributeName))
@@ -217,9 +219,9 @@ namespace Templator
                 for (XmlContext.ElementIndex = 0; XmlContext.ElementIndex < XmlContext.ElementList.Count; XmlContext.ElementIndex++)
                 {
                     ParseXmlInternal(XmlContext.ElementList[XmlContext.ElementIndex]);
-                    if (XmlContext.OnNextElement != null)
+                    if (XmlContext.OnAfterParsingElement != null)
                     {
-                        XmlContext.OnNextElement(this);
+                        XmlContext.OnAfterParsingElement(this);
                     }
                 }
             }
@@ -276,13 +278,17 @@ namespace Templator
             {
                 Input = input,
                 ParentHolder = parentHolder,
-                Logger = disableLogging ? null : Config.Logger
+                Logger = disableLogging ? null : Config.Logger,
+                Text = Context == null ? null : Context.Text
             };
-            if (Stack.Count > 0)
+
+            if (Context == null)
             {
-                newC.Text = Context.Text;
+                Context = newC;
+                return;
             }
-            Stack.Push(newC);
+            Stack.Push(Context);
+            Context = newC;
         }
 
         public void PushXmlContext(XElement element)
@@ -300,8 +306,11 @@ namespace Templator
         public void PopContext()
         {
             var c = Context;
-            c.ParentHolder.Children = Context.Holders;
-            Stack.Pop();
+            Context = Stack.Pop();
+            if (c.ParentHolder != null)
+            {
+                c.ParentHolder.Children = c.Holders;
+            }
             Context.Result.Append(c.Result);
         }
 

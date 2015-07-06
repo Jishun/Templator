@@ -19,86 +19,68 @@ namespace Templator
             KeyWords = (new List<TemplatorKeyWord>()
             {
                 //Structure keywords
-                new TemplatorKeyWord(KeyWordRepeatBegin){
-                    HandleNullOrEmpty = true,
-                    OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManupulation() ? value : String.Empty, 
-                    PostParse = (parser, parsedHolder) =>
-                    {
-                        if (parser.InXmlManupulation())
-                        {
-                            return false;
-                        }
-                        return KeyWords[KeyWordRepeat].PostParse(parser, parsedHolder);
-                    } 
-                },
                 new TemplatorKeyWord(KeyWordRepeat){
                     HandleNullOrEmpty = true,
-                    OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManupulation() ? value : String.Empty, 
+                    OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
+                    PostParse = (parser, parsedHolder) =>
+                    {
+                        KeyWords[KeyWordRepeatBegin].PostParse(parser, parsedHolder);
+                        if (parser.InXmlManipulation())
+                        {
+                            KeyWords[KeyWordRepeatEnd].PostParse(parser, parsedHolder);
+                        }
+                        return false;
+                    } 
+                },
+                new TemplatorKeyWord(KeyWordRepeatBegin){
+                    HandleNullOrEmpty = true,
+                    OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
                     PostParse = (parser, parsedHolder) =>
                     {
                         var childInputs = parser.Context.Input.GetChildCollection(parsedHolder.Name, parser.Config);
                         IDictionary<string, object> input = null;
-                        var inputCount = 0;
                         var l = parser.StackLevel + parsedHolder.Name;
                         var inputIndex = (int?)parser.Context[l + "InputIndex"] ?? 0;
+                        var inputCount = 0;
                         if (childInputs.IsNullOrEmpty())
                         {
-                            parser.Context[l + "InputCount"] = inputCount = 0;
-                            parser.Context[l + "InputIndex"] = inputIndex + 1;
+                            parser.Context[l + "InputCount"] = 0;
+                            parser.Context[l + "InputIndex"] = inputIndex;
                             input = parser.Context.Input == null ? null : new Dictionary<string, object>() { { ReservedKeyWordParent, parser.Context.Input } };
                         }
                         else
                         {
-                            input = childInputs[inputIndex];
-                            parser.Context[l + "InputIndex"] = inputIndex + 1;
+                            input = childInputs[inputIndex++];
+                            parser.Context[l + "InputIndex"] = inputIndex;
                             parser.Context[l + "InputCount"] = inputCount = childInputs.Length;
                         }
                         parser.Context.Holders.AddOrSkip(parsedHolder.Name, parsedHolder);
-                        if (inputIndex == 0 && parser.InXmlManupulation())
+                        if (parser.InXmlManipulation())
                         {
-                            parsedHolder["XmlElementIndex"] = parser.ParentXmlContext.ElementIndex;
-                            parser.ParentXmlContext.OnNextElement =  p =>
+                            parser.ParentXmlContext.OnAfterParsingElement = null;
+                            if (inputIndex < inputCount )
+                            {
+                                parser.ParentXmlContext[l + "XmlElementIndex"] = parser.ParentXmlContext.ElementIndex;
+
+                                parser.ParentXmlContext.OnBeforeParsingElement = p =>
                                 {
-                                    p.PopContext();
-                                    var ll = p.StackLevel + parsedHolder.Name;
-                                    if ((int)p.Context[ll + "InputCount"] > (int)p.Context[ll + "InputIndex"])
+                                    var ll = p.StackLevel -1  + parsedHolder.Name;
+                                    if ((int)p.ParentContext[ll + "InputCount"] > (int)p.ParentContext[ll + "InputIndex"])
                                     {
-                                        p.XmlContext.ElementIndex = (int)parsedHolder["XmlElementIndex"] - 1;
-                                    }
-                                    else
-                                    {
-                                        p.Context[ll + "InputIndex"] = null;
-                                        p.XmlContext.OnNextElement = null;
-                                    }
-                                };
-                            parser.ParentXmlContext.OnParsingElement = p =>
-                                {
-                                    var ll = p.StackLevel + parsedHolder.Name;
-                                    if (p.Context[ll + "InputIndex"] == null)
-                                    {
-                                        p.XmlContext.OnNextElement = null;
-                                        return;
-                                    }
-                                    if ((int)p.Context[ll + "InputCount"] > (int)p.Context[ll + "InputIndex"] + 1)
-                                    {
-                                        var startIndex = (int) parsedHolder["XmlElementIndex"];
+                                        var startIndex = (int)p.XmlContext[ll + "XmlElementIndex"];
+                                        startIndex += p.XmlContext.ElementIndex - startIndex;
                                         var element = new XElement(p.XmlContext.ElementList[startIndex]);
                                         p.XmlContext.ElementList[startIndex] = element;
                                         p.XmlContext.Element.Add(element);
                                     }
-                                    else
-                                    {
-                                        p.XmlContext.OnParsingElement = null;
-                                    }
                                 };
-                            if (inputIndex == 0 && inputCount > 1)
-                            {
-                                var startIndex = parser.ParentXmlContext.ElementIndex;
-                                var element = new XElement(parser.ParentXmlContext.ElementList[startIndex]);
-                                parser.ParentXmlContext.ElementList[startIndex] = element;
-                                parser.ParentXmlContext.Element.Add(element);
+
+                                var newElement = new XElement(parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex]);
+                                parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex] = newElement;
+                                parser.ParentXmlContext.Element.Add(newElement);
                             }
                         }
+                        
                         parser.PushContext(input, parsedHolder, parsedHolder.IsOptional());
                         return false;
                     } 
@@ -108,16 +90,38 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => String.Empty,
                     PostParse = (parser, parsedHolder) =>
                     {
-                        var position = parser.Context.ParentHolder.Position;
-                        parser.PopContext();
-                        var l = parser.StackLevel + parsedHolder.Name;
-                        if ((int)parser.Context[l + "InputCount"] > (int)parser.Context[l + "InputIndex"])
+                        if (parser.InXmlManipulation())
                         {
-                            parser.Context.Text.Position = position;
+                            parser.ParentXmlContext.OnAfterParsingElement = p =>
+                            {
+                                p.PopContext();
+                                var ll = p.StackLevel + parsedHolder.Name;
+                                if ((int)p.Context[ll + "InputCount"] > (int)p.Context[ll + "InputIndex"])
+                                {
+                                    p.XmlContext.ElementIndex = (int)p.XmlContext[ll + "XmlElementIndex"] - 1;
+                                }
+                                else
+                                {
+                                    p.Context[ll + "InputIndex"] = null;
+                                    p.XmlContext.OnBeforeParsingElement = null;
+                                }
+                                p.XmlContext.OnAfterParsingElement = null;
+                            };
+                            parser.ParentXmlContext.OnBeforeParsingElement = null;
                         }
                         else
                         {
-                            parser.Context[l + "InputIndex"] = null;
+                            var position = parser.Context.ParentHolder.Position;
+                            parser.PopContext();
+                            var l = parser.StackLevel + parsedHolder.Name;
+                            if ((int)parser.Context[l + "InputCount"] > (int)parser.Context[l + "InputIndex"])
+                            {
+                                parser.Context.Text.Position = position;
+                            }
+                            else
+                            {
+                                parser.Context[l + "InputIndex"] = null;
+                            }
                         }
                         return false;
                     }

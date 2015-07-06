@@ -208,7 +208,7 @@ namespace Templator
                 return parser.Context.Holders;
             }
         }
-        public static bool InXmlManupulation(this TemplatorParser parser)
+        public static bool InXmlManipulation(this TemplatorParser parser)
         {
             return parser.XmlContext != null && parser.XmlContext.Attribute != null &&
                    parser.XmlContext.Attribute.Name == parser.Config.XmlReservedAttributeName;
