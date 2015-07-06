@@ -10,3 +10,14 @@
 1
 
 Invalid Field length: 'HolderName', value: 2015-09-10, valid length: 11.$$'HolderName' is required
+{{User(Holder Name)[Length(8;10;11)]}}
+{HolderName: "2015-09"}
+
+1
+
+Invalid Field length: 'HolderName', value: 2015-09, valid length: 8;10;11.$$'HolderName' is required
+{{User(Holder Name)[Length(1-11)]}}
+{HolderName: "2015-09-10"}
+2015-09-10
+1
+

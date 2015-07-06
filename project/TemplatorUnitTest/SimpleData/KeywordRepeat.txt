@@ -69,3 +69,11 @@ xml
 <x att=""> <zz att="111">1</zz><c att="1111"><b><d/></b></c><zz att="211">2</zz><c att="2111"><b><d/></b><b><d/></b></c></x>
 2
 Repeat,Repeat2
+
+xml
+<x><zz Bindings="{{User(Repeat)[CollectionBegin()]}}"></zz><c Bindings="{{(Repeat)[CollectionEnd]}}" /></x>
+{}
+
+1
+Repeat
+'Repeat' is required

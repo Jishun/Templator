@@ -65,14 +65,11 @@ namespace Templator
                                 parser.ParentXmlContext.OnBeforeParsingElement = p =>
                                 {
                                     var ll = p.StackLevel -1  + parsedHolder.Name;
-                                    if ((int)p.ParentContext[ll + "InputCount"] > (int)p.ParentContext[ll + "InputIndex"])
-                                    {
-                                        var startIndex = (int)p.XmlContext[ll + "XmlElementIndex"];
-                                        startIndex += p.XmlContext.ElementIndex - startIndex;
-                                        var element = new XElement(p.XmlContext.ElementList[startIndex]);
-                                        p.XmlContext.ElementList[startIndex] = element;
-                                        p.XmlContext.Element.Add(element);
-                                    }
+                                    var startIndex = (int)p.XmlContext[ll + "XmlElementIndex"];
+                                    startIndex += p.XmlContext.ElementIndex - startIndex;
+                                    var element = new XElement(p.XmlContext.ElementList[startIndex]);
+                                    p.XmlContext.ElementList[startIndex] = element;
+                                    p.XmlContext.Element.Add(element);
                                 };
 
                                 var newElement = new XElement(parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex]);
@@ -242,76 +239,64 @@ namespace Templator
                         str = holder.ContainsKey(KeyWordNumber) ? Convert.ToString(value.DecimalToString() ?? value) : Convert.ToString(value);   
                         var length = str.Length;
                         int? maxLength = null;
-                        var customLength = (string)holder[KeyWordLength];
-                        if (!customLength.IsNullOrWhiteSpace())
+                        var customLength = (Pair<string, IList<int>>)holder[KeyWordLength];
+                        if (customLength.Second[0] == -1)
                         {
-                            if (customLength.Contains("-"))
+                            maxLength = customLength.Second[2];
+                            if (length < customLength.Second[1] || length > customLength.Second[2])
                             {
-                                var arr = customLength.Split('-');
-                                if (arr.Length != 2)
-                                {
-                                    throw new TemplatorParamsException("Invalid length defined");
-                                }
-                                int min, max;
-                                if (int.TryParse(arr[0], out min) && int.TryParse(arr[1], out max))
-                                {
-                                    if (max >= length && min <= length)
-                                    {
-                                        return str;
-                                    }
-                                    if (max < length)
-                                    {
-                                        maxLength = max;
-                                    }
-                                    goto invalidLength;
-                                }
-                            }
-                            else if (customLength.Contains(";"))
-                            {
-                                foreach (var f in customLength.Split(';'))
-                                {
-                                    var l = 0;
-                                    if (int.TryParse(f, out l))
-                                    {
-                                        if (l == length)
-                                        {
-                                            return str;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        throw new TemplatorParamsException("Invalid length defined");
-                                    }
-                                }
                                 goto invalidLength;
                             }
-                            else
-                            {
-                                var l = 0;
-                                if (int.TryParse(customLength, out l))
-                                {
-                                    if (l == length)
-                                    {
-                                        return str;
-                                    }
-                                }
-                                else
-                                {
-                                    throw new TemplatorParamsException("Invalid length defined");
-                                }
-                                goto invalidLength;
-                            }
-                            throw new TemplatorParamsException("Invalid length defined");
                         }
+                        else if (!customLength.Second.Contains(length))
+                        {
+                            if (customLength.Second.Count == 1)
+                            {
+                                maxLength = customLength.Second[0];
+                            }
+                            goto invalidLength;
+                        }
+                        return str;
                         invalidLength:
                         if (maxLength.HasValue && holder.ContainsKey(KeyWordTruncate))
                         {
                             str = str.Substring(0, maxLength.Value);
                             return str;
                         }
-                        parser.LogError("Invalid Field length: '{0}', value: {1}, valid length: {2}.", "HolderName", value, customLength);
+                        parser.LogError("Invalid Field length: '{0}', value: {1}, valid length: {2}.", "HolderName", value, customLength.First);
                         return null;
-                    }
+                    },
+                    Parse = ((parser, str) =>
+                    {
+                        IList<int> lengths = null;
+                        if (str.Contains("-"))
+                        {
+                            lengths = str.Split('-').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
+                            if (lengths.Count != 2)
+                            {
+                                throw new TemplatorParamsException("Invalid length defined");
+                            }
+                            lengths.Insert(0, -1);
+                        }
+                        else if(str.Contains(";"))
+                        {
+                            lengths = str.Split(';').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
+                            if (lengths.Count == 0)
+                            {
+                                throw new TemplatorParamsException("Invalid length defined");
+                            }
+                        }
+                        else
+                        {
+                            var l = str.ParseIntNullable();
+                            if (!l.HasValue)
+                            {
+                                throw new TemplatorParamsException("Invalid length defined");
+                            }
+                            lengths = l.Value.Single().ToList();
+                        }
+                        parser.ParsingHolder[KeyWordLength] = new Pair<string,IList<int>>(str, lengths);
+                    })
                 },
                 //new TemplatorKeyWord(KeyWordSelect){},
                 //new TemplatorKeyWord(KeyWordExpression){},
