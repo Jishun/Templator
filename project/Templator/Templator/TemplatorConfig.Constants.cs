@@ -71,12 +71,20 @@ namespace Templator
         public string KeyWordElementName = "ElementName";
         public string KeyWordAttributeName = "AttributeName";
         public string KeyWordSeekup = "Inherited";
+        public string KeyWordAverage = "Avg";
         public string KeyWordSum = "Sum";
         public string KeyWordCount = "Count";
         public string KeyWordMulti = "Multi";
         public string KeyWordOptional = "Optional";
         public string KeyWordJs = "Js";
         public string KeyWordComments = "Tips";
+        public string KeyWordCsv = "Csv";
+        public string KeyWordEncode = "Encode";
+        public string KeyWordDecode = "Decode";
+        public string KeyWordBase64 = "Base64";
+        public string KeyWordBase32 = "Base32";
+        public string KeyWordUrl = "Url";
+        public string KeyWordHtml = "Html";
 
         public string ReservedKeyWordParent = "$$P$$";
         public string ReservedKeyWordXattribute = "TemplatorParser";

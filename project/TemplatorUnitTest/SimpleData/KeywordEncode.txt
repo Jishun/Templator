@@ -1,0 +1,90 @@
+﻿{{(Holder Name)[Base64]}}
+{"HolderName":"holder"}
+aG9sZGVy
+1
+
+
+{{(Holder Name)[Base32]}}
+{"HolderName":"holder"}
+E88UXBHRB2
+1
+
+
+{{(Holder Name)[Url]}}
+{"HolderName":"holder/%"}
+holder%2f%25
+1
+
+
+{{(Holder Name)[Html]}}
+{"HolderName":"holder<>"}
+holder&lt;&gt;
+1
+
+
+{{(Holder Name)[Encode(Base64)]}}
+{"HolderName":"holder"}
+E88UXBHRB2
+1
+
+
+{{(Holder Name)[Encode(Base32)]}}
+{"HolderName":"holder"}
+aG9sZGVy
+1
+
+
+{{(Holder Name)[Encode(Url)]}}
+{"HolderName":"holder/%"}
+holder%2f%25
+1
+
+
+{{(Holder Name)[Encode(Html)]}}
+{"HolderName":"holder<>"}
+holder&lt;&gt;
+1
+
+
+{{(Holder Name)[Encode(Csv)]}}
+{"HolderName":",holder"}
+",holder"
+1
+
+
+csv
+1,2,{{Holder Name}},4
+{"HolderName":",3"}
+1,2,",3",4
+1
+
+
+{{(Holder Name)[Decode(Base64)]}}
+{"HolderName":"E88UXBHRB2"}
+holder
+1
+
+
+{{(Holder Name)[Decode(Base32)]}}
+{"HolderName":"aG9sZGVy"}
+holder
+1
+
+
+{{(Holder Name)[Decode(Url)]}}
+{"HolderName":"holder%2f%25"}
+holder/%
+1
+
+
+{{(Holder Name)[Decode(Html)]}}
+{"HolderName":"holder&lt;&gt;"}
+holder<>
+1
+
+
+{{(Holder Name)[Decode(Csv)]}}
+{"HolderName":"\",holder\""}
+,holder
+1
+

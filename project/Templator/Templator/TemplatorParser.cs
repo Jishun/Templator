@@ -10,6 +10,7 @@ namespace Templator
 {
     public class TemplatorParser
     {
+        public bool Csv;
         public TemplatorKeyWord ParsingKeyword;
         public TextHolder ParsingHolder;
         public HolderParseState State;
@@ -22,7 +23,7 @@ namespace Templator
         public TemplatorConfig Config;
         public IList<XElement> RemovingElements = new List<XElement>();
 
-        public event EventHandler<TemplateParserEventArgs> OnRequireInput;
+        public event EventHandler<TemplateEventArgs> OnRequireInput;
 
         public TemplatorXmlParsingContext ParentXmlContext
         {
@@ -49,6 +50,7 @@ namespace Templator
                 GrammarParser.Context.TokenCreated += OnGrammerTokenCreated;
             }
         }
+
 #region Grammar
 
         private int _parsingStart = 0;
@@ -158,15 +160,7 @@ namespace Templator
         }
 
         #endregion Grammer
-
-        public void RequireInput(object sender, TemplateParserEventArgs args)
-        {
-            if (OnRequireInput != null)
-            {
-                OnRequireInput(this, args);
-            }
-        }
-
+        
         public void StartOver()
         {
             RemovingElements.Clear();
@@ -174,12 +168,30 @@ namespace Templator
             XmlStack.Clear();
             XmlContext = null;
             Context = null;
+            Csv = false;
         }
 
-        public virtual IDictionary<string, TextHolder> ParseXml(XElement rootElement, IDictionary<string, object> input)
+        public virtual IDictionary<string, TextHolder> ParseCsv(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        {
+            Csv = true;
+            return ParseText(src, input, preparsedHolders);
+        }
+
+        public virtual IDictionary<string, TextHolder> ParseText(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        {
+            PushContext(input, null);
+            Context.Text = new SeekableString(src, Config.LineBreakOption);
+            Context.PreparsedHolders= preparsedHolders;
+            Context.Result.Clear();
+            ParseTextInternal(input);
+            return Context.Holders;
+        }
+
+        public virtual IDictionary<string, TextHolder> ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
         {
             XmlContext = new TemplatorXmlParsingContext(){Element = rootElement};
             PushContext(input, null);
+            Context.PreparsedHolders = preparsedHolders;
             ParseXmlInternal(rootElement);
             foreach (var removingElement in RemovingElements)
             {
@@ -191,6 +203,38 @@ namespace Templator
             return Context.Holders;
         }
 
+        public virtual bool ParseTextInternal(IDictionary<string, object> input)
+        {
+            var hasHolder = false;
+            Context.Input = input;
+            State = new HolderParseState();
+            while (!Context.Text.Eof || State.End) 
+            {
+                if (HolderParsingStates.States.ContainsKey(State))
+                {
+                    var fun = HolderParsingStates.States[State];
+                    var holder = fun(this);
+                    if (holder != null)
+                    {
+                        hasHolder = true;
+                        Context.Holders.AddOrSkip(holder.Name, holder);
+                    }
+                }
+                else
+                {
+                    throw new TemplatorUnexpecetedStateException();
+                }
+            }
+            return hasHolder;
+        }
+
+        public void RequireInput(object sender, TemplateEventArgs args)
+        {
+            if (OnRequireInput != null)
+            {
+                OnRequireInput(this, args);
+            }
+        }
         public void ParseXmlInternal(XElement element)
         {
             if (XmlContext.OnBeforeParsingElement != null)
@@ -227,7 +271,7 @@ namespace Templator
             }
             else
             {
-                Context.Text = new SeekableString(element.Value);
+                Context.Text = new SeekableString(element.Value, Config.LineBreakOption);
                 Context.Result.Clear();
                 var hasHolder = ParseTextInternal(Context.Input);
                 if (hasHolder)
@@ -237,49 +281,16 @@ namespace Templator
             }
             PopXmlContext();
         }
-
-        public virtual IDictionary<string, TextHolder> ParseText(string src, IDictionary<string, object> input)
-        {
-            PushContext(input, null);
-            Context.Text = new SeekableString(src);
-            Context.Result.Clear();
-            ParseTextInternal(input);
-            return Context.Holders;
-        }
-
-        public virtual bool ParseTextInternal(IDictionary<string, object> input)
-        {
-            var hasHolder = false;
-            Context.Input = input;
-            State = new HolderParseState();
-            while (!Context.Text.Eof || State.End) 
-            {
-                if (HolderParsingStates.States.ContainsKey(State))
-                {
-                    var fun = HolderParsingStates.States[State];
-                    var holder = fun(this);
-                    if (holder != null)
-                    {
-                        hasHolder = true;
-                        Context.Holders.AddOrSkip(holder.Name, holder);
-                    }
-                }
-                else
-                {
-                    throw new TemplatorUnexpecetedStateException();
-                }
-            }
-            return hasHolder;
-        }
-
         public void PushContext(IDictionary<string, object> input, TextHolder parentHolder, bool disableLogging = false)
         {
+            var holderDefinitions = parentHolder == null ? null : Context.PreparsedHolders.GetOrDefault(parentHolder.Name);
             var newC = new TemplatorParsingContext
             {
                 Input = input,
                 ParentHolder = parentHolder,
                 Logger = disableLogging ? null : Config.Logger,
-                Text = Context == null ? null : Context.Text
+                Text = Context == null ? null : Context.Text,
+                PreparsedHolders = holderDefinitions == null ? null : holderDefinitions.Children
             };
 
             if (Context == null)

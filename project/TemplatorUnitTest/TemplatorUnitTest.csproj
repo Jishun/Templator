@@ -85,6 +85,12 @@
   <ItemGroup>
     <EmbeddedResource Include="SimpleData\KeywordRepeat.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SimpleData\KeywordEncode.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SimpleData\KeywordAggregate.txt" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

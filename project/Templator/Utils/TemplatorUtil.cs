@@ -4,12 +4,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
+using System.Xml.Linq;
 using DotNetUtils;
+using Newtonsoft.Json;
 
 namespace Templator
 {
     public static class TemplatorUtil
     {
+        public static IDictionary<string, TextHolder> LoadTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input)
+        {
+            using (var rd = new StreamReader(stream))
+            {
+                parser.ParseText(rd.ReadToEnd(), input);
+                return parser.Context.Holders;
+            }
+        }
+
         public static void GrammarCheckDirectory(this TemplatorParser parser, string path, string[] filters, int depth)
         {
             var files = filters.IsNullOrEmpty()
@@ -39,26 +51,22 @@ namespace Templator
             }
         }
 
-        public static IDictionary<string, object>[] GetChildCollection(this IDictionary<string, object> input, string key, TemplatorConfig config)
+        public static IDictionary<string, TextHolder> MergeHolders(this IDictionary<string, TextHolder> holders, IEnumerable<TextHolder> addition, string mergeinto = null)
         {
-            if (input != null && input.ContainsKey(key))
+            if (holders == null || addition == null)
             {
-                var retArray = input[key] as object[];
-                if (retArray != null)
-                {
-                    var ret = retArray.Where(r => r is IDictionary<string, object>).Cast<IDictionary<string, object>>().ToArray();
-                    foreach (var dictionary in ret)
-                    {
-                        dictionary.AddOrSkip(config.ReservedKeyWordParent, input);
-                    }
-                    return ret;
-                }
+                return holders ?? addition.ToDictionary(a => a.Name);
             }
-            return null;
-        }
-
-        public static IDictionary<string, TextHolder> MergeHolders(this IDictionary<string, TextHolder> holders, IEnumerable<TextHolder> addition)
-        {
+            var ret = holders;
+            if (mergeinto != null)
+            {
+                var into = holders.GetOrDefault(mergeinto);
+                if (into == null)
+                {
+                    throw new TemplatorException("Merging into non-exist holder");
+                }
+                holders = into.Children;
+            }
             foreach (var textHolder in addition)
             {
                 var existing = holders.GetOrDefault(textHolder.Name);
@@ -75,69 +83,103 @@ namespace Templator
                 }
                 else
                 {
-                    throw new Exception("Repeat Item redefined differently");
-                }
-            }
-            return holders;
-        }
-
-        public static object Aggregate(this TemplatorParser parser, TextHolder holder, string aggregateField, IDictionary<string, object> input, Func<object, object, object> aggregateFunc)
-        {
-            object ret = null;
-            foreach (var c in aggregateField.Split(Constants.SemiDelimChar))
-            {
-                string left = null;
-                var fieldName = c.GetUntil(".", out left);
-                if (!left.IsNullOrWhiteSpace())
-                {
-                    var list = input.GetCollectionInput(fieldName, parser.Config);
-                    ret = list.EmptyIfNull().Aggregate(ret, (current, item) => aggregateFunc(current, parser.Aggregate(holder, left, item, aggregateFunc)));
-                }
-                else
-                {
-                    var value = parser.GetValue(fieldName, input);
-                    ret = aggregateFunc(ret, value);
+                    throw new TemplatorException("Repeat Item redefined differently");
                 }
             }
             return ret;
         }
 
-        public static object GetValue(this TemplatorParser parser, string holderName, IDictionary<string, object> input, int inherited = 0)
+        public static IDictionary<string, object> MergeInput(IEnumerable<string> inputs, string fieldName, TemplatorConfig config)
         {
-            var holder = new TextHolder(holderName);
-            holder[parser.Config.KeyWordSeekup] = inherited;
-            return parser.GetValue(holder, input);
+            if (inputs != null)
+            {
+                var ret = inputs.Select(ParseJsonDict).ToList();
+                if (ret.Count > 0)
+                {
+                    return MergeInput(ret, fieldName, config);
+                }
+            }
+            return null;
         }
 
-        public static object GetValue(this TemplatorParser parser, TextHolder holder, IDictionary<string, object> input)
+        public static IDictionary<string, object> MergeInput(IList<IDictionary<string, object>> inputs, string fieldName, TemplatorConfig config)
         {
-            object value = null;
-            if (input != null && input.ContainsKey(holder.Name))
+            if (inputs != null && inputs.Count > 0)
             {
-                value = input[holder.Name];
-            }
-            else
-            {
-                var arg = new TemplateParserEventArgs() { Holder = holder };
-                parser.RequireInput(parser, arg);
-                value = arg.Text;
-            }
-            value = holder.KeyWords.EmptyIfNull()
-                .Where(key => key.OnGetValue != null)
-                .OrderBy(k => k.Preority)
-                .Aggregate(value, (current, key) =>
+                var ret = inputs[0];
+                var list = ret.GetChildCollection(fieldName, config).EmptyIfNull().ToList();
+                for (var i = 1; i < inputs.Count; i++)
                 {
-                    if (current.IsNullOrEmpty() && !key.HandleNullOrEmpty)
+                    var subList = inputs[i].GetChildCollection(fieldName, config);
+                    if (subList != null)
                     {
-                        return current;
+                        list.AddRange(subList);
                     }
-                    return key.OnGetValue(holder, parser, current);
-                });
-            if (null == value)
-            {
-                parser.LogError("'{0}' is required", holder.Name);
+                }
+                ret[fieldName] = list.ToArray();
+                return ret;
             }
-            return value;
+            return null;
+        }
+        
+        public static string InputToJson(this IDictionary<string, object> input)
+        {
+            var se = JsonSerializer.Create(new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            using (var wr = new StringWriter())
+            {
+                se.Serialize(wr, input);
+                return wr.ToString();
+            }
+        }
+
+        public static IDictionary<string, object> ParseJsonDict(this string inputStr)
+        {
+            var se = new JavaScriptSerializer();
+            return se.Deserialize<IDictionary<string, object>>(inputStr);
+        }
+
+        public static IDictionary<string, object> ParseJsonDict(this Stream stream)
+        {
+            using (var sr = new StreamReader(stream))
+            {
+                return sr.ReadToEnd().ParseJsonDict();
+            }
+        }
+
+        public static string XmlToJson(this string inputStr, TemplatorConfig config)
+        {
+            var xml = XElement.Parse(inputStr);
+            var input = ParseXmlDict(xml.Elements(), config);
+            return InputToJson(input);
+        }
+
+        public static IDictionary<string, object> ParseXmlDict(this IEnumerable<XElement> elements, TemplatorConfig config)
+        {
+            IDictionary<string, object> ret = new Dictionary<string, object>();
+            foreach (var e in elements)
+            {
+                if (e.Name == config.XmlFieldElementName)
+                {
+                    var nameNode = e.Element(config.XmlNameNodeName);
+                    if (nameNode != null)
+                    {
+                        var collection = e.Elements(config.XmlCollectionNodeName).ToArray();
+                        if (collection.Length > 0)
+                        {
+                            ret.Add(nameNode.Value, collection.Select(item => ParseXmlDict(item.Elements(config.XmlFieldElementName), config)).ToArray());
+                        }
+                        else
+                        {
+                            var valueNode = e.Element(config.XmlValueNodeName);
+                            if (valueNode != null)
+                            {
+                                ret.Add(nameNode.Value, valueNode.Value);
+                            }
+                        }
+                    }
+                }
+            }
+            return ret;
         }
     }
 }

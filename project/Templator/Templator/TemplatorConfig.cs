@@ -22,8 +22,10 @@ namespace Templator
         public string DateFormat;
 
         public ILogger Logger = new Logger();
-        public EventHandler<TemplateParserEventArgs> RequireInput;
+        public EventHandler<TemplateEventArgs> RequireInput;
 
+        public Encoding Encoding = Encoding.UTF8;
+        public LineBreakOption LineBreakOption;
         public bool IgnoreUnknownKeyword = true;
         public bool IgnoreUnknownParam = true;
         public bool CategoryOptional = false;
@@ -39,7 +41,7 @@ namespace Templator
         public string XmlValueNodeName = "Value";
         public string XmlNameNodeName = "Name";
         public string XmlCollectionNodeName = "CollectionItem";
-        public string KeyFields = "Fields";
+        public string KeyHolders = "Fields";
         public TemplatorConfig()
         {
             PrepareKeywords();

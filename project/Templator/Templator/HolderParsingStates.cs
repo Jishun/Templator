@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using CsvEnumerator;
 using DotNetUtils;
 
 namespace Templator
@@ -190,7 +191,7 @@ namespace Templator
                     parser.State = new HolderParseState();
                     var value = parser.GetValue(ret, parser.Context.Input);
                     var notSKip = ret.KeyWords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
-                    parser.Context.Result.Append(value);
+                    parser.Context.Result.Append(parser.Csv ? value.SafeToString().EncodeCsvField() : value);
                     return notSKip? ret : null;
                 }
             }

@@ -7,7 +7,7 @@ using DotNetUtils;
 
 namespace Templator
 {
-    public static class HolderExtensions
+    public static class HolderUtils
     {
         public static object DecimalToString(this object value)
         {

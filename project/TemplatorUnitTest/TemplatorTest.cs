@@ -23,7 +23,7 @@ namespace TemplatorUnitTest
             {
                 parser.StartOver();
                 _logs.Erros.Clear();
-                var fields = entry.IsXml ? parser.ParseXml(entry.Xml, entry.Input) : parser.ParseText(entry.Template, entry.Input);
+                var fields = entry.IsXml ? parser.ParseXml(entry.Xml, entry.Input) : entry.IsCsv ? parser.ParseCsv(entry.Template, entry.Input) : parser.ParseText(entry.Template, entry.Input);
                 Assert.AreEqual(entry.FieldCount, fields.Count);
                 if (_logs.Erros.Count > 0)
                 {
@@ -68,7 +68,8 @@ namespace TemplatorUnitTest
                             yield return new SimpleDataEntry(name, id++)
                             {
                                 IsXml = line == "xml",
-                                Template = line == "xml" ? rd.ReadLine() : line,
+                                IsCsv = line == "csv",
+                                Template = line == "xml" || line == "csv" ? rd.ReadLine() : line,
                                 Input = rd.ReadLine().ParseJsonDict(),
                                 Output = rd.ReadLine(),
                                 FieldCount = int.Parse(rd.ReadLine()),
@@ -87,6 +88,7 @@ namespace TemplatorUnitTest
             private readonly string _fileName;
             public readonly int Id;
             public bool IsXml;
+            public bool IsCsv;
             public string Log;
             public string Template;
             public IDictionary<string, object> Input;

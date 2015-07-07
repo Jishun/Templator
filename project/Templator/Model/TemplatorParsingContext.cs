@@ -14,6 +14,7 @@ namespace Templator
         public IDictionary<string, object> Input;
         public TextHolder ParentHolder;
         public IDictionary<string, TextHolder> Holders = new Dictionary<string, TextHolder>();
+        public IDictionary<string, TextHolder> PreparsedHolders;
         public StringBuilder Result = new StringBuilder();
         public IDictionary<string, object> Params = new Dictionary<string, object>();
 

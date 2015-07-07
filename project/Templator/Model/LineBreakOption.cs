@@ -6,9 +6,5 @@ using System.Threading.Tasks;
 
 namespace Templator
 {
-    public class TemplateParserEventArgs
-    {
-        public string Text { get; set; }
-        public TextHolder Holder { get; set; }
-    }
+    
 }
