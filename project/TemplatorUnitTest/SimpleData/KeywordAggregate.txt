@@ -10,10 +10,10 @@
 4
 
 
-{{(Holder Name)[Count(HolderRepeat.Holder3)]}}{{(Holder1)[Number]}}{{(Holder2)[Number]}}{{(HolderRepeat)[Collection]}}{{(Holder3)[Number]}}{{(HolderRepeat)[CollectionEnd]}}
-{Holder1: 1, Holder2:2, HolderRepeat: [{Holder3:3},{Holder3:4}]}
-21234
-4
+{{(Holder Name)[Count(HolderRepeat.Repeat2)]}}{{(HolderRepeat)[Collection]}}{{(Repeat2)[Collection]}}{{(Name)[Optional]}}{{(Repeat2)[CollectionEnd]}}{{(HolderRepeat)[CollectionEnd]}}
+{HolderRepeat: [{Repeat2:[{Name: "name"},{Name: "name"}]},{Repeat2:[{Name: "name"}]}]}
+3namenamename
+2
 
 
 {{(Holder Name)[Count(Holder1;Holder2;HolderRepeat.Holder3)]}}{{(Holder1)[Number]}}{{(Holder2)[Number]}}{{(HolderRepeat)[Collection]}}{{(Holder3)[Number]}}{{(HolderRepeat)[CollectionEnd]}}

@@ -28,6 +28,18 @@ Level0Level1level21Level22Level02
 3
 Repeat,Repeat2
 
+{{Level0ItemName}}{{User(Repeat)[CollectionBegin(), Holder]}}{{Level1ItemName}}{{(Repeat2)[Collection]}}{{Level2ItemName}}{{(Repeat2)[CollectionEnd]}}{{User(Repeat)[CollectionEnd()]}}{{Level0ItemName2}}
+{Level0ItemName: "Level0",Level0ItemName2: "Level02",Repeat: [{Level1ItemName:"Level1", Repeat2:[{Level2ItemName: "level21"}, {Level2ItemName:"Level22"}]}]}
+Level0Level02
+3
+Repeat,Repeat2
+
+{{Level0ItemName}}{{User(Repeat)[CollectionBegin()]}}{{Level1ItemName}}{{(Repeat2)[Collection,Holder]}}{{Level2ItemName}}{{(Repeat2)[CollectionEnd]}}{{User(Repeat)[CollectionEnd()]}}{{Level0ItemName2}}
+{Level0ItemName: "Level0",Level0ItemName2: "Level02",Repeat: [{Level1ItemName:"Level1", Repeat2:[{Level2ItemName: "level21"}, {Level2ItemName:"Level22"}]}]}
+Level0Level1Level02
+3
+Repeat,Repeat2
+
 xml
 <x>{{Level0ItemName}}{{User(Repeat)[Collection()]}}{{Level1ItemName}}{{(Repeat2)[Collection]}}{{Level2ItemName}}{{(Repeat2)[CollectionEnd]}}{{User(Repeat)[CollectionEnd()]}}{{Level0ItemName2}}</x>
 {Level0ItemName: "Level0",Level0ItemName2: "Level02",Repeat: [{Level1ItemName:"Level1", Repeat2:[{Level2ItemName: "level21"}, {Level2ItemName:"Level22"}]}]}

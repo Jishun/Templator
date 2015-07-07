@@ -24,7 +24,7 @@ namespace Templator
 
         public static void GrammarCheckDirectory(this TemplatorParser parser, string path, string[] filters, int depth)
         {
-            var files = filters.IsNullOrEmpty()
+            var files = filters.IsNullOrEmptyValue()
                 ? Directory.EnumerateFiles(path)
                 : Directory.EnumerateFiles(path).Where(f => filters.Any(fi => f.EndsWith(fi, StringComparison.OrdinalIgnoreCase)));
             foreach (var name in files)

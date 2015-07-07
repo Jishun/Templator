@@ -24,7 +24,7 @@ namespace Templator
             return holder.Children != null;
         }
 
-        public static bool IsNullOrEmpty(this object value)
+        public static bool IsNullOrEmptyValue(this object value)
         {
             return value == null || Convert.ToString(value) == String.Empty;
         }
@@ -59,6 +59,7 @@ namespace Templator
             }
             return ret;
         }
+
         public static bool IsOptional(this TextHolder holder)
         {
             return holder.KeyWords.Any(k => k.IndicatesOptional);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Web.Script.Serialization;
@@ -11,9 +12,8 @@ namespace Templator
 {
     public static class TemplatorParserUtil
     {
-        public static object Aggregate(this TemplatorParser parser, TextHolder holder, string aggregateField, IDictionary<string, object> input, Func<object, object, object> aggregateFunc)
+        public static object Aggregate(this TemplatorParser parser, object current, TextHolder holder, string aggregateField, IDictionary<string, object> input, Func<object, object, object> aggregateFunc)
         {
-            object ret = null;
             foreach (var c in aggregateField.Split(Constants.SemiDelimChar))
             {
                 string left = null;
@@ -21,15 +21,15 @@ namespace Templator
                 if (!left.IsNullOrWhiteSpace())
                 {
                     var list = input.GetChildCollection(fieldName, parser.Config);
-                    ret = list.EmptyIfNull().Aggregate(ret, (current, item) => aggregateFunc(current, parser.Aggregate(holder, left, item, aggregateFunc)));
+                    current = list.EmptyIfNull().Aggregate(current, (current1, subInput) => parser.Aggregate(current1, holder, left, subInput, aggregateFunc));
                 }
                 else
                 {
                     var value = parser.GetValue(fieldName, input);
-                    ret = aggregateFunc(ret, value);
+                    current = aggregateFunc(current, value);
                 }
             }
-            return ret;
+            return current;
         }
 
         public static object GetValue(this TemplatorParser parser, string holderName, IDictionary<string, object> input, int inherited = 0)
@@ -57,7 +57,7 @@ namespace Templator
                 .OrderBy(k => k.Preority)
                 .Aggregate(value, (current, key) =>
                 {
-                    if (current.IsNullOrEmpty() && !key.HandleNullOrEmpty)
+                    if (current.IsNullOrEmptyValue() && !key.HandleNullOrEmpty)
                     {
                         return current;
                     }

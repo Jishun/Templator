@@ -75,7 +75,7 @@ namespace Templator
                     }
                 }
             }
-            Context.Result.Append(text);
+            AppendResult(text);
         }
 
         public virtual void OnGrammerTokenCreated(object sender, ParsingEventArgs e)
@@ -281,16 +281,17 @@ namespace Templator
             }
             PopXmlContext();
         }
-        public void PushContext(IDictionary<string, object> input, TextHolder parentHolder, bool disableLogging = false)
+        public void PushContext(IDictionary<string, object> input, TextHolder parentHolder, bool skipOutput = false, bool disableLogging = false)
         {
             var holderDefinitions = parentHolder == null ? null : Context.PreparsedHolders.GetOrDefault(parentHolder.Name);
-            var newC = new TemplatorParsingContext
+            var newC = new TemplatorParsingContext(skipOutput)
             {
                 Input = input,
                 ParentHolder = parentHolder,
                 Logger = disableLogging ? null : Config.Logger,
                 Text = Context == null ? null : Context.Text,
                 PreparsedHolders = holderDefinitions == null ? null : holderDefinitions.Children
+                
             };
 
             if (Context == null)
@@ -322,12 +323,19 @@ namespace Templator
             {
                 c.ParentHolder.Children = c.Holders;
             }
-            Context.Result.Append(c.Result);
+            AppendResult(c.Result);
         }
 
         public void PopXmlContext()
         {
             XmlContext = XmlStack.Pop();
+        }
+        public void AppendResult(object value)
+        {
+            if (Context.Result != null)
+            {
+                Context.Result.Append(value);
+            }
         }
 
         public void LogError(string pattern, params object[] args)

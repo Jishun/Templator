@@ -27,7 +27,7 @@ namespace Templator
                         }
                         parser.ParsingHolder = new TextHolder(){Position = parser.Context.Text.Position - parser.Config.Begin.Length};
                     }
-                    parser.Context.Result.Append(str);
+                    parser.AppendResult(str);
                     parser.State.Begin = true;
                     return null;
                 }
@@ -191,7 +191,7 @@ namespace Templator
                     parser.State = new HolderParseState();
                     var value = parser.GetValue(ret, parser.Context.Input);
                     var notSKip = ret.KeyWords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
-                    parser.Context.Result.Append(parser.Csv ? value.SafeToString().EncodeCsvField() : value);
+                    parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value);
                     return notSKip? ret : null;
                 }
             }
@@ -209,7 +209,7 @@ namespace Templator
                 }
                 else
                 {
-                    if (!str.IsNullOrEmpty())
+                    if (!str.IsNullOrEmptyValue())
                     {
                         if (!parser.Config.IgnoreUnknownParam)
                         {

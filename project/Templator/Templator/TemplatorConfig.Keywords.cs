@@ -80,7 +80,7 @@ namespace Templator
                             }
                         }
                         
-                        parser.PushContext(input, parsedHolder, parsedHolder.IsOptional());
+                        parser.PushContext(input, parsedHolder, parsedHolder.ContainsKey(KeyWordHolder), parsedHolder.IsOptional());
                         return false;
                     } 
                 },
@@ -182,7 +182,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string)holder[KeyWordSum];
-                        return parser.Aggregate(holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 0) + (agg.ParseDecimalNullable(0) ?? 0)).DecimalToString();
+                        return parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 0) + (agg.ParseDecimalNullable() ?? 0)).DecimalToString();
                     }
                 },
                 new TemplatorKeyWord(KeyWordAverage)
@@ -192,8 +192,8 @@ namespace Templator
                     {
                         var aggregateField = (string)holder[KeyWordAverage];
                         // sum/count
-                        var count = (decimal)parser.Aggregate(holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable(0) ?? 0) + 1);
-                        return count != 0 ? (decimal)parser.Aggregate(holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 0) + (agg.ParseDecimalNullable(0) ?? 0))/count : 0;
+                        var count = (decimal)parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable() ?? 0) + (item is object[] ? ((object[])item).Length : 1));
+                        return count != 0 ? (decimal)parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 0) + (agg.ParseDecimalNullable() ?? 0)) / count : 0;
                     }
                 },
                 new TemplatorKeyWord(KeyWordCount)
@@ -202,7 +202,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string) holder[KeyWordCount];
-                        return parser.Aggregate(holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable(0) ?? 0) + 1).DecimalToString();
+                        return parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable() ?? 0) + (item is object[] ? ((object[])item).Length : 1)).DecimalToString();
                     }
                 },
                 new TemplatorKeyWord(KeyWordMulti)
@@ -211,7 +211,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string)holder[KeyWordMulti];
-                        return parser.Aggregate(holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 1) * (agg.ParseDecimalNullable() ?? 1)).DecimalToString();
+                        return parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 1) * (agg.ParseDecimalNullable() ?? 1)).DecimalToString();
                     }
                 },
                 new TemplatorKeyWord(KeyWordOptional)
@@ -633,7 +633,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var ifQuery = (string)holder[KeyWordIfnot];
-                        if (value.IsNullOrEmpty())
+                        if (value.IsNullOrEmptyValue())
                         {
                             parser.RemovingElements.Add(ifQuery.IsNullOrWhiteSpace()
                             ? parser.XmlContext.Element
@@ -701,11 +701,11 @@ namespace Templator
                     {
                         var eav = value;
                         var name = (string) holder[KeyWordIf];
-                        if (!name.IsNullOrEmpty())
+                        if (!name.IsNullOrEmptyValue())
                         {
                             eav = parser.GetValue(name, parser.Context.Input, (int?) holder[KeyWordSeekup] ?? 0);
                         }
-                        if (eav.IsNullOrEmpty())
+                        if (eav.IsNullOrEmptyValue())
                         {
                             parser.RemovingElements.Add(parser.XmlContext.Element);
                         }
