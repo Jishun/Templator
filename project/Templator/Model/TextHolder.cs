@@ -16,7 +16,7 @@ namespace Templator
         public int Position;
 
         public IDictionary<string, TextHolder> Children;
-        public IList<TemplatorKeyWord> KeyWords = new List<TemplatorKeyWord>();
+        public IList<TemplatorKeyword> Keywords = new List<TemplatorKeyword>();
         public IDictionary<string, object> Params = new Dictionary<string, object>();
 
         public object this[string keywordName]

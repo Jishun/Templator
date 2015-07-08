@@ -6,7 +6,7 @@ using Irony.Parsing;
 
 namespace Templator
 {
-    public class TemplatorKeyWord
+    public class TemplatorKeyword
     {
         public readonly string Name;
         public int Preority;
@@ -15,12 +15,12 @@ namespace Templator
         public Func<TemplatorParser, TextHolder, bool> PostParse;
         public Action<TemplatorParser, string> Parse;
         public Func<TextHolder, TemplatorParser, object, object> OnGetValue;
-        public TemplatorKeyWord(string name)
+        public TemplatorKeyword(string name)
         {
             Name = name;
         }
 
-        public TemplatorKeyWord Create()
+        public TemplatorKeyword Create()
         {
             return this;
         }

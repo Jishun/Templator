@@ -31,7 +31,7 @@ namespace Templator
         public bool CategoryOptional = false;
         public bool SyntaxCheckOnly = false;
 
-        public IDictionary<string, TemplatorKeyWord> KeyWords;
+        public IDictionary<string, TemplatorKeyword> Keywords;
 
         public IDictionary<string, Type> Enums = new Dictionary<string, Type>();
         public IDictionary<string, Regex> Regexes = new Dictionary<string, Regex>();

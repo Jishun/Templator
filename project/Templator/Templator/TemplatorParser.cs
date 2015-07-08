@@ -11,7 +11,7 @@ namespace Templator
     public class TemplatorParser
     {
         public bool Csv;
-        public TemplatorKeyWord ParsingKeyword;
+        public TemplatorKeyword ParsingKeyword;
         public TextHolder ParsingHolder;
         public HolderParseState State;
 
@@ -62,14 +62,14 @@ namespace Templator
         {
             if (holder != null)
             {
-                if (ParsingHolder.KeyWords.Any(k => k.Name == Config.KeyWordRepeatEnd))
+                if (ParsingHolder.Keywords.Any(k => k.Name == Config.KeywordRepeatEnd))
                 {
                     PopContext();
                 }
                 else
                 {
                     Context.Holders[ParsingHolder.Name] = ParsingHolder;
-                    if (ParsingHolder.KeyWords.Any(k => k.Name == Config.KeyWordRepeat || k.Name == Config.KeyWordRepeatBegin))
+                    if (ParsingHolder.Keywords.Any(k => k.Name == Config.KeywordRepeat || k.Name == Config.KeywordRepeatBegin))
                     {
                         PushContext(null, holder);
                     }
@@ -130,18 +130,18 @@ namespace Templator
                     else
                     {
                         ParsingKeyword.Parse(this, v);
-                        ParsingHolder.KeyWords.Add(ParsingKeyword);
+                        ParsingHolder.Keywords.Add(ParsingKeyword);
                         ParsingKeyword = null;
                     }
                 }
-                else if (Config.KeyWords.ContainsKey(t))
+                else if (Config.Keywords.ContainsKey(t))
                 {
                     if (ParsingKeyword != null)
                     {
                         throw new TemplatorSyntaxException();
                     }
-                    ParsingKeyword = Config.KeyWords[v];
-                    ParsingHolder.KeyWords.Add(ParsingKeyword);
+                    ParsingKeyword = Config.Keywords[v];
+                    ParsingHolder.Keywords.Add(ParsingKeyword);
                     ParsingKeyword = null;
                 }
             }

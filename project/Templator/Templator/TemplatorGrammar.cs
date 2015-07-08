@@ -41,8 +41,8 @@ namespace Templator
             var tMultiKeywords = new NonTerminal("MultiKeywords");
             var tParamedKeyword = new NonTerminal(config.TermParamedKeyword);
 
-            var keyword = new NonTerminal(config.TermKeyword) {Rule = ToTerm(config.KeyWords.First().Key)};
-            foreach (var k in config.KeyWords.Skip(1))
+            var keyword = new NonTerminal(config.TermKeyword) {Rule = ToTerm(config.Keywords.First().Key)};
+            foreach (var k in config.Keywords.Skip(1))
             {
                keyword.Rule |= k.Key;
             }

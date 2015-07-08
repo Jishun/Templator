@@ -62,7 +62,7 @@ namespace Templator
 
         public static bool IsOptional(this TextHolder holder)
         {
-            return holder.KeyWords.Any(k => k.IndicatesOptional);
+            return holder.Keywords.Any(k => k.IndicatesOptional);
         }
     }
 }

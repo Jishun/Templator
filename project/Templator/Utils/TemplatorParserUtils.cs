@@ -35,7 +35,7 @@ namespace Templator
         public static object GetValue(this TemplatorParser parser, string holderName, IDictionary<string, object> input, int inherited = 0)
         {
             var holder = GetHolder(input, holderName, parser.Config);
-            holder[parser.Config.KeyWordSeekup] = inherited;
+            holder[parser.Config.KeywordSeekup] = inherited;
             return parser.GetValue(holder, input);
         }
 
@@ -52,7 +52,7 @@ namespace Templator
                 parser.RequireInput(parser, arg);
                 value = arg.Text;
             }
-            value = holder.KeyWords.EmptyIfNull()
+            value = holder.Keywords.EmptyIfNull()
                 .Where(key => key.OnGetValue != null)
                 .OrderBy(k => k.Preority)
                 .Aggregate(value, (current, key) =>
@@ -80,7 +80,7 @@ namespace Templator
                     var ret = retArray.Where(r => r is IDictionary<string, object>).Cast<IDictionary<string, object>>().ToArray();
                     foreach (var dictionary in ret)
                     {
-                        dictionary.AddOrSkip(config.ReservedKeyWordParent, input);
+                        dictionary.AddOrSkip(config.ReservedKeywordParent, input);
                     }
                     return ret;
                 }

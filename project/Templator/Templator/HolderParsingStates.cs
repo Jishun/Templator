@@ -53,7 +53,7 @@ namespace Templator
                         parser.State.Name = true;
                         if (matched == parser.Config.KeywordsBegin)
                         {
-                            parser.State.KeyWordsBegin = true;
+                            parser.State.KeywordsBegin = true;
                         }
                         else if (matched == parser.Config.End)
                         {
@@ -90,7 +90,7 @@ namespace Templator
                     }
                     if (matched == parser.Config.KeywordsBegin)
                     {
-                        parser.State.KeyWordsBegin = true;
+                        parser.State.KeywordsBegin = true;
                     }
                     else
                     {
@@ -100,7 +100,7 @@ namespace Templator
                 }
             },
             {
-                new HolderParseState(){Begin = true, Name = true, KeyWordsBegin = true}, parser =>
+                new HolderParseState(){Begin = true, Name = true, KeywordsBegin = true}, parser =>
                 {
                     string matched;
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.ParamBegin, parser.Config.Delimiter, parser.Config.KeywordsEnd);
@@ -112,16 +112,16 @@ namespace Templator
                     str = str.Trim();
                     if (str != String.Empty)
                     {
-                        if (parser.Config.KeyWords.ContainsKey(str))
+                        if (parser.Config.Keywords.ContainsKey(str))
                         {
                             if (parser.ParsingKeyword != null)
                             {
                                 parser.State.Error = true;
                                 throw new TemplatorSyntaxException();
                             }
-                            parser.ParsingKeyword = parser.Config.KeyWords[str].Create();
-                            parser.ParsingHolder.KeyWords = parser.ParsingHolder.KeyWords ?? new List<TemplatorKeyWord>();
-                            parser.ParsingHolder.KeyWords.Add(parser.ParsingKeyword);
+                            parser.ParsingKeyword = parser.Config.Keywords[str].Create();
+                            parser.ParsingHolder.Keywords = parser.ParsingHolder.Keywords ?? new List<TemplatorKeyword>();
+                            parser.ParsingHolder.Keywords.Add(parser.ParsingKeyword);
                         }
                         else
                         {
@@ -150,7 +150,7 @@ namespace Templator
                 }
             },
             {
-                new HolderParseState(){Begin = true, Name = true, KeyWordsBegin = true, KeywordParamBegin = true, }, parser =>
+                new HolderParseState(){Begin = true, Name = true, KeywordsBegin = true, KeywordParamBegin = true, }, parser =>
                 {
                     string matched;
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.ParamEnd);
@@ -169,7 +169,7 @@ namespace Templator
                 }
             },
             {
-                new HolderParseState(){Begin = true, Name = true, KeyWordsBegin = true, KeywordsEnd = true, }, parser =>
+                new HolderParseState(){Begin = true, Name = true, KeywordsBegin = true, KeywordsEnd = true, }, parser =>
                 {
                     string matched;
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.End);
@@ -190,7 +190,7 @@ namespace Templator
                     parser.ParsingKeyword = null;
                     parser.State = new HolderParseState();
                     var value = parser.GetValue(ret, parser.Context.Input);
-                    var notSKip = ret.KeyWords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
+                    var notSKip = ret.Keywords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
                     parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value);
                     return notSKip? ret : null;
                 }
