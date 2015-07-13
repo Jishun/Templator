@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.XPath;
 using CsvEnumerator;
 using DotNetUtils;
@@ -39,7 +40,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
                     PostParse = (parser, parsedHolder) =>
                     {
-                        var childInputs = parser.Context.Input.GetChildCollection(parsedHolder.Name, parser.Config);
+                        var childInputs = TemplatorUtil.GetChildCollection(parser.Context.Input, parsedHolder.Name, parser.Config);
                         IDictionary<string, object> input = null;
                         var l = parser.StackLevel + parsedHolder.Name;
                         var inputIndex = (int?)parser.Context[l + "InputIndex"] ?? 0;
@@ -249,6 +250,35 @@ namespace Templator
                             throw new TemplatorParamsException("Invalid Regular expression defined");
                         }
                         return value;
+                    },
+                    Parse = (parser, str) =>
+                    {
+                        if (parser.XmlContext != null && str.IsNullOrEmpty())
+                        {
+                            var node = parser.XmlContext.Element;
+                            var info = node.GetSchemaInfo();
+                            if (info != null)
+                            {
+                                var type = info.SchemaType as XmlSchemaSimpleType;
+                                if (type != null)
+                                {
+                                    var content = type.Content as XmlSchemaSimpleTypeRestriction;
+                                    if (content != null && content.Facets != null)
+                                    {
+                                        foreach (var patternFacet in content.Facets.OfType<XmlSchemaPatternFacet>())
+                                        {
+                                            parser.ParsingHolder[KeywordRegex] = patternFacet.Value;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                        else
+                        {
+                            parser.ParsingHolder[KeywordRegex] = str;
+                        }
                     }
                 },
                 new TemplatorKeyword(KeywordLength)
@@ -263,7 +293,7 @@ namespace Templator
                         }
                         string str = null;
                         str = holder.ContainsKey(KeywordNumber) ? Convert.ToString(value.DecimalToString() ?? value) : value.SafeToString();
-                        var child = isArray ? parser.Context.Input.GetChildCollection(holder.Name, parser.Config) : null;
+                        var child = isArray ? TemplatorUtil.GetChildCollection(parser.Context.Input, holder.Name, parser.Config) : null;
                         var length = isArray ? child == null ? 0 : child.Length : str.Length;
                         int? maxLength = null;
                         var customLength = (Pair<string, IList<int>>)holder[KeywordLength];

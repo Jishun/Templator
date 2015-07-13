@@ -64,5 +64,20 @@ namespace Templator
         {
             return holder.Keywords.Any(k => k.IndicatesOptional);
         }
+
+        public static TextHolder Clone(this TextHolder holder)
+        {
+            var ret = new TextHolder(holder.Name)
+            {
+                Category = holder.Category,
+                Keywords = holder.Keywords.Select(k => k.Create()).ToList(),
+                Params = holder.Params.Copy()
+            };
+            if (ret.Children != null)
+            {
+                ret.Children = holder.Children.ToDictionary(c => c.Key, c => c.Value.Clone());
+            }
+            return ret;
+        }
     }
 }

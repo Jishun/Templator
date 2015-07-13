@@ -24,6 +24,10 @@ namespace Templator
         {
             return this;
         }
+        public TemplatorKeyword Clone()
+        {
+            return (TemplatorKeyword)MemberwiseClone();
+        }
 
         public override string ToString()
         {

@@ -61,7 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\InvalidFieldParamsException.cs" />
+    <Compile Include="Exceptions\TempatorException.cs" />
     <Compile Include="Model\HolderParseState.cs" />
     <Compile Include="Model\LineBreakOption.cs" />
     <Compile Include="Model\TemplatorParsingContext.cs" />
@@ -77,7 +77,6 @@
     <Compile Include="Templator\TemplatorConfig.cs" />
     <Compile Include="Templator\TemplatorGrammar.cs" />
     <Compile Include="Model\TemplatorKeyWord.cs" />
-    <Compile Include="Utils\TemplatorParserUtils.cs" />
     <Compile Include="Model\TemplatorXmlParsingContext.cs" />
     <Compile Include="Templator\HolderParsingStates.cs" />
     <Compile Include="Model\TextHolder.cs" />

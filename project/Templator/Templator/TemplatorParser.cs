@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using DotNetUtils;
 using Irony.Parsing;
 
@@ -11,19 +12,18 @@ namespace Templator
     public class TemplatorParser
     {
         public bool Csv;
+        public TemplatorConfig Config;
         public TemplatorKeyword ParsingKeyword;
         public TextHolder ParsingHolder;
         public HolderParseState State;
+        public IList<XElement> RemovingElements = new List<XElement>();
+
+        public IDictionary<string, TextHolder> Holders = new Dictionary<string, TextHolder>();
 
         public TemplatorXmlParsingContext XmlContext;
         public TemplatorParsingContext Context;
         public Stack<TemplatorParsingContext> Stack = new Stack<TemplatorParsingContext>();
         public Stack<TemplatorXmlParsingContext> XmlStack = new Stack<TemplatorXmlParsingContext>();
-
-        public TemplatorConfig Config;
-        public IList<XElement> RemovingElements = new List<XElement>();
-
-        public event EventHandler<TemplateEventArgs> OnRequireInput;
 
         public TemplatorXmlParsingContext ParentXmlContext
         {
@@ -42,7 +42,6 @@ namespace Templator
         public TemplatorParser(TemplatorConfig config)
         {
             Config = config;
-            OnRequireInput += config.RequireInput;
             var grammar = new TemplatorGrammar(Config);
             GrammarParser = new Parser(grammar);
             if (!config.SyntaxCheckOnly)
@@ -161,7 +160,7 @@ namespace Templator
 
         #endregion Grammer
         
-        public void StartOver()
+        public void StartOver(bool clearHolders = true)
         {
             RemovingElements.Clear();
             Stack.Clear();
@@ -169,25 +168,56 @@ namespace Templator
             XmlContext = null;
             Context = null;
             Csv = false;
+            if (clearHolders)
+            {
+                Holders.Clear();
+            }
+        }
+        public void RequireInput(object sender, TemplateEventArgs args)
+        {
+            var recursiveCheckKey = args.Holder.Name + "$Processing";
+            if ((bool?)Context[recursiveCheckKey] == true)
+            {
+                Context[recursiveCheckKey] = null;
+                return;
+            }
+            Context[recursiveCheckKey] = true;
+            if (Config.RequireInput != null)
+            {
+                Config.RequireInput(this, args);
+            }
+            Context[recursiveCheckKey] = null;
         }
 
-        public virtual IDictionary<string, TextHolder> ParseCsv(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+
+#region parsing
+        public virtual string ParseCsv(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
         {
             Csv = true;
             return ParseText(src, input, preparsedHolders);
         }
 
-        public virtual IDictionary<string, TextHolder> ParseText(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public virtual string ParseText(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
         {
             PushContext(input, null);
             Context.Text = new SeekableString(src, Config.LineBreakOption);
             Context.PreparsedHolders= preparsedHolders;
             Context.Result.Clear();
             ParseTextInternal(input);
-            return Context.Holders;
+            CollectHolderResults();
+            return Context.Result.ToString();
         }
 
-        public virtual IDictionary<string, TextHolder> ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public virtual XElement ParseXml(XDocument doc, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, XmlSchemaSet schemaSet = null)
+        {
+            if (schemaSet != null)
+            {
+                doc.Validate(schemaSet, (o, e) => { }, true);
+            }
+            return ParseXml(doc.Root, input, preparsedHolders);
+        }
+
+        public virtual XElement ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
         {
             XmlContext = new TemplatorXmlParsingContext(){Element = rootElement};
             PushContext(input, null);
@@ -200,40 +230,8 @@ namespace Templator
                     removingElement.Remove();
                 }
             }
-            return Context.Holders;
-        }
-
-        public virtual bool ParseTextInternal(IDictionary<string, object> input)
-        {
-            var hasHolder = false;
-            Context.Input = input;
-            State = new HolderParseState();
-            while (!Context.Text.Eof || State.End) 
-            {
-                if (HolderParsingStates.States.ContainsKey(State))
-                {
-                    var fun = HolderParsingStates.States[State];
-                    var holder = fun(this);
-                    if (holder != null)
-                    {
-                        hasHolder = true;
-                        Context.Holders.AddOrSkip(holder.Name, holder);
-                    }
-                }
-                else
-                {
-                    throw new TemplatorUnexpecetedStateException();
-                }
-            }
-            return hasHolder;
-        }
-
-        public void RequireInput(object sender, TemplateEventArgs args)
-        {
-            if (OnRequireInput != null)
-            {
-                OnRequireInput(this, args);
-            }
+            CollectHolderResults();
+            return XmlContext.Element;
         }
         public void ParseXmlInternal(XElement element)
         {
@@ -281,6 +279,87 @@ namespace Templator
             }
             PopXmlContext();
         }
+
+        public virtual bool ParseTextInternal(IDictionary<string, object> input)
+        {
+            var hasHolder = false;
+            Context.Input = input;
+            State = new HolderParseState();
+            while (!Context.Text.Eof || State.End) 
+            {
+                if (HolderParsingStates.States.ContainsKey(State))
+                {
+                    var fun = HolderParsingStates.States[State];
+                    var holder = fun(this);
+                    if (holder != null)
+                    {
+                        hasHolder = true;
+                        Context.Holders.AddOrSkip(holder.Name, holder);
+                    }
+                }
+                else
+                {
+                    throw new TemplatorUnexpecetedStateException();
+                }
+            }
+            return hasHolder;
+        }
+#endregion parsing
+
+#region utils
+        public IDictionary<string, object>[] GetChildInputs(string key)
+        {
+            return TemplatorUtil.GetChildCollection(Context.Input, key, Config);
+        }
+
+        public bool HasInput(string key)
+        {
+            return Context.Input.ContainsKey(key);
+        }
+
+        public object GetInputValue(string key, object defaultRet = null)
+        {
+            return Context.Input.GetOrDefault(key, defaultRet);
+        }
+
+        public T GetInputValue<T>(string key, T defaultRet = default(T))
+        {
+            return Context.Input.GetOrDefault(key, defaultRet).SafeConvert(defaultRet, Config.DateFormat);
+        }
+
+        public T GetValue<T>(string key, T defaultRet = default(T), int seekUp = 0)
+        {
+            return TemplatorUtil.GetValue(this, key, Context.Input, seekUp).SafeConvert<T>(default(T), Config.DateFormat);
+        }
+
+        public T GetValue<T>(TextHolder key, T defaultRet = default(T), int seekUp = 0)
+        {
+            return TemplatorUtil.GetValue(this, key, Context.Input).SafeConvert<T>(default(T), Config.DateFormat);
+        }
+        
+        public void CacheValue(string key, object value, bool overWirteIfExists = false)
+        {
+            if (overWirteIfExists)
+            {
+                Context.Input.AddOrOverwrite(key, value);
+            }
+            else
+            {
+                Context.Input.AddOrSkip(key, value);
+            }
+        }
+
+        public TextHolder GetHolder(string name)
+        {
+            if (Context.PreparsedHolders != null)
+            {
+                return Context.PreparsedHolders.GetOrDefault(name) ?? new TextHolder(name);
+            }
+            return new TextHolder(name);
+        }
+#endregion utils
+
+#region Contexts
         public void PushContext(IDictionary<string, object> input, TextHolder parentHolder, bool skipOutput = false, bool disableLogging = false)
         {
             var holderDefinitions = parentHolder == null ? null : Context.PreparsedHolders.GetOrDefault(parentHolder.Name);
@@ -330,6 +409,15 @@ namespace Templator
         {
             XmlContext = XmlStack.Pop();
         }
+        #endregion Contexts
+        public void LogError(string pattern, params object[] args)
+        {
+            if (Context.Logger != null )
+            {
+                Context.Logger.LogError(pattern, args);
+            }
+        }
+#region results
         public void AppendResult(object value)
         {
             if (Context.Result != null)
@@ -338,12 +426,10 @@ namespace Templator
             }
         }
 
-        public void LogError(string pattern, params object[] args)
+        private void CollectHolderResults(string mergeInto = null)
         {
-            if (Context.Logger != null )
-            {
-                Context.Logger.LogError(pattern, args);
-            }
+            TemplatorUtil.MergeHolders(Holders, Context.Holders.Values, mergeInto);
         }
+#endregion results
     }
 }

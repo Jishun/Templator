@@ -23,8 +23,19 @@ namespace TemplatorUnitTest
             {
                 parser.StartOver();
                 _logs.Erros.Clear();
-                var fields = entry.IsXml ? parser.ParseXml(entry.Xml, entry.Input) : entry.IsCsv ? parser.ParseCsv(entry.Template, entry.Input) : parser.ParseText(entry.Template, entry.Input);
-                Assert.AreEqual(entry.FieldCount, fields.Count);
+                if (entry.IsXml)
+                {
+                    parser.ParseXml(entry.Xml, entry.Input);
+                }
+                else if(entry.IsCsv)
+                {
+                    parser.ParseCsv(entry.Template, entry.Input);
+                }
+                else
+                {
+                    parser.ParseText(entry.Template, entry.Input);
+                }
+                Assert.AreEqual(entry.FieldCount, parser.Holders.Count);
                 if (_logs.Erros.Count > 0)
                 {
                     var errors = _logs.Erros.Join("$$");
@@ -44,6 +55,7 @@ namespace TemplatorUnitTest
                 }
                 if (!entry.Levels.IsNullOrEmpty())
                 {
+                    var fields = parser.Holders;
                     foreach (var s in entry.Levels.Split(','))
                     {
                         Assert.IsTrue(fields.ContainsKey(s));

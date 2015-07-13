@@ -189,7 +189,7 @@ namespace Templator
                     parser.ParsingHolder = null;
                     parser.ParsingKeyword = null;
                     parser.State = new HolderParseState();
-                    var value = parser.GetValue(ret, parser.Context.Input);
+                    var value = parser.GetValue<object>(ret);
                     var notSKip = ret.Keywords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
                     parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value);
                     return notSKip? ret : null;
