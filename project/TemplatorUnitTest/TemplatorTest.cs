@@ -17,6 +17,7 @@ namespace TemplatorUnitTest
         [TestMethod]
         public void SimpleDataTest()
         {
+            //TTODO: test repeat witn multiple deep collection merge e.g. c{d(e)}, c{d(g)} => c{d(e,g)}
             _config.Logger = _logs;
             var parser = new TemplatorParser(_config);
             foreach (var entry in GetSimpleDataEntries())

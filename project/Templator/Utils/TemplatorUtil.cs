@@ -15,28 +15,28 @@ namespace Templator
 {
     public static class TemplatorUtil
     {
-        public static string LoadTextTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public static string LoadTextTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
             using (var rd = new StreamReader(stream))
             {
-                return parser.ParseText(rd.ReadToEnd(), input, preparsedHolders);
+                return parser.ParseText(rd.ReadToEnd(), input, preparsedHolders, mergeHoldersInto);
             }
         }
 
-        public static XElement LoadXmlTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, XmlSchemaSet schemaSet = null)
+        public static XElement LoadXmlTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null, XmlSchemaSet schemaSet = null)
         {
             using (var rd = XmlReader.Create(stream))
             {
                 var doc = XDocument.Load(rd);
-                return parser.ParseXml(doc, input, preparsedHolders, schemaSet);
+                return parser.ParseXml(doc, input, preparsedHolders, mergeHoldersInto, schemaSet);
             }
         }
 
-        public static string LoadCsvTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public static string LoadCsvTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
             using (var rd = new StreamReader(stream))
             {
-                return parser.ParseCsv(rd.ReadToEnd(), input, preparsedHolders);
+                return parser.ParseCsv(rd.ReadToEnd(), input, preparsedHolders, mergeHoldersInto);
             }
         }
 
@@ -216,7 +216,7 @@ namespace Templator
                     var ret = retArray.Where(r => r is IDictionary<string, object>).Cast<IDictionary<string, object>>().ToArray();
                     foreach (var dictionary in ret)
                     {
-                        dictionary.AddOrSkip(config.ReservedKeywordParent, input);
+                        dictionary.AddOrOverwrite(config.ReservedKeywordParent, input);
                     }
                     return ret;
                 }
@@ -247,7 +247,11 @@ namespace Templator
         public static object GetValue(TemplatorParser parser, string holderName, IDictionary<string, object> input, int inherited = 0)
         {
             var holder = GetHolder(input, holderName, parser.Config);
-            holder[parser.Config.KeywordSeekup] = inherited;
+            if (inherited > 0)
+            {
+                holder[parser.Config.KeywordSeekup] = inherited;
+                holder.Keywords.Add(parser.Config.Keywords[parser.Config.KeywordSeekup].Create());
+            }
             return GetValue(parser, holder, input);
         }
 

@@ -22,7 +22,7 @@ namespace Templator
 
         public TemplatorXmlParsingContext XmlContext;
         public TemplatorParsingContext Context;
-        public Stack<TemplatorParsingContext> Stack = new Stack<TemplatorParsingContext>();
+        public Stack<TemplatorParsingContext> Stack;
         public Stack<TemplatorXmlParsingContext> XmlStack = new Stack<TemplatorXmlParsingContext>();
 
         public TemplatorXmlParsingContext ParentXmlContext
@@ -36,7 +36,7 @@ namespace Templator
 
         public int StackLevel
         {
-            get { return Stack.Count; }
+            get { return Stack == null ? -1 : Stack.Count; }
         }
 
         public TemplatorParser(TemplatorConfig config)
@@ -48,6 +48,7 @@ namespace Templator
             {
                 GrammarParser.Context.TokenCreated += OnGrammerTokenCreated;
             }
+            Context = new TemplatorParsingContext();
         }
 
 #region Grammar
@@ -163,10 +164,10 @@ namespace Templator
         public void StartOver(bool clearHolders = true)
         {
             RemovingElements.Clear();
-            Stack.Clear();
+            Stack = null;
             XmlStack.Clear();
             XmlContext = null;
-            Context = null;
+            Context = new TemplatorParsingContext();
             Csv = false;
             if (clearHolders)
             {
@@ -191,24 +192,25 @@ namespace Templator
 
 
 #region parsing
-        public virtual string ParseCsv(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public virtual string ParseCsv(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
             Csv = true;
-            return ParseText(src, input, preparsedHolders);
+            return ParseText(src, input, preparsedHolders, mergeHoldersInto);
         }
 
-        public virtual string ParseText(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public virtual string ParseText(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
             PushContext(input, null);
             Context.Text = new SeekableString(src, Config.LineBreakOption);
             Context.PreparsedHolders= preparsedHolders;
             Context.Result.Clear();
-            ParseTextInternal(input);
-            CollectHolderResults();
+            Context.Input = input;
+            ParseTextInternal();
+            CollectHolderResults(mergeHoldersInto);
             return Context.Result.ToString();
         }
 
-        public virtual XElement ParseXml(XDocument doc, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, XmlSchemaSet schemaSet = null)
+        public virtual XElement ParseXml(XDocument doc, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null, XmlSchemaSet schemaSet = null)
         {
             if (schemaSet != null)
             {
@@ -217,7 +219,7 @@ namespace Templator
             return ParseXml(doc.Root, input, preparsedHolders);
         }
 
-        public virtual XElement ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null)
+        public virtual XElement ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
             XmlContext = new TemplatorXmlParsingContext(){Element = rootElement};
             PushContext(input, null);
@@ -230,7 +232,7 @@ namespace Templator
                     removingElement.Remove();
                 }
             }
-            CollectHolderResults();
+            CollectHolderResults(mergeHoldersInto);
             return XmlContext.Element;
         }
         public void ParseXmlInternal(XElement element)
@@ -245,8 +247,8 @@ namespace Templator
                 XmlContext.Attribute = a;
                 Context.Result.Clear();
                 Context.Text = new SeekableString(a.Value);
-                var hasHolder = ParseTextInternal(Context.Input);
-                if (hasHolder)
+                var holders = ParseTextInternal();
+                if (holders.Count > 0)
                 {
                     a.Value = Context.Result.ToString();
                 }
@@ -271,20 +273,39 @@ namespace Templator
             {
                 Context.Text = new SeekableString(element.Value, Config.LineBreakOption);
                 Context.Result.Clear();
-                var hasHolder = ParseTextInternal(Context.Input);
-                if (hasHolder)
+                var holders = ParseTextInternal();
+                if (holders.Count > 0)
                 {
                     element.Value = Context.Result.ToString();
+                    if (holders.Count == 1)
+                    {
+                        var info = element.GetSchemaInfo();
+                        if (info != null)
+                        {
+                            var type = info.SchemaType as XmlSchemaSimpleType;
+                            if (type != null)
+                            {
+                                var content = type.Content as XmlSchemaSimpleTypeRestriction;
+                                if (content != null && content.Facets != null)
+                                {
+                                    foreach (var patternFacet in content.Facets.OfType<XmlSchemaPatternFacet>())
+                                    {
+                                        holders[0][Config.KeywordRegex] = patternFacet.Value;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             PopXmlContext();
         }
 
-        public virtual bool ParseTextInternal(IDictionary<string, object> input)
+        public virtual IList<TextHolder> ParseTextInternal()
         {
-            var hasHolder = false;
-            Context.Input = input;
             State = new HolderParseState();
+            var ret = new List<TextHolder>();
             while (!Context.Text.Eof || State.End) 
             {
                 if (HolderParsingStates.States.ContainsKey(State))
@@ -293,7 +314,7 @@ namespace Templator
                     var holder = fun(this);
                     if (holder != null)
                     {
-                        hasHolder = true;
+                        ret.Add(holder);
                         Context.Holders.AddOrSkip(holder.Name, holder);
                     }
                 }
@@ -302,7 +323,7 @@ namespace Templator
                     throw new TemplatorUnexpecetedStateException();
                 }
             }
-            return hasHolder;
+            return ret;
         }
 #endregion parsing
 
@@ -339,13 +360,16 @@ namespace Templator
         
         public void CacheValue(string key, object value, bool overWirteIfExists = false)
         {
-            if (overWirteIfExists)
+            if (Context.Input != null)
             {
-                Context.Input.AddOrOverwrite(key, value);
-            }
-            else
-            {
-                Context.Input.AddOrSkip(key, value);
+                if (overWirteIfExists)
+                {
+                    Context.Input.AddOrOverwrite(key, value);
+                }
+                else
+                {
+                    Context.Input.AddOrSkip(key, value);
+                }
             }
         }
 
@@ -363,6 +387,10 @@ namespace Templator
         public void PushContext(IDictionary<string, object> input, TextHolder parentHolder, bool skipOutput = false, bool disableLogging = false)
         {
             var holderDefinitions = parentHolder == null ? null : Context.PreparsedHolders.GetOrDefault(parentHolder.Name);
+            if (parentHolder != null && Context.Holders.ContainsKey(parentHolder.Name))
+            {
+                parentHolder = Context.Holders[parentHolder.Name];
+            }
             var newC = new TemplatorParsingContext(skipOutput)
             {
                 Input = input,
@@ -370,12 +398,12 @@ namespace Templator
                 Logger = disableLogging ? null : Config.Logger,
                 Text = Context == null ? null : Context.Text,
                 PreparsedHolders = holderDefinitions == null ? null : holderDefinitions.Children
-                
             };
 
-            if (Context == null)
+            if (Stack == null)
             {
                 Context = newC;
+                Stack = new Stack<TemplatorParsingContext>();
                 return;
             }
             Stack.Push(Context);
@@ -400,7 +428,7 @@ namespace Templator
             Context = Stack.Pop();
             if (c.ParentHolder != null)
             {
-                c.ParentHolder.Children = c.Holders;
+                c.ParentHolder.Children = TemplatorUtil.MergeHolders(c.ParentHolder.Children, c.Holders.Values);
             }
             AppendResult(c.Result);
         }

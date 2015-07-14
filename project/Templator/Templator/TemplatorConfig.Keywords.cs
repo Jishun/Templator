@@ -140,7 +140,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var refer = (string)holder[KeywordRefer];
-                        return parser.GetValue(refer, parser.Context.Input);
+                        return TemplatorUtil.GetValue(parser, refer, parser.Context.Input, (int?)holder[KeywordSeekup] ?? 0);
                     },
                     Parse = (parser, str) =>
                     {
@@ -162,6 +162,10 @@ namespace Templator
                             var input = parser.Context.Input;
                             while (level-- > 0 && input != null)
                             {
+                                if (!input.ContainsKey(ReservedKeywordParent))
+                                {
+                                    break;
+                                }
                                 input = (IDictionary<string, object>) input[ReservedKeywordParent];
                                 if (input.ContainsKey(holder.Name))
                                 {
@@ -253,32 +257,7 @@ namespace Templator
                     },
                     Parse = (parser, str) =>
                     {
-                        if (parser.XmlContext != null && str.IsNullOrEmpty())
-                        {
-                            var node = parser.XmlContext.Element;
-                            var info = node.GetSchemaInfo();
-                            if (info != null)
-                            {
-                                var type = info.SchemaType as XmlSchemaSimpleType;
-                                if (type != null)
-                                {
-                                    var content = type.Content as XmlSchemaSimpleTypeRestriction;
-                                    if (content != null && content.Facets != null)
-                                    {
-                                        foreach (var patternFacet in content.Facets.OfType<XmlSchemaPatternFacet>())
-                                        {
-                                            parser.ParsingHolder[KeywordRegex] = patternFacet.Value;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            
-                        }
-                        else
-                        {
-                            parser.ParsingHolder[KeywordRegex] = str;
-                        }
+                        parser.ParsingHolder[KeywordRegex] = str;
                     }
                 },
                 new TemplatorKeyword(KeywordLength)
