@@ -40,6 +40,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
                     PostParse = (parser, parsedHolder) =>
                     {
+                        var disableLog = parsedHolder.IsOptional();
                         var childInputs = TemplatorUtil.GetChildCollection(parser.Context.Input, parsedHolder.Name, parser.Config);
                         IDictionary<string, object> input = null;
                         var l = parser.StackLevel + parsedHolder.Name;
@@ -53,11 +54,20 @@ namespace Templator
                         }
                         else
                         {
-                            input = childInputs[inputIndex++];
-                            parser.Context[l + "InputIndex"] = inputIndex;
-                            if (parser.Context[l + "InputCount"] == null)
+                            if (inputIndex < childInputs.Length)
                             {
-                                parser.Context[l + "InputCount"] = inputCount = childInputs.Length;
+                                input = childInputs[inputIndex++];
+                            }
+                            else
+                            {
+                                disableLog = true;
+                                input = new Dictionary<string, object>() { { ReservedKeywordParent, parser.Context.Input } };
+                            }
+                            parser.Context[l + "InputIndex"] = inputIndex;
+                            if (parser.Context[l + "InputCount"] == null || !(parsedHolder.ContainsKey(KeywordLength) || parsedHolder.ContainsKey(KeywordAlignCount)))
+                            {
+                                inputCount = childInputs.Length;
+                                parser.Context[l + "InputCount"] = inputCount;
                             }
                             else
                             {
@@ -71,24 +81,33 @@ namespace Templator
                             if (inputIndex < inputCount )
                             {
                                 parser.ParentXmlContext[l + "XmlElementIndex"] = parser.ParentXmlContext.ElementIndex;
-
                                 parser.ParentXmlContext.OnBeforeParsingElement = p =>
                                 {
-                                    var ll = p.StackLevel -1  + parsedHolder.Name;
-                                    var startIndex = (int)p.XmlContext[ll + "XmlElementIndex"];
-                                    startIndex += p.XmlContext.ElementIndex - startIndex;
-                                    var element = new XElement(p.XmlContext.ElementList[startIndex]);
-                                    p.XmlContext.ElementList[startIndex] = element;
-                                    p.XmlContext.Element.Add(element);
+                                    var element = new XElement(p.XmlContext.ElementList[p.XmlContext.ElementIndex]);
+                                    if ((string)parsedHolder[KeywordRepeatBegin] == "Group")
+                                    {
+                                        parser.XmlContext.Element.Add(element);
+                                    }
+                                    else
+                                    {
+                                        p.XmlContext.ElementList[p.XmlContext.ElementIndex].AddAfterSelf(element);
+                                    }
+                                    p.XmlContext.ElementList[p.XmlContext.ElementIndex] = element;
                                 };
-
                                 var newElement = new XElement(parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex]);
+                                if ((string)parsedHolder[KeywordRepeatBegin] == "Group")
+                                {
+                                    parser.ParentXmlContext.Element.Add(newElement);
+                                }
+                                else
+                                {
+                                    parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex].InsertElementAfter(newElement);
+                                }
                                 parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex] = newElement;
-                                parser.ParentXmlContext.Element.Add(newElement);
                             }
                         }
-                        
-                        parser.PushContext(input, parsedHolder, parsedHolder.ContainsKey(KeywordHolder), parsedHolder.IsOptional());
+
+                        parser.PushContext(input, parsedHolder, parsedHolder.ContainsKey(KeywordHolder), disableLog);
                         return false;
                     } 
                 },
@@ -111,6 +130,13 @@ namespace Templator
                                 {
                                     p.Context[ll + "InputIndex"] = null;
                                     p.XmlContext.OnBeforeParsingElement = null;
+                                    if ((string)parsedHolder[KeywordRepeatEnd] == "Group")
+                                    {
+                                        for (var i = p.XmlContext.ElementIndex+1; i < p.XmlContext.ElementList.Count; i++)
+                                        {
+                                            p.XmlContext.ElementList[i].MoveLast();
+                                        }
+                                    }
                                 }
                                 p.XmlContext.OnAfterParsingElement = null;
                             };
@@ -748,11 +774,33 @@ namespace Templator
                 new TemplatorKeyword(KeywordDisplayName)
                 {
                 },
+                //Keyword Expand
                 new TemplatorKeyword(KeywordTruncate){},
                 new TemplatorKeyword(KeywordFill){},
                 new TemplatorKeyword(KeywordPrefill){},
                 new TemplatorKeyword(KeywordAppend){},
-                new TemplatorKeyword(KeywordAlignCount){},
+                //Align minCount
+                new TemplatorKeyword(KeywordAlignCount)
+                {
+                    Parse = ((parser, s) =>
+                    {
+                        if (s.IsNullOrWhiteSpace())
+                        {
+                            throw new TemplatorParamsException();
+                        }
+                        parser.ParsingHolder[KeywordAlignCount] = s;
+                        var childInputs = TemplatorUtil.GetChildCollection(parser.ParentContext.Input, s, parser.Config);
+                        if (!childInputs.IsNullOrEmpty())
+                        {
+                            var l = parser.StackLevel + parser.ParsingHolder.Name;
+                            parser.Context[l + "InputCount"] = childInputs.Max(c =>
+                            {
+                                var child = TemplatorUtil.GetChildCollection(c, parser.ParsingHolder.Name, parser.Config);
+                                return child == null ? 0 : child.Length;
+                            });
+                        }
+                    })
+                },
             }).ToDictionary(k => k.Name);
             var index = 1;
             foreach (var key in Keywords.Values)

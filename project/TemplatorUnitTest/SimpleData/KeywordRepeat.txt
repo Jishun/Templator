@@ -81,14 +81,28 @@ xml
 Repeat
 
 xml
-<x><zz Bindings="{{User(Repeat)[CollectionBegin()]}}" att="{{Level1Name3}}">{{Level1Name1}}</zz><c Bindings="{{(Repeat)[CollectionEnd]}}" att="{{Level1Name4}}">{{Level1Name2}}</c></x>
+<x><zz Bindings="{{User(Repeat)[CollectionBegin(Group)]}}" att="{{Level1Name3}}">{{Level1Name1}}</zz><c Bindings="{{(Repeat)[CollectionEnd()]}}" att="{{Level1Name4}}">{{Level1Name2}}</c><d/><e></e></x>
 {Repeat: [{Level1Name1: "1", Level1Name2: "11", Level1Name3: "111", Level1Name4: "1111"},{Level1Name1: "2", Level1Name2: "21", Level1Name3: "211", Level1Name4: "2111"},{Level1Name1: "3", Level1Name2: "31", Level1Name3: "311", Level1Name4: "3111"}]}
-<x> <zz att="111">1</zz><c att="1111">11</c><zz att="211">2</zz><c att="2111">21</c><zz att="311">3</zz><c att="3111">31</c></x>
+<x> <zz att="111">1</zz><c att="1111">11</c><d/><e></e><zz att="211">2</zz><c att="2111">21</c><zz att="311">3</zz><c att="3111">31</c></x>
 1
 Repeat
 
 xml
-<x att="{{RootAtt}}"><zz Bindings="{{User(Repeat)[CollectionBegin()]}}" att="{{Level1Name3}}">{{Level1Name1}}</zz><c Bindings="{{(Repeat)[CollectionEnd]}}" att="{{Level1Name4}}"><b Bindings="{{Repeat2[Collection]}}"><d/></b></c></x>
+<x><zz Bindings="{{User(Repeat)[CollectionBegin()]}}" att="{{Level1Name3}}">{{Level1Name1}}</zz><c Bindings="{{(Repeat)[CollectionEnd()]}}" att="{{Level1Name4}}">{{Level1Name2}}</c><d/><e></e></x>
+{Repeat: [{Level1Name1: "1", Level1Name2: "11", Level1Name3: "111", Level1Name4: "1111"},{Level1Name1: "2", Level1Name2: "21", Level1Name3: "211", Level1Name4: "2111"},{Level1Name1: "3", Level1Name2: "31", Level1Name3: "311", Level1Name4: "3111"}]}
+<x> <zz att="111">1</zz><zz att="211">2</zz><zz att="311">3</zz><c att="1111">11</c><c att="2111">21</c><c att="3111">31</c><d/><e></e></x>
+1
+Repeat
+
+xml
+<x><zz Bindings="{{User(Repeat)[CollectionBegin(Group)]}}" att="{{Level1Name3}}">{{Level1Name1}}</zz><c Bindings="{{(Repeat)[CollectionEnd(Group)]}}" att="{{Level1Name4}}">{{Level1Name2}}</c><d/><e></e></x>
+{Repeat: [{Level1Name1: "1", Level1Name2: "11", Level1Name3: "111", Level1Name4: "1111"},{Level1Name1: "2", Level1Name2: "21", Level1Name3: "211", Level1Name4: "2111"},{Level1Name1: "3", Level1Name2: "31", Level1Name3: "311", Level1Name4: "3111"}]}
+<x> <zz att="111">1</zz><c att="1111">11</c><zz att="211">2</zz><c att="2111">21</c><zz att="311">3</zz><c att="3111">31</c><d/><e></e></x>
+1
+Repeat
+
+xml
+<x att="{{RootAtt}}"><zz Bindings="{{User(Repeat)[CollectionBegin(Group)]}}" att="{{Level1Name3}}">{{Level1Name1}}</zz><c Bindings="{{(Repeat)[CollectionEnd]}}" att="{{Level1Name4}}"><b Bindings="{{Repeat2[Collection]}}"><d/></b></c></x>
 {RootAtt:"", Repeat: [{Level1Name1: "1", Repeat2: [{}], Level1Name3: "111", Level1Name4: "1111"},{Level1Name1: "2", Repeat2: [{},{}], Level1Name3: "211", Level1Name4: "2111"}]}
 <x att=""> <zz att="111">1</zz><c att="1111"><b><d/></b></c><zz att="211">2</zz><c att="2111"><b><d/></b><b><d/></b></c></x>
 2

@@ -26,6 +26,7 @@ namespace Templator
 
         public Encoding Encoding = Encoding.UTF8;
         public LineBreakOption LineBreakOption;
+        public XmlElementRepeatBehavior XmlElementRepeatBehavior = XmlElementRepeatBehavior.RepeatGroupIfMultiple;
         public bool IgnoreUnknownKeyword = true;
         public bool IgnoreUnknownParam = true;
         public bool CategoryOptional = false;
