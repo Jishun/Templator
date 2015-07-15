@@ -73,7 +73,7 @@ namespace Templator
                 Keywords = holder.Keywords.Select(k => k.Create()).ToList(),
                 Params = holder.Params.Copy()
             };
-            if (ret.Children != null)
+            if (holder.Children != null)
             {
                 ret.Children = holder.Children.ToDictionary(c => c.Key, c => c.Value.Clone());
             }

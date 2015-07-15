@@ -113,6 +113,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordRepeatEnd){
                     HandleNullOrEmpty = true,
+                    IndicatesOptional = true,
                     OnGetValue = (holder, parser, value) => String.Empty,
                     PostParse = (parser, parsedHolder) =>
                     {
@@ -294,7 +295,7 @@ namespace Templator
                         var isArray = holder.ContainsKey(KeywordRepeat) || holder.ContainsKey(KeywordRepeatBegin);
                         if (value.IsNullOrEmptyValue() && ! isArray)
                         {
-                            return null;
+                            return value;
                         }
                         string str = null;
                         str = holder.ContainsKey(KeywordNumber) ? Convert.ToString(value.DecimalToString() ?? value) : value.SafeToString();
@@ -757,7 +758,7 @@ namespace Templator
                         var name = (string) holder[KeywordIf];
                         if (!name.IsNullOrEmptyValue())
                         {
-                            eav = parser.GetValue(name, parser.Context.Input, (int?) holder[KeywordSeekup] ?? 0);
+                            eav = parser.GetValue<object>(name, null, (int?) holder[KeywordSeekup] ?? 0);
                         }
                         if (eav.IsNullOrEmptyValue())
                         {
