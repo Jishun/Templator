@@ -10,5 +10,6 @@ namespace Templator
     {
         public object Value { get; set; }
         public TextHolder Holder { get; set; }
+        public IDictionary<string, object> Input { get; set; } 
     }
 }

@@ -174,22 +174,25 @@ namespace Templator
                 Holders.Clear();
             }
         }
-        public void RequireInput(object sender, TemplateEventArgs args)
+        public object RequireValue(object sender, TextHolder holder, object defaultRet = null, IDictionary<string, Object> input = null)
         {
-            var recursiveCheckKey = args.Holder.Name + "$Processing";
-            if ((bool?)Context[recursiveCheckKey] == true)
+            var recursiveCheckKey = StackLevel + holder.Name + "$Processing";
+            var dict = input ?? Context.Input ?? Context.Params;
+            if ((bool?)dict.GetOrDefault(recursiveCheckKey, null) == true)
             {
-                Context[recursiveCheckKey] = null;
-                return;
+                dict[recursiveCheckKey] = null;
+                return defaultRet;
             }
-            Context[recursiveCheckKey] = true;
+            dict[recursiveCheckKey] = true;
             if (Config.RequireInput != null)
             {
+                var args = new TemplateEventArgs(){Holder = holder, Input = input ?? Context.Input};
                 Config.RequireInput(this, args);
+                return args.Value ?? defaultRet;
             }
-            Context[recursiveCheckKey] = null;
+            dict[recursiveCheckKey] = null;
+            return defaultRet;
         }
-
 
 #region parsing
         public virtual string ParseCsv(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
@@ -338,9 +341,9 @@ namespace Templator
             return Context.Input.ContainsKey(key);
         }
 
-        public object GetInputValue(string key, object defaultRet = null)
+        public object GetInputValue(string key, object defaultRet = null, int seekup = 0)
         {
-            return Context.Input.GetOrDefault(key, defaultRet);
+            return TemplatorUtil.GetInputValue(this, key, Context.Input, defaultRet, seekup);
         }
 
         public T GetInputValue<T>(string key, T defaultRet = default(T))
@@ -350,25 +353,26 @@ namespace Templator
 
         public T GetValue<T>(string key, T defaultRet = default(T), int seekUp = 0)
         {
-            return TemplatorUtil.GetValue(this, key, Context.Input, seekUp).SafeConvert<T>(default(T), Config.DateFormat);
+            return TemplatorUtil.GetValue(this, key, Context.Input, defaultRet, seekUp).SafeConvert<T>(default(T), Config.DateFormat);
         }
 
         public T GetValue<T>(TextHolder key, T defaultRet = default(T), int seekUp = 0)
         {
-            return TemplatorUtil.GetValue(this, key, Context.Input).SafeConvert<T>(default(T), Config.DateFormat);
+            return TemplatorUtil.GetValue(this, key, Context.Input, defaultRet).SafeConvert<T>(default(T), Config.DateFormat);
         }
         
-        public void CacheValue(string key, object value, bool overWirteIfExists = false)
+        public void CacheValue(string key, object value, bool overWirteIfExists = false, IDictionary<string, object> input = null )
         {
-            if (Context.Input != null)
+            input = input ?? Context.Input;
+            if (input != null)
             {
                 if (overWirteIfExists)
                 {
-                    Context.Input.AddOrOverwrite(key, value);
+                    input.AddOrOverwrite(key, value);
                 }
                 else
                 {
-                    Context.Input.AddOrSkip(key, value);
+                    input.AddOrSkip(key, value);
                 }
             }
         }

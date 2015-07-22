@@ -42,7 +42,7 @@ namespace Templator
         public string XmlValueNodeName = "Value";
         public string XmlNameNodeName = "Name";
         public string XmlCollectionNodeName = "CollectionItem";
-        public string KeyHolders = "Fields";
+        public string KeyHolders = "$Fields";
         public TemplatorConfig()
         {
             PrepareKeywords();

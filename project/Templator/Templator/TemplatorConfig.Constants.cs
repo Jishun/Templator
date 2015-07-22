@@ -11,7 +11,7 @@ namespace Templator
 
         public string XmlReservedAttributeName = "Bindings";
 
-        public string EscapePrefix = "\\";
+        public string EscapePrefix = null;//"\\";
         public string Begin = "{{";
         public string End="}}";
         public string Delimiter=",";

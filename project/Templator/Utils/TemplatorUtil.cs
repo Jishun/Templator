@@ -237,14 +237,26 @@ namespace Templator
                 }
                 else
                 {
-                    var value = GetValue(parser, fieldName, input);
+                    var value = GetValue(parser, fieldName, input, null);
                     current = aggregateFunc(current, value);
                 }
             }
             return current;
         }
 
-        public static object GetValue(TemplatorParser parser, string holderName, IDictionary<string, object> input, int inherited = 0)
+        public static object GetInputValue(TemplatorParser parser, string key, IDictionary<string, object> input, object defaultRet = null, int seekup = 0)
+        {
+            var i = input;
+            var v = i.GetOrDefault(key, defaultRet);
+            while (v == null && seekup-- > 0 && i.ContainsKey(parser.Config.ReservedKeywordParent))
+            {
+                i = (IDictionary<string, object>)i[parser.Config.ReservedKeywordParent];
+                v = GetInputValue(parser, key, i, defaultRet);
+            }
+            return v;
+        }
+
+        public static object GetValue(TemplatorParser parser, string holderName, IDictionary<string, object> input, object defaultRet, int inherited = 0)
         {
             var holder = GetHolder(input, holderName, parser.Config);
             if (inherited > 0)
@@ -252,10 +264,10 @@ namespace Templator
                 holder[parser.Config.KeywordSeekup] = inherited;
                 holder.Keywords.Add(parser.Config.Keywords[parser.Config.KeywordSeekup].Create());
             }
-            return GetValue(parser, holder, input);
+            return GetValue(parser, holder, input, defaultRet);
         }
 
-        public static object GetValue(TemplatorParser parser, TextHolder holder, IDictionary<string, object> input)
+        public static object GetValue(TemplatorParser parser, TextHolder holder, IDictionary<string, object> input, object defaultRet)
         {
             object value = null;
             if (input != null && input.ContainsKey(holder.Name))
@@ -264,9 +276,7 @@ namespace Templator
             }
             else
             {
-                var arg = new TemplateEventArgs() { Holder = holder };
-                parser.RequireInput(parser, arg);
-                value = arg.Value;
+                value = parser.RequireValue(parser, holder, defaultRet, input);
             }
             value = holder.Keywords.EmptyIfNull()
                 .Where(key => key.OnGetValue != null)
@@ -281,7 +291,14 @@ namespace Templator
                 });
             if (null == value)
             {
-                parser.LogError("'{0}' is required", holder.Name);
+                if (defaultRet != null)
+                {
+                    value = defaultRet;
+                }
+                else
+                {
+                    parser.LogError("'{0}' is required", holder.Name);
+                }
             }
             return value;
         }

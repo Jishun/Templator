@@ -167,7 +167,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var refer = (string)holder[KeywordRefer];
-                        return TemplatorUtil.GetValue(parser, refer, parser.Context.Input, (int?)holder[KeywordSeekup] ?? 0);
+                        return TemplatorUtil.GetValue(parser, refer, parser.Context.Input, null, (int?)holder[KeywordSeekup] ?? 0);
                     },
                     Parse = (parser, str) =>
                     {
@@ -758,7 +758,8 @@ namespace Templator
                         var name = (string) holder[KeywordIf];
                         if (!name.IsNullOrEmptyValue())
                         {
-                            eav = parser.GetValue<object>(name, null, (int?) holder[KeywordSeekup] ?? 0);
+                            eav = TemplatorUtil.GetInputValue(parser, name, parser.Context.Input);
+                            eav = eav ?? parser.RequireValue(parser, TemplatorUtil.GetHolder(parser.Context.Input, name, parser.Config));
                         }
                         if (eav.IsNullOrEmptyValue())
                         {

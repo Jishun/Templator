@@ -9,7 +9,7 @@ namespace Templator
 {
     public class Logger : ILogger
     {
-        public IList<string> Erros = new List<string>(); 
+        public IList<string> Errors = new List<string>(); 
         public void Log(string pattern, params object[] args)
         {
         }
@@ -33,7 +33,7 @@ namespace Templator
 
         public void LogError(string pattern, params object[] args)
         {
-            Erros.AddString(pattern, args);
+            Errors.AddString(pattern, args);
         }
 
         public void LogWarning(string pattern, params object[] args)
