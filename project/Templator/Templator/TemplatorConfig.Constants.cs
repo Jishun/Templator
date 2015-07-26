@@ -88,6 +88,7 @@ namespace Templator
         public string KeywordHtml = "Html";
 
         public string ReservedKeywordParent = "$$P$$";
+        public string ReservedKeywordIndex = "$Index";
         public string ReservedKeywordXattribute = "TemplatorParser";
     }
 }

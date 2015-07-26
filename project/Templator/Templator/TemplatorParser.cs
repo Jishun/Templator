@@ -174,13 +174,13 @@ namespace Templator
                 Holders.Clear();
             }
         }
-        public object RequireValue(object sender, TextHolder holder, object defaultRet = null, IDictionary<string, Object> input = null)
+        public object RequireValue(object sender, TextHolder holder, object defaultRet = null, IDictionary<string, object> input = null)
         {
             var recursiveCheckKey = StackLevel + holder.Name + "$Processing";
             var dict = input ?? Context.Input ?? Context.Params;
             if ((bool?)dict.GetOrDefault(recursiveCheckKey, null) == true)
             {
-                dict[recursiveCheckKey] = null;
+                dict.Remove(recursiveCheckKey);
                 return defaultRet;
             }
             dict[recursiveCheckKey] = true;
@@ -188,9 +188,10 @@ namespace Templator
             {
                 var args = new TemplateEventArgs(){Holder = holder, Input = input ?? Context.Input};
                 Config.RequireInput(this, args);
+                dict.Remove(recursiveCheckKey);
                 return args.Value ?? defaultRet;
             }
-            dict[recursiveCheckKey] = null;
+            dict.Remove(recursiveCheckKey);
             return defaultRet;
         }
 
@@ -232,7 +233,7 @@ namespace Templator
             {
                 if (removingElement != null && removingElement.Parent != null)
                 {
-                    removingElement.Remove();
+                    removingElement.Remove();//RemoveWithNextWhitespace
                 }
             }
             CollectHolderResults(mergeHoldersInto);

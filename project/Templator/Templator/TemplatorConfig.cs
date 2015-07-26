@@ -32,6 +32,7 @@ namespace Templator
         public bool CategoryOptional = false;
         public bool SyntaxCheckOnly = false;
 
+        public int KeywordPriorityIncreamental = 10;
         public IDictionary<string, TemplatorKeyword> Keywords;
 
         public IDictionary<string, Type> Enums = new Dictionary<string, Type>();

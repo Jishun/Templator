@@ -189,6 +189,13 @@ namespace Templator
                     parser.ParsingHolder = null;
                     parser.ParsingKeyword = null;
                     parser.State = new HolderParseState();
+                    ret.Keywords = ret.Keywords.OrderBy(k => k.PostParse == null)
+                            .ThenByDescending(k => k.ManipulateInput)
+                            .ThenByDescending(k => k.IsValidation && !k.ManipulateOutPut)
+                            .ThenByDescending(k => k.IsValidation)
+                            .ThenByDescending(k => k.ManipulateOutPut)
+                            .ThenBy(k => k.Preority)
+                            .ToList();
                     var value = parser.GetValue<object>(ret);
                     var notSKip = ret.Keywords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
                     parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value);

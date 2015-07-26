@@ -25,11 +25,8 @@ namespace Templator
 
         public static XElement LoadXmlTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null, XmlSchemaSet schemaSet = null)
         {
-            using (var rd = XmlReader.Create(stream))
-            {
-                var doc = XDocument.Load(rd);
-                return parser.ParseXml(doc, input, preparsedHolders, mergeHoldersInto, schemaSet);
-            }
+            var doc = XDocument.Load(stream);
+            return parser.ParseXml(doc, input, preparsedHolders, mergeHoldersInto, schemaSet);
         }
 
         public static string LoadCsvTemplate(this TemplatorParser parser, Stream stream, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
@@ -214,9 +211,10 @@ namespace Templator
                 if (retArray != null)
                 {
                     var ret = retArray.Where(r => r is IDictionary<string, object>).Cast<IDictionary<string, object>>().ToArray();
-                    foreach (var dictionary in ret)
+                    for (var i = 0; i < ret.Length; i++)
                     {
-                        dictionary.AddOrOverwrite(config.ReservedKeywordParent, input);
+                        ret[i].AddOrOverwrite(config.ReservedKeywordParent, input);
+                        ret[i].AddOrOverwrite(config.ReservedKeywordIndex, i+1);
                     }
                     return ret;
                 }
@@ -237,11 +235,30 @@ namespace Templator
                 }
                 else
                 {
-                    var value = GetValue(parser, fieldName, input, null);
+                    var value = GetUnformmatedValue(parser, fieldName, input);
                     current = aggregateFunc(current, value);
                 }
             }
             return current;
+        }
+
+        public static object GetUnformmatedValue(TemplatorParser parser, string fieldName, IDictionary<string, object> input, int seekUp = 0, bool requireInput = true)
+        {
+            var value = GetInputValue(parser, fieldName, input, null, seekUp);
+            if (value == null)
+            {
+                var subHolder = GetHolder(input, fieldName, parser.Config, false);
+                if (subHolder != null)
+                {
+                    value = subHolder.Keywords.EmptyIfNull().Where(k => k.ManipulateInput && k.OnGetValue != null)
+                        .Aggregate(value, (current, k) => KeywordPostParse(parser, subHolder, current, k));
+                }
+                if (requireInput)
+                {
+                    value = value ?? parser.RequireValue(parser, subHolder ?? new TextHolder(fieldName), null, input);
+                }
+            }
+            return value;
         }
 
         public static object GetInputValue(TemplatorParser parser, string key, IDictionary<string, object> input, object defaultRet = null, int seekup = 0)
@@ -278,17 +295,7 @@ namespace Templator
             {
                 value = parser.RequireValue(parser, holder, defaultRet, input);
             }
-            value = holder.Keywords.EmptyIfNull()
-                .Where(key => key.OnGetValue != null)
-                .OrderBy(k => k.Preority)
-                .Aggregate(value, (current, key) =>
-                {
-                    if (current.IsNullOrEmptyValue() && !key.HandleNullOrEmpty)
-                    {
-                        return current;
-                    }
-                    return key.OnGetValue(holder, parser, current);
-                });
+            value = PostParseValue(parser, holder, value);
             if (null == value)
             {
                 if (defaultRet != null)
@@ -303,7 +310,13 @@ namespace Templator
             return value;
         }
 
-        public static TextHolder GetHolder(IDictionary<string, object> input, string key, TemplatorConfig config)
+        public static object PostParseValue(TemplatorParser parser, TextHolder holder,  object value)
+        {
+            return holder.Keywords.EmptyIfNull().Where(key => key.OnGetValue != null)
+                .Aggregate(value, (current, k) => KeywordPostParse(parser, holder, current, k));
+        }
+
+        public static TextHolder GetHolder(IDictionary<string, object> input, string key, TemplatorConfig config, bool creatIfNoFound = true)
         {
             TextHolder holder = null;
             var holders = input.GetOrDefault(config.KeyHolders) as IDictionary<string, TextHolder>;
@@ -311,7 +324,21 @@ namespace Templator
             {
                 holder = holders[key];
             }
-            return holder ?? new TextHolder(key);
+            return holder ?? (creatIfNoFound ? new TextHolder(key) : null);
+        }
+
+        private static object KeywordPostParse(TemplatorParser parser, TextHolder holder, object current, TemplatorKeyword key)
+        {
+            if (current.IsNullOrEmptyValue() && !key.HandleNullOrEmpty)
+            {
+                return current;
+            }
+            var ret = key.OnGetValue(holder, parser, current);
+            if (key.ManipulateInput && !key.IndicatesOptional)
+            {
+                parser.CacheValue(holder.Name, ret, true);
+            }
+            return ret;
         }
     }
 }

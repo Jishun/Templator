@@ -23,7 +23,7 @@ namespace TemplatorUnitTest
             foreach (var entry in GetSimpleDataEntries())
             {
                 parser.StartOver();
-                _logs.Erros.Clear();
+                _logs.Errors.Clear();
                 if (entry.IsXml)
                 {
                     parser.ParseXml(entry.Xml, entry.Input);
@@ -37,9 +37,9 @@ namespace TemplatorUnitTest
                     parser.ParseText(entry.Template, entry.Input);
                 }
                 Assert.AreEqual(entry.FieldCount, parser.Holders.Count);
-                if (_logs.Erros.Count > 0)
+                if (_logs.Errors.Count > 0)
                 {
-                    var errors = _logs.Erros.Join("$$");
+                    var errors = _logs.Errors.Join("$$");
                     Assert.AreEqual(entry.Log, errors);
                 }
                 else

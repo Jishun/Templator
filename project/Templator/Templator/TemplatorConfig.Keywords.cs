@@ -40,14 +40,15 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
                     PostParse = (parser, parsedHolder) =>
                     {
-                        var disableLog = parsedHolder.IsOptional();
                         var childInputs = TemplatorUtil.GetChildCollection(parser.Context.Input, parsedHolder.Name, parser.Config);
                         IDictionary<string, object> input = null;
                         var l = parser.StackLevel + parsedHolder.Name;
                         var inputIndex = (int?)parser.Context[l + "InputIndex"] ?? 0;
                         var inputCount = 0;
+                        var disableLog = false;
                         if (childInputs.IsNullOrEmpty())
                         {
+                            disableLog = parsedHolder.IsOptional();
                             parser.Context[l + "InputCount"] = 0;
                             parser.Context[l + "InputIndex"] = inputIndex;
                             input = parser.Context.Input == null ? null : new Dictionary<string, object>() { { ReservedKeywordParent, parser.Context.Input } };
@@ -108,6 +109,7 @@ namespace Templator
                         }
 
                         parser.PushContext(input, parsedHolder, parsedHolder.ContainsKey(KeywordHolder), disableLog);
+                        parser.Context["ParentPosition"] = parsedHolder.Position;
                         return false;
                     } 
                 },
@@ -145,7 +147,7 @@ namespace Templator
                         }
                         else
                         {
-                            var position = parser.Context.ParentHolder.Position;
+                            var position = (int)parser.Context["ParentPosition"];
                             parser.PopContext();
                             var l = parser.StackLevel + parsedHolder.Name;
                             if ((int)parser.Context[l + "InputCount"] > (int)parser.Context[l + "InputIndex"])
@@ -164,6 +166,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordRefer)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var refer = (string)holder[KeywordRefer];
@@ -180,6 +183,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordSeekup)
                 {
+                    ManipulateInput = true,
                     HandleNullOrEmpty = true,
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -210,6 +214,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordJs)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         throw new NotImplementedException();
@@ -218,6 +223,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordSum)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string)holder[KeywordSum];
@@ -227,6 +233,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordAverage)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string)holder[KeywordAverage];
@@ -238,6 +245,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordCount)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string) holder[KeywordCount];
@@ -247,6 +255,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordMulti)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string)holder[KeywordMulti];
@@ -257,11 +266,13 @@ namespace Templator
                 {
                     HandleNullOrEmpty = true,
                     IndicatesOptional = true,
+                    ManipulateInput = true,
                     OnGetValue = (holder, parser, value) => value ?? holder[KeywordOptional],
                 },
                 //Validation Keywords
                 new TemplatorKeyword(KeywordRegex)
                 {
+                    IsValidation = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var regStr = (string) holder[KeywordRegex];
@@ -289,6 +300,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordLength)
                 {
+                    IsValidation = true,
                     HandleNullOrEmpty = true,
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -373,6 +385,7 @@ namespace Templator
                 //new TemplatorKeyword(KeywordExpression){},
                 new TemplatorKeyword(KeywordMin)
                 {
+                    IsValidation = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var min = (decimal)holder[KeywordMin];
@@ -395,6 +408,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordMax)
                 {
+                    IsValidation = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var max = (decimal) holder[KeywordMax];
@@ -416,8 +430,13 @@ namespace Templator
                     })
                 },
                 //DataType/format Keywords
-                new TemplatorKeyword(KeywordBit){OnGetValue = (holder, parser, value) => value == null ? null : String.Empty},
+                new TemplatorKeyword(KeywordBit)
+                {
+                    IsValidation = true,
+                    OnGetValue = (holder, parser, value) => value == null ? null : String.Empty
+                },
                 new TemplatorKeyword(KeywordEnum){
+                    IsValidation = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var typeName = (string)holder[KeywordEnum];
@@ -442,6 +461,8 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordNumber)
                 {
+                    IsValidation = true,
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var d = value.ParseDecimalNullable();
@@ -456,7 +477,8 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordDateTime)
                 {
-
+                    IsValidation = true,
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var d = value.ParseDateTimeNullable();
@@ -476,6 +498,7 @@ namespace Templator
                 //Format Keywords
                 new TemplatorKeyword(KeywordEven)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var d = value.ParseDecimalNullable();
@@ -484,6 +507,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordAwayFromZero)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var d = value.ParseDecimalNullable();
@@ -492,6 +516,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordFormat)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         if (null == value)
@@ -504,6 +529,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordMap)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var dict = (IDictionary<string, string>)holder[KeywordMap];
@@ -529,6 +555,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordReplace)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         throw new NotImplementedException();
@@ -540,6 +567,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordTransform)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var str = value.SafeToString();
@@ -555,6 +583,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordUpper)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         value = value.SafeToString().ToUpper();
@@ -563,6 +592,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordTrim)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         var str = value.SafeToString();
@@ -582,26 +612,32 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordCsv)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) => value.SafeToString().EncodeCsvField()
                 },
                 new TemplatorKeyword(KeywordBase32)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) => Base32.ToBase32String(parser.Config.Encoding.GetBytes(value.SafeToString()))
                 },
                 new TemplatorKeyword(KeywordBase64)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) => Convert.ToBase64String(parser.Config.Encoding.GetBytes(value.SafeToString()))
                 },
                 new TemplatorKeyword(KeywordUrl)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) => HttpUtility.UrlEncode(value.SafeToString())
                 },
                 new TemplatorKeyword(KeywordHtml)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) => HttpUtility.HtmlEncode(value.SafeToString())
                 },
                 new TemplatorKeyword(KeywordEncode)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         switch ((string)holder[KeywordEncode])
@@ -623,6 +659,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordDecode)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
                         switch ((string)holder[KeywordDecode])
@@ -642,19 +679,9 @@ namespace Templator
                         }
                     }
                 },
-                new TemplatorKeyword(KeywordHolder)
-                {
-                    OnGetValue = (holder, parser, value) =>
-                    {
-                        if (parser.XmlContext != null && parser.XmlContext.Element != null)
-                        {
-                            parser.RemovingElements.Add(parser.XmlContext.Element);
-                        }
-                        return value == null ? null : String.Empty;
-                    }
-                },
                 new TemplatorKeyword(KeywordRemoveChar)
                 {
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) => value.SafeToString().RemoveCharacter((char[]) holder[KeywordRemoveChar]),
                     Parse = ((parser, str) =>
                     {
@@ -668,17 +695,38 @@ namespace Templator
                 new TemplatorKeyword(KeywordFixedLength)
                 {
                     HandleNullOrEmpty = true,
+                    ManipulateOutPut = true,
                     OnGetValue = (holder, parser, value) =>
                     {
-                        var length = (int) holder[KeywordFixedLength];
-                        return value.SafeToString()
-                            .ToFixLength(length, (((string)holder[KeywordFill] ?? (string)holder[KeywordFill] ?? (string)holder[KeywordPrefill]).NullIfEmpty() ?? " ").First(),
-                                !holder.ContainsKey(KeywordPrefill));
+                        if (value != null)
+                        {
+                            var length = (int) holder[KeywordFixedLength];
+                            return value.SafeToString()
+                                .ToFixLength(length,
+                                    (((string) holder[KeywordFill] ??
+                                      (string) holder[KeywordFill] ?? (string) holder[KeywordPrefill]).NullIfEmpty() ??
+                                     " ").First(),
+                                    !holder.ContainsKey(KeywordPrefill));
+                        }
+                        return null;
                     },
                     Parse = ((parser, str) =>
                     {
                         parser.ParsingHolder[KeywordFixedLength] = str.ParseIntParam();
                     })
+                },
+                new TemplatorKeyword(KeywordHolder)
+                {
+                    ManipulateOutPut = true,
+                    HandleNullOrEmpty = true,
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        if (parser.XmlContext != null && parser.XmlContext.Element != null)
+                        {
+                            parser.RemovingElements.Add(parser.XmlContext.Element);
+                        }
+                        return value == null ? null : String.Empty;
+                    }
                 },
                 //document manupulation keywords
                 new TemplatorKeyword(KeywordIfnot)
@@ -807,7 +855,7 @@ namespace Templator
             var index = 1;
             foreach (var key in Keywords.Values)
             {
-                key.Preority = key.Preority > 0 ? key.Preority : index+=10;
+                key.Preority = key.Preority > 0 ? key.Preority : index += KeywordPriorityIncreamental;
             }
         }
     }
