@@ -190,10 +190,11 @@ namespace Templator
                     parser.ParsingKeyword = null;
                     parser.State = new HolderParseState();
                     ret.Keywords = ret.Keywords.OrderBy(k => k.PostParse == null)
+                            .ThenByDescending(k => k.CalculateInput)
                             .ThenByDescending(k => k.ManipulateInput)
-                            .ThenByDescending(k => k.IsValidation && !k.ManipulateOutPut)
+                            .ThenByDescending(k => k.IsValidation && !k.ManipulateOutput)
                             .ThenByDescending(k => k.IsValidation)
-                            .ThenByDescending(k => k.ManipulateOutPut)
+                            .ThenByDescending(k => k.ManipulateOutput)
                             .ThenBy(k => k.Preority)
                             .ToList();
                     var value = parser.GetValue<object>(ret);

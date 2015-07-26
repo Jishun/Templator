@@ -33,5 +33,18 @@ namespace Templator
                 Result = new StringBuilder();
             }
         }
+
+        public void ClearResult()
+        {
+            if (Result != null)
+            {
+                Result.Clear();
+            }
+        }
+
+        public string GetResult()
+        {
+            return Result == null ? String.Empty : Result.ToString();
+        }
     }
 }

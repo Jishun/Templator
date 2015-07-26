@@ -31,6 +31,9 @@ namespace Templator
         public bool IgnoreUnknownParam = true;
         public bool CategoryOptional = false;
         public bool SyntaxCheckOnly = false;
+        public bool CacheCalculatedResults = true;
+        public bool SaveManipulatedResults = true;
+        public bool AllowCachingNullValues = false;
 
         public int KeywordPriorityIncreamental = 10;
         public IDictionary<string, TemplatorKeyword> Keywords;

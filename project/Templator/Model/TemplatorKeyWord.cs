@@ -12,8 +12,9 @@ namespace Templator
         public int Preority;
         public bool HandleNullOrEmpty;
         public bool IndicatesOptional;
+        public bool CalculateInput;
         public bool ManipulateInput;
-        public bool ManipulateOutPut;
+        public bool ManipulateOutput;
         public bool IsValidation;
         public Func<TemplatorParser, TextHolder, bool> PostParse;
         public Action<TemplatorParser, string> Parse;

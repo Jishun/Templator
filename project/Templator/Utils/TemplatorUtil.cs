@@ -245,18 +245,23 @@ namespace Templator
         public static object GetUnformmatedValue(TemplatorParser parser, string fieldName, IDictionary<string, object> input, int seekUp = 0, bool requireInput = true)
         {
             var value = GetInputValue(parser, fieldName, input, null, seekUp);
+            var subHolder = GetHolder(input, fieldName, parser.Config, false);
             if (value == null)
             {
-                var subHolder = GetHolder(input, fieldName, parser.Config, false);
                 if (subHolder != null)
                 {
-                    value = subHolder.Keywords.EmptyIfNull().Where(k => k.ManipulateInput && k.OnGetValue != null)
+                    value = subHolder.Keywords.EmptyIfNull().Where(k => k.CalculateInput && k.OnGetValue != null)
                         .Aggregate(value, (current, k) => KeywordPostParse(parser, subHolder, current, k));
                 }
                 if (requireInput)
                 {
                     value = value ?? parser.RequireValue(parser, subHolder ?? new TextHolder(fieldName), null, input);
                 }
+            }
+            if (subHolder != null)
+            {
+                value = subHolder.Keywords.EmptyIfNull().Where(k => k.ManipulateInput && k.OnGetValue != null)
+                        .Aggregate(value, (current, k) => KeywordPostParse(parser, subHolder, current, k));
             }
             return value;
         }
@@ -291,11 +296,14 @@ namespace Templator
             {
                 value = input[holder.Name];
             }
-            else
+            if (value == null)
             {
-                value = parser.RequireValue(parser, holder, defaultRet, input);
+                value = holder.Keywords.EmptyIfNull().Where(k => k.CalculateInput && k.OnGetValue != null)
+                        .Aggregate(value, (current, k) => KeywordPostParse(parser, holder, current, k));
             }
-            value = PostParseValue(parser, holder, value);
+            value = value ?? parser.RequireValue(parser, holder, defaultRet, input);
+            value = holder.Keywords.EmptyIfNull().Where(key => !key.CalculateInput && key.OnGetValue != null)
+                .Aggregate(value, (current, k) => KeywordPostParse(parser, holder, current, k));
             if (null == value)
             {
                 if (defaultRet != null)
@@ -310,11 +318,6 @@ namespace Templator
             return value;
         }
 
-        public static object PostParseValue(TemplatorParser parser, TextHolder holder,  object value)
-        {
-            return holder.Keywords.EmptyIfNull().Where(key => key.OnGetValue != null)
-                .Aggregate(value, (current, k) => KeywordPostParse(parser, holder, current, k));
-        }
 
         public static TextHolder GetHolder(IDictionary<string, object> input, string key, TemplatorConfig config, bool creatIfNoFound = true)
         {
@@ -334,7 +337,8 @@ namespace Templator
                 return current;
             }
             var ret = key.OnGetValue(holder, parser, current);
-            if (key.ManipulateInput && !key.IndicatesOptional)
+            if (((key.ManipulateInput && parser.Config.SaveManipulatedResults) 
+                || (key.CalculateInput && parser.Config.CacheCalculatedResults)) && !key.IndicatesOptional)
             {
                 parser.CacheValue(holder.Name, ret, true);
             }

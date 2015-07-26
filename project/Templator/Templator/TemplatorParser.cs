@@ -207,11 +207,11 @@ namespace Templator
             PushContext(input, null);
             Context.Text = new SeekableString(src, Config.LineBreakOption);
             Context.PreparsedHolders= preparsedHolders;
-            Context.Result.Clear();
+            Context.ClearResult();
             Context.Input = input;
             ParseTextInternal();
             CollectHolderResults(mergeHoldersInto);
-            return Context.Result.ToString();
+            return Context.GetResult();
         }
 
         public virtual XElement ParseXml(XDocument doc, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null, XmlSchemaSet schemaSet = null)
@@ -249,12 +249,12 @@ namespace Templator
             foreach (var a in element.Attributes().OrderBy(a => a.Name != Config.XmlReservedAttributeName))
             {
                 XmlContext.Attribute = a;
-                Context.Result.Clear();
+                Context.ClearResult();
                 Context.Text = new SeekableString(a.Value);
                 var holders = ParseTextInternal();
                 if (holders.Count > 0)
                 {
-                    a.Value = Context.Result.ToString();
+                    a.Value = Context.GetResult();
                 }
                 if (a.Name == Config.XmlReservedAttributeName)
                 {
@@ -276,11 +276,11 @@ namespace Templator
             else
             {
                 Context.Text = new SeekableString(element.Value, Config.LineBreakOption);
-                Context.Result.Clear();
+                Context.ClearResult();
                 var holders = ParseTextInternal();
                 if (holders.Count > 0)
                 {
-                    element.Value = Context.Result.ToString();
+                    element.Value = Context.GetResult();
                     if (holders.Count == 1)
                     {
                         var info = element.GetSchemaInfo();
@@ -365,6 +365,14 @@ namespace Templator
         public void CacheValue(string key, object value, bool overWirteIfExists = false, IDictionary<string, object> input = null )
         {
             input = input ?? Context.Input;
+            if (value == null && !Config.AllowCachingNullValues)
+            {
+                if (input != null && input.ContainsKey(key) && overWirteIfExists)
+                {
+                    input.Remove(key);
+                }
+                return;
+            }
             if (input != null)
             {
                 if (overWirteIfExists)
