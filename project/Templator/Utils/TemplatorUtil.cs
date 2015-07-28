@@ -214,7 +214,8 @@ namespace Templator
                     for (var i = 0; i < ret.Length; i++)
                     {
                         ret[i].AddOrOverwrite(config.ReservedKeywordParent, input);
-                        ret[i].AddOrOverwrite(config.ReservedKeywordIndex, i+1);
+                        ret[i].AddOrOverwrite(config.ReservedKeywordIndex, i + 1);
+                        ret[i].AddOrOverwrite(config.ReservedKeyword0Index, i);
                     }
                     return ret;
                 }

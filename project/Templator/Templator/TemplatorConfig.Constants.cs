@@ -53,7 +53,6 @@ namespace Templator
         public string KeywordRefer = "Refer";
         public string KeywordHolder = "Holder";
         public string KeywordSelect = "Select";
-        public string KeywordExpression = "Expression";
         public string KeywordMin = "Min";
         public string KeywordMax = "Max";
         public string KeywordFill = "Fill";
@@ -76,6 +75,8 @@ namespace Templator
         public string KeywordSum = "Sum";
         public string KeywordCount = "Count";
         public string KeywordMulti = "Multi";
+        public string KeywordMathMax = "MathMax";
+        public string KeywordMathMin = "MathMin";
         public string KeywordOptional = "Optional";
         public string KeywordJs = "Js";
         public string KeywordComments = "Tips";
@@ -87,8 +88,11 @@ namespace Templator
         public string KeywordUrl = "Url";
         public string KeywordHtml = "Html";
 
+        public string KeywordExpression = "Expression";
+        public string KeywordMath = "Math"; //Math expression,js?
+
         public string ReservedKeywordParent = "$$P$$";
         public string ReservedKeywordIndex = "$Index";
-        public string ReservedKeywordXattribute = "TemplatorParser";
+        public string ReservedKeyword0Index = "$0Index";
     }
 }

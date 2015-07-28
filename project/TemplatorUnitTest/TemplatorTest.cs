@@ -121,7 +121,7 @@ namespace TemplatorUnitTest
             }
             public XElement XmlOutput
             {
-                get { return IsXml ? XElement.Parse(Output) : null; }
+                get { return IsXml ? Output.IsNullOrEmpty() ? null : XElement.Parse(Output) : null; }
             }
 
             public override string ToString()
