@@ -1,0 +1,27 @@
+﻿xml
+<a><x Bindings="{{HolderName[If]}}"></x></a>
+{}
+<a/>
+1
+
+
+xml
+<a><x Bindings="{{User(HolderName)[Ifnot(.)]}}"></x></a>
+{}
+<a/>
+1
+
+
+xml
+<x attr="{{HolderName[AttributeIf]}}"></x>
+{}
+<x></x>
+1
+
+
+xml
+<a><b><x attr="{{HolderName[Ifnot(..)]}}"></x></b></a>
+{}
+<a/>
+1
+

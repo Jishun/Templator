@@ -1,0 +1,13 @@
+﻿xml
+<a><x Bindings="{{HolderName[ElementName]}}"></x></a>
+{HolderName: "hehe"}
+<a><hehe></hehe></a>
+1
+
+
+xml
+<a><x Bindings="{{HolderName[AttributeName]}}a"></x></a>
+{HolderName: "hehe"}
+<a><x hehe="a"></x></a>
+1
+
