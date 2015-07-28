@@ -18,7 +18,7 @@ Repeat
 'Repeat' is required
 {{User(Repeat)[Collection(),Optional]}}{{(ItemName)[]}},{{User(Repeat)[CollectionEnd()]}}
 {}
-,
+
 1
 Repeat
 

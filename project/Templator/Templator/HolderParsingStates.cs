@@ -199,7 +199,7 @@ namespace Templator
                             .ToList();
                     var value = parser.GetValue<object>(ret);
                     var notSKip = ret.Keywords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
-                    parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value);
+                    parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value.SafeToString());
                     return notSKip? ret : null;
                 }
             }
