@@ -12,7 +12,7 @@ namespace Templator
     [Language("Templator", "1.0", "Templator parsing data format")]
     public class TemplatorGrammar : Grammar
     {
-        public TemplatorGrammar() : this(TemplatorConfig.Instance)
+        public TemplatorGrammar() : this(TemplatorConfig.DefaultInstance)
         {
             
         }

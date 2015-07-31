@@ -13,7 +13,7 @@ namespace Templator
     public partial class TemplatorConfig
     {
         private static TemplatorConfig _instance;
-        public static TemplatorConfig Instance
+        public static TemplatorConfig DefaultInstance
         {
             get { return _instance ?? (_instance = new TemplatorConfig()); }
             set { _instance = value; }
