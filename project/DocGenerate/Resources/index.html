@@ -29,10 +29,10 @@
                 </div>
             </div>
             <div class="col-lg-10 col-md-10 col-sm-9 leaderboard">
-                <h3 id="Sec_{{Name}}" bindings="{{Sections[CollectionBegin]}}">{{Name}}</h3>
+                <h3 id="Sec_{{Name}}" bindings="{{Sections[CollectionBegin(Group)]}}">{{Name}}</h3>
                 <h5>{{Description}}</h5>
-                <ul bindings="{{Sections[CollectionEnd]}}">
-                    <li bindings="{{Details[Collection,Optional]}}">
+                <ul bindings="{{Sections[CollectionEnd(Group)]}}">
+                    <li bindings="{{Details[Collection,Optional, Ifnot(..)]}}">
                         <h4>{{Name}}:</h4>
                         <h5>{{Description}}</h5>
                     </li>

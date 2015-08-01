@@ -12,6 +12,6 @@ namespace DocGenerate
         public string Name { get; set; }
         public string Description { get; set; }
         public IList<Triple<string, string, string>> Examples { get; set; }
-        public string[] Properties { get; set; } 
+        public IList<Pair<string, string>> Params { get; set; } 
     }
 }
