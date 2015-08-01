@@ -71,7 +71,7 @@ namespace Templator
                     Context.Holders[ParsingHolder.Name] = ParsingHolder;
                     if (ParsingHolder.Keywords.Any(k => k.Name == Config.KeywordRepeat || k.Name == Config.KeywordRepeatBegin))
                     {
-                        PushContext(null, holder);
+                        PushContext(null, null, holder);
                     }
                 }
             }
@@ -154,7 +154,7 @@ namespace Templator
 #endif
             ParsingHolder = null;
             ParsingKeyword = null;
-            PushContext(null, null);
+            PushContext(null, null, null);
             GrammarParseTree = GrammarParser.Parse(template, fileName);
             return Context.Holders;
         }
@@ -204,7 +204,7 @@ namespace Templator
 
         public virtual string ParseText(string src, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
-            PushContext(input, null);
+            PushContext(input, null, null);
             Context.Text = new SeekableString(src, Config.LineBreakOption);
             Context.PreparsedHolders= preparsedHolders;
             Context.ClearResult();
@@ -226,7 +226,7 @@ namespace Templator
         public virtual XElement ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
             XmlContext = new TemplatorXmlParsingContext(){Element = rootElement};
-            PushContext(input, null);
+            PushContext(input, null, null);
             Context.PreparsedHolders = preparsedHolders;
             ParseXmlInternal(rootElement);
             foreach (var removingElement in RemovingElements)
@@ -266,10 +266,28 @@ namespace Templator
             {
                 for (XmlContext.ElementIndex = 0; XmlContext.ElementIndex < XmlContext.ElementList.Count; XmlContext.ElementIndex++)
                 {
-                    ParseXmlInternal(XmlContext.ElementList[XmlContext.ElementIndex]);
-                    if (XmlContext.OnAfterParsingElement != null)
+                    var xElement = XmlContext.ElementList[XmlContext.ElementIndex] as XElement;
+                    if (xElement != null)
                     {
-                        XmlContext.OnAfterParsingElement(this);
+                        ParseXmlInternal(xElement);
+                        if (XmlContext.OnAfterParsingElement != null)
+                        {
+                            XmlContext.OnAfterParsingElement(this);
+                        }
+                    }
+                    else
+                    {
+                        var text = XmlContext.ElementList[XmlContext.ElementIndex] as XText;
+                        if (text != null)
+                        {
+                            Context.Text = new SeekableString(text.Value, Config.LineBreakOption);
+                            Context.ClearResult();
+                            var holders = ParseTextInternal();
+                            if (holders.Count > 0)
+                            {
+                                text.Value = Context.GetResult();
+                            }
+                        }
                     }
                 }
             }
@@ -397,7 +415,7 @@ namespace Templator
 #endregion utils
 
 #region Contexts
-        public void PushContext(IDictionary<string, object> input, TextHolder parentHolder, bool skipOutput = false, bool disableLogging = false)
+        public void PushContext(IDictionary<string, object> input, ISeekable text, TextHolder parentHolder, bool skipOutput = false, bool disableLogging = false)
         {
             var holderDefinitions = parentHolder == null ? null : Context.PreparsedHolders.GetOrDefault(parentHolder.Name);
             if (parentHolder != null && Context.Holders.ContainsKey(parentHolder.Name))
@@ -409,7 +427,7 @@ namespace Templator
                 Input = input,
                 ParentHolder = parentHolder,
                 Logger = disableLogging ? null : Config.Logger,
-                Text = Context == null ? null : Context.Text,
+                Text = text ?? (Context == null ? null : Context.Text),
                 PreparsedHolders = holderDefinitions == null ? null : holderDefinitions.Children
             };
 
@@ -427,7 +445,7 @@ namespace Templator
         {
             var newC = new TemplatorXmlParsingContext
             {
-                ElementList = element.Elements().ToArray(),
+                ElementList = element.Nodes().ToArray(),
                 Element = element,
                 ElementIndex = 0
             };

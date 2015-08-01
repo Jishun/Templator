@@ -9,7 +9,7 @@ namespace Templator
     public class TemplatorXmlParsingContext
     {
         public int ElementIndex;
-        public IList<XElement> ElementList;
+        public IList<XNode> ElementList;
         public XElement Element;
         public XAttribute Attribute;
         public IDictionary<string, object> Params = new Dictionary<string, object>();

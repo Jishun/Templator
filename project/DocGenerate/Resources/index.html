@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>{{Title}}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="top" style="padding-left: 30px;">
+        <h3>{{Title}} {{Description}}</h3>
+        <hr style="width: 95%; height:2px;background-color: #99AABB;" />
+    </div>
+    <div class="container-fluid master">
+        <div class="row" >
+            <div class="col-lg-2 col-md-2 col-sm-3 menu" style="background-color: #CCDDEE; min-height: 1000px;">
+                <div style="padding-top: 20px;">
+                    <ul style="list-style-type: none;">
+                        <li bindings="{{Sections[Collection]}}"><a href="#Sec_{{Name}}"><h4>{{Name}}</h4></a></li>
+                        <li>
+                            <h4>Keywords</h4>
+                            <ul style="list-style-type: none;">
+                                <li bindings="{{Keywords[Collection]}}"><a href="#Key_{{Name}}">{{Name}}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-10 col-md-10 col-sm-9 leaderboard">
+                <h3 id="Sec_{{Name}}" bindings="{{Sections[CollectionBegin]}}">{{Name}}</h3>
+                <h5>{{Description}}</h5>
+                <ul bindings="{{Sections[CollectionEnd]}}">
+                    <li bindings="{{Details[Collection,Optional]}}">
+                        <h4>{{Name}}:</h4>
+                        <h5>{{Description}}</h5>
+                    </li>
+                </ul>
+                <h3>Keywords</h3>
+                <ul>
+                    <li bindings="{{Keywords[Collection]}}" id="Key_{{Name}}">
+                        <h4>{{Name}}</h4>
+                        <p>{{Description}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

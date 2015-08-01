@@ -8,8 +8,10 @@ namespace Templator
 {
     public partial class TemplatorConfig
     {
-
         public string XmlReservedAttributeName = "Bindings";
+        public string ReservedKeywordParent = "$$P$$";
+        public string ReservedKeywordIndex = "$Index";
+        public string ReservedKeyword0Index = "$0Index";
 
         public string EscapePrefix = null;//"\\";
         public string Begin = "{{";
@@ -30,6 +32,8 @@ namespace Templator
         public string KeywordRepeatBegin = "CollectionBegin";
         public string KeywordRepeat = "Collection";
         public string KeywordRepeatEnd = "CollectionEnd";
+        public string KeywordNested = "Nested";
+        public string KeywordNestedXml = "NestedXml";
         public string KeywordAlignCount = "AlignCount";
         public string KeywordEnum = "Enum";
         public string KeywordDisplayName = "DisplayName";
@@ -90,9 +94,5 @@ namespace Templator
 
         public string KeywordExpression = "Expression";
         public string KeywordMath = "Math"; //Math expression,js?
-
-        public string ReservedKeywordParent = "$$P$$";
-        public string ReservedKeywordIndex = "$Index";
-        public string ReservedKeyword0Index = "$0Index";
     }
 }

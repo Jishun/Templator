@@ -84,7 +84,7 @@ namespace Templator
                                 parser.ParentXmlContext[l + "XmlElementIndex"] = parser.ParentXmlContext.ElementIndex;
                                 parser.ParentXmlContext.OnBeforeParsingElement = p =>
                                 {
-                                    var element = new XElement(p.XmlContext.ElementList[p.XmlContext.ElementIndex]);
+                                    var element = new XElement((XElement)p.XmlContext.ElementList[p.XmlContext.ElementIndex]);
                                     if ((string)parsedHolder[KeywordRepeatBegin] == "Group")
                                     {
                                         parser.XmlContext.Element.Add(element);
@@ -95,20 +95,20 @@ namespace Templator
                                     }
                                     p.XmlContext.ElementList[p.XmlContext.ElementIndex] = element;
                                 };
-                                var newElement = new XElement(parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex]);
+                                var newElement = new XElement((XElement)parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex]);
                                 if ((string)parsedHolder[KeywordRepeatBegin] == "Group")
                                 {
                                     parser.ParentXmlContext.Element.Add(newElement);
                                 }
                                 else
                                 {
-                                    parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex].InsertElementAfter(newElement);
+                                    ((XElement)parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex]).InsertElementAfter(newElement);
                                 }
                                 parser.ParentXmlContext.ElementList[parser.ParentXmlContext.ElementIndex] = newElement;
                             }
                         }
 
-                        parser.PushContext(input, parsedHolder, parsedHolder.ContainsKey(KeywordHolder) || inputCount == 0, noOutput);
+                        parser.PushContext(input, null, parsedHolder, parsedHolder.ContainsKey(KeywordHolder) || inputCount == 0, noOutput);
                         parser.Context["ParentPosition"] = parsedHolder.Position;
                         return false;
                     } 
@@ -137,7 +137,7 @@ namespace Templator
                                     {
                                         for (var i = p.XmlContext.ElementIndex+1; i < p.XmlContext.ElementList.Count; i++)
                                         {
-                                            p.XmlContext.ElementList[i].MoveLast();
+                                            ((XElement)p.XmlContext.ElementList[i]).MoveLast();
                                         }
                                     }
                                 }
@@ -161,6 +161,35 @@ namespace Templator
                         }
                         return false;
                     }
+                },
+                new TemplatorKeyword(KeywordNested)
+                {
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        if (value != null)
+                        {
+                            parser.PushContext(parser.Context.Input, new SeekableString((string)value), holder, true);
+                            parser.ParseTextInternal();
+                            parser.PopContext();
+                            return parser.Context.Result.ToString();
+                        }
+                        return null;
+                    } 
+                },
+                new TemplatorKeyword(KeywordNestedXml)
+                {
+                    PostParse = (parser, holder) => parser.Context.Input != null,
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        if (value != null)
+                        {
+                            var e = XElement.Parse((string) value);
+                            parser.ParseXmlInternal(e);
+                            parser.XmlContext.Element.Add(e);
+                            return String.Empty;
+                        }
+                        return null;
+                    } 
                 },
                 //Calculated Keywords
                 new TemplatorKeyword(KeywordSeekup)
