@@ -40,7 +40,7 @@ namespace Templator
         public static bool InXmlManipulation(this TemplatorParser parser)
         {
             return parser.XmlContext != null && parser.XmlContext.Attribute != null &&
-                   parser.XmlContext.Attribute.Name == parser.Config.XmlReservedAttributeName;
+                   parser.XmlContext.Attribute.Name == parser.Config.XmlTemplatorAttributeName;
         }
 
         public static void GrammarCheckDirectory(this TemplatorParser parser, string path, string[] filters, int depth)

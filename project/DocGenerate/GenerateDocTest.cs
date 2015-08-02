@@ -15,8 +15,7 @@ namespace DocGenerate
         public void GenerateDoc()
         {
             var config = TemplatorConfig.DefaultInstance;
-            config.XmlReservedAttributeName = "bindings";
-            config.XmlElementRepeatBehavior = XmlElementRepeatBehavior.RepeatGroupIfMultiple;
+            config.XmlTemplatorAttributeName = "bindings";
             var parser = new TemplatorParser(config);
             var stream = "DocGenerate.Resources.index.html".GetResourceStreamFromExecutingAssembly();
             var input = TemplatorHelpDoc.GetInputDict();

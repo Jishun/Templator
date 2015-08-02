@@ -64,7 +64,6 @@
   <ItemGroup>
     <Compile Include="Exceptions\TempatorException.cs" />
     <Compile Include="Model\HolderParseState.cs" />
-    <Compile Include="Model\XmlElementRepeatBehavior.cs" />
     <Compile Include="Model\TemplatorParsingContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\TemplateEventArgs.cs" />

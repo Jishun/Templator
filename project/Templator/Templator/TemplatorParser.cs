@@ -209,6 +209,10 @@ namespace Templator
             Context.PreparsedHolders= preparsedHolders;
             Context.ClearResult();
             Context.Input = input;
+            if (preparsedHolders != null)
+            {
+                input.AddOrOverwrite(Config.KeyHolders, preparsedHolders);
+            }
             ParseTextInternal();
             CollectHolderResults(mergeHoldersInto);
             return Context.GetResult();
@@ -229,6 +233,10 @@ namespace Templator
             PushContext(input, null, null);
             Context.PreparsedHolders = preparsedHolders;
             ParseXmlInternal(rootElement);
+            if (preparsedHolders != null)
+            {
+                input.AddOrOverwrite(Config.KeyHolders, preparsedHolders);
+            }
             foreach (var removingElement in RemovingElements)
             {
                 if (removingElement != null && removingElement.Parent != null)
@@ -246,7 +254,7 @@ namespace Templator
                 XmlContext.OnBeforeParsingElement(this);
             }
             PushXmlContext(element);
-            foreach (var a in element.Attributes().OrderBy(a => a.Name != Config.XmlReservedAttributeName))
+            foreach (var a in element.Attributes().OrderBy(a => a.Name != Config.XmlTemplatorAttributeName))
             {
                 XmlContext.Attribute = a;
                 Context.ClearResult();
@@ -256,7 +264,7 @@ namespace Templator
                 {
                     a.Value = Context.GetResult();
                 }
-                if (a.Name == Config.XmlReservedAttributeName)
+                if (a.Name == Config.XmlTemplatorAttributeName)
                 {
                     a.Remove();
                 }

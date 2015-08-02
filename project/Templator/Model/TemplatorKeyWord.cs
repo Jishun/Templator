@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using DotNetUtils;
 using Irony.Parsing;
+using Microsoft.SqlServer.Server;
 
 namespace Templator
 {
@@ -19,6 +20,14 @@ namespace Templator
         public Func<TemplatorParser, TextHolder, bool> PostParse;
         public Action<TemplatorParser, string> Parse;
         public Func<TextHolder, TemplatorParser, object, object> OnGetValue;
+
+        #region HelpContent
+
+        public string Description { get; set; }
+        public IList<Triple<string, string, string>> Examples { get; set; }
+        public IList<Pair<string, string>> Params { get; set; } 
+        #endregion
+
         public TemplatorKeyword(string name)
         {
             Name = name;

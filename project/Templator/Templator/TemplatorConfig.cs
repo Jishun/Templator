@@ -22,6 +22,7 @@ namespace Templator
 
         [Description("The DateTime format used by the parser to parse DateTime values")]
         public string DateFormat;
+        [Description("The Logger object used for parser to log errors")]
         public ILogger Logger = new Logger();
         [Description("A event fired by the parser when no input found in the input dictionary to allow additional logic to find the value")]
         public EventHandler<TemplateEventArgs> RequireInput;
@@ -29,8 +30,6 @@ namespace Templator
         public Encoding Encoding = Encoding.UTF8;
         [Description("Options to control line breaks in the text file, such as to ensure the file uses windows(CRLF) mode or unix(LF)")]
         public LineBreakOption LineBreakOption;
-        [Description("To control the repeat behavior of repeating a group of XElement, e.g: '<a/><b/>' -> '<a/><a/><b/><b/>' or '<a/><b/><a/><b/>'")]
-        public XmlElementRepeatBehavior XmlElementRepeatBehavior = XmlElementRepeatBehavior.RepeatGroupIfMultiple;
         [Description("Whether to throw exception when parser finds an unknown keyword")]
         public bool IgnoreUnknownKeyword = true;
         [Description("Whether to throw exception when parser finds an unknown keyword Parameter")]
@@ -53,12 +52,15 @@ namespace Templator
         public IDictionary<string, Type> Enums = new Dictionary<string, Type>();
         [Description("Pre-defined regular expressions (stored with a key of its name) for the parser to use, the parser will try to find a match with param string as name in this dict and pull the value otherwise use the param string as the regex ")]
         public IDictionary<string, Regex> Regexes = new Dictionary<string, Regex>();
-
-        public string XmlTemplateAttr = "Bindings";
+        [Description("The TextHolder Element name when parsing xml format input")]
         public string XmlFieldElementName = "Field";
+        [Description("The TextHolder Value Element name when parsing xml format input")]
         public string XmlValueNodeName = "Value";
+        [Description("The TextHolder Name Element name when parsing xml format input")]
         public string XmlNameNodeName = "Name";
+        [Description("The TextHolder Child collection Element name when parsing xml format input")]
         public string XmlCollectionNodeName = "CollectionItem";
+        [Description("The key used by the parser to store preparsed Holder definitions.")]
         public string KeyHolders = "$Fields";
         public TemplatorConfig()
         {

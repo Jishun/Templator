@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,18 +9,30 @@ namespace Templator
 {
     public partial class TemplatorConfig
     {
-        public string XmlReservedAttributeName = "Bindings";
+        [Description("The reserved xml attribute to hold Templator used xml manipulation TextHolders such as Collections, this attribute will be removed while processing")]
+        public string XmlTemplatorAttributeName = "Bindings";
+        [Description("When goes deeper level into an Array/Repeat/Collection, the parent input will be stored in the current input with this string as key")]
         public string ReservedKeywordParent = "$$P$$";
+        [Description("When looping arries/repeat/collection, retrieve the 1 based index with this name")]
         public string ReservedKeywordIndex = "$Index";
+        [Description("When looping arries/repeat/collection, retrieve the 0 based index with this name")]
         public string ReservedKeyword0Index = "$0Index";
 
+        [Description("An escape character when parsing template")]
         public string EscapePrefix = null;//"\\";
+        [Description("The begginng of a TextHolder, configurable in case of symbol conflict, default '{{'")]
         public string Begin = "{{";
-        public string End="}}";
-        public string Delimiter=",";
-        public string ParamBegin="(";
+        [Description("The ending of a TextHolder, configurable in case of symbol conflict, default '}}'")]
+        public string End = "}}";
+        [Description("The delimiter of keywords, configurable in case of symbol conflict, default ','")]
+        public string Delimiter = ",";
+        [Description("The begginng of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default '('")]
+        public string ParamBegin = "(";
+        [Description("The ending of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'")]
         public string ParamEnd = ")";
+        [Description("The begginng of the keyword collection, configurable in case of symbol conflict, default '['")]
         public string KeywordsBegin = "[";
+        [Description("The ending of the keyword collection, configurable in case of symbol conflict, default ']'")]
         public string KeywordsEnd = "]";
 
         public string TermCategory = "tCategory";
