@@ -4,36 +4,35 @@
     <title>Templator</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   </head>
   <body>
     <div class="top" style="padding-left: 30px;">
-      <h3>Templator -- An Advanced text templating engine, (Draft page, working in progress)</h3>
+      <h3>Templator<a href="https://github.com/djsxp/Templator">(GitHub)</a> -- An Advanced text templating engine</h3>
       <hr style="width: 95%; height:2px;background-color: #99AABB;" />
     </div>
     <div class="container-fluid master">
       <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-3 menu" style="background-color: #CCDDEE; min-height: 1000px;">
+        <div class="col-lg-2 col-md-2 col-sm-3 menu" style="background-color: #CCDDEE;">
           <div style="padding-top: 20px;">
             <ul style="list-style-type: none;">
+              <li>
+                <a href="#Sec_CodeExample">
+                  <h4>Code Example</h4>
+                </a>
+              </li>
               <li>
                 <a href="#Sec_Philosophy">
                   <h4>Philosophy</h4>
                 </a>
               </li>
               <li>
-                <a href="#Sec_Usage">
-                  <h4>Usage</h4>
+                <a href="#Sec_Template Usage">
+                  <h4>Template Usage</h4>
                 </a>
               </li>
               <li>
                 <a href="#Sec_Syntax of a TextHolder">
                   <h4>Syntax of a TextHolder</h4>
-                </a>
-              </li>
-              <li>
-                <a href="#Sec_Examples">
-                  <h4>Examples</h4>
                 </a>
               </li>
               <li>
@@ -48,7 +47,166 @@
                     <a href="#Key_Collection">Collection</a>
                   </li>
                   <li>
+                    <a href="#Key_CollectionBegin">CollectionBegin</a>
+                  </li>
+                  <li>
                     <a href="#Key_CollectionEnd">CollectionEnd</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Nested">Nested</a>
+                  </li>
+                  <li>
+                    <a href="#Key_NestedXml">NestedXml</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Inherited">Inherited</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Js">Js</a>
+                  </li>
+                  <li>
+                    <a href="#Key_MathMax">MathMax</a>
+                  </li>
+                  <li>
+                    <a href="#Key_MathMin">MathMin</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Sum">Sum</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Avg">Avg</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Count">Count</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Multi">Multi</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Refer">Refer</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Even">Even</a>
+                  </li>
+                  <li>
+                    <a href="#Key_AwayZero">AwayZero</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Default">Default</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Optional">Optional</a>
+                  </li>
+                  <li>
+                    <a href="#Key_RegExp">RegExp</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Length">Length</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Min">Min</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Max">Max</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Bool">Bool</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Enum">Enum</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Number">Number</a>
+                  </li>
+                  <li>
+                    <a href="#Key_DateTime">DateTime</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Format">Format</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Map">Map</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Replace">Replace</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Transform">Transform</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Upper">Upper</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Lower">Lower</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Trim">Trim</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Csv">Csv</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Base32">Base32</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Base64">Base64</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Url">Url</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Html">Html</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Encode">Encode</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Decode">Decode</a>
+                  </li>
+                  <li>
+                    <a href="#Key_RemoveChar">RemoveChar</a>
+                  </li>
+                  <li>
+                    <a href="#Key_FixedLength">FixedLength</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Holder">Holder</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Ifnot">Ifnot</a>
+                  </li>
+                  <li>
+                    <a href="#Key_EnumElement">EnumElement</a>
+                  </li>
+                  <li>
+                    <a href="#Key_ElementName">ElementName</a>
+                  </li>
+                  <li>
+                    <a href="#Key_AttributeIf">AttributeIf</a>
+                  </li>
+                  <li>
+                    <a href="#Key_AttributeName">AttributeName</a>
+                  </li>
+                  <li>
+                    <a href="#Key_If">If</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Tips">Tips</a>
+                  </li>
+                  <li>
+                    <a href="#Key_DisplayName">DisplayName</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Truncate">Truncate</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Fill">Fill</a>
+                  </li>
+                  <li>
+                    <a href="#Key_Prepend">Prepend</a>
+                  </li>
+                  <li>
+                    <a href="#Key_AlignCount">AlignCount</a>
                   </li>
                 </ul>
               </li>
@@ -56,20 +214,83 @@
           </div>
         </div>
         <div class="col-lg-10 col-md-10 col-sm-9 leaderboard">
+          <h3 id="Sec_CodeExample">CodeExample</h3>
+          <b>This page you are looking at is generated by Templator, please refer to the <a href="https://github.com/djsxp/Templator/blob/master/project/DocGenerate/Resources/index.html">template</a> as an example, correspoding calling code is <a href="https://github.com/djsxp/Templator/blob/master/project/DocGenerate/GenerateDocTest.cs">here</a></b>
+          <h5>To use this libary: </h5>
+          <ul>
+            <li>Initialize an instance of Templator Config. cutomize it if necessary</li>
+            <li>Assign an instance of ILogger to the config object, or leave it default an later use ((Logger)config.Logger).Errors to retrieve parser errors</li>
+            <li>Initialize an instans of TemplatorParser with the config object</li>
+            <li>Construct a IDictionary&lt;string, object&gt; as input or use TemplatorUtil.ParseJsonDict(string) method to parse a Json object as input</li>
+            <li>Load text/xml templat as string or stream</li>
+            <li>var outPut = parser.LoadXmlTemplate(stream, input); or parser.ParseXml, or parser.LoadTextTemplate etc.. will generate the parsed string</li>
+            <li>Check the logger object (((Logger)config.Logger).Errors by default) for parsing errors</li>
+            <li>parser.Holders will give out the holders defined inside the template</li>
+          </ul>
           <h3 id="Sec_Philosophy">Philosophy</h3>
           <h5>Try to Create a text processing engine with the ablity to produce all kinds of formated text using a unified input structure, with the ablity to be fully cusomized in order to overcome any possible symbol conflicts.</h5>
-          <h3 id="Sec_Usage">Usage</h3>
+          <h3 id="Sec_Template Usage">Template Usage</h3>
           <h5>Simply put the a place holder at the position of the text which you what to output, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value</h5>
           <h3 id="Sec_Syntax of a TextHolder">Syntax of a TextHolder</h3>
           <h5>With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object  </h5>
-          <h3 id="Sec_Examples">Examples</h3>
-          <h5>This Help document page is generated by Templator, (There will be a link of the code onces it's complete...)</h5>
           <h3 id="Sec_Configuration">Configuration</h3>
           <h5>Templator allows to be fully customized through config object, see the following options for details:</h5>
           <ul>
             <li>
+              <h4>XmlTemplatorAttributeName:</h4>
+              <h5>The reserved xml attribute to hold Templator used xml manipulation TextHolders such as Collections, this attribute will be removed while processing</h5>
+            </li>
+            <li>
+              <h4>ReservedKeywordParent:</h4>
+              <h5>When goes deeper level into an Array/Repeat/Collection, the parent input will be stored in the current input with this string as key</h5>
+            </li>
+            <li>
+              <h4>ReservedKeywordIndex:</h4>
+              <h5>When looping arries/repeat/collection, retrieve the 1 based index with this name</h5>
+            </li>
+            <li>
+              <h4>ReservedKeyword0Index:</h4>
+              <h5>When looping arries/repeat/collection, retrieve the 0 based index with this name</h5>
+            </li>
+            <li>
+              <h4>EscapePrefix:</h4>
+              <h5>An escape character when parsing template</h5>
+            </li>
+            <li>
+              <h4>Begin:</h4>
+              <h5>The begginng of a TextHolder, configurable in case of symbol conflict, default '{{'</h5>
+            </li>
+            <li>
+              <h4>End:</h4>
+              <h5>The ending of a TextHolder, configurable in case of symbol conflict, default '}}'</h5>
+            </li>
+            <li>
+              <h4>Delimiter:</h4>
+              <h5>The delimiter of keywords, configurable in case of symbol conflict, default ','</h5>
+            </li>
+            <li>
+              <h4>ParamBegin:</h4>
+              <h5>The begginng of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default '('</h5>
+            </li>
+            <li>
+              <h4>ParamEnd:</h4>
+              <h5>The ending of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'</h5>
+            </li>
+            <li>
+              <h4>KeywordsBegin:</h4>
+              <h5>The begginng of the keyword collection, configurable in case of symbol conflict, default '['</h5>
+            </li>
+            <li>
+              <h4>KeywordsEnd:</h4>
+              <h5>The ending of the keyword collection, configurable in case of symbol conflict, default ']'</h5>
+            </li>
+            <li>
               <h4>DateFormat:</h4>
               <h5>The DateTime format used by the parser to parse DateTime values</h5>
+            </li>
+            <li>
+              <h4>Logger:</h4>
+              <h5>The Logger object used for parser to log errors</h5>
             </li>
             <li>
               <h4>RequireInput:</h4>
@@ -82,10 +303,6 @@
             <li>
               <h4>LineBreakOption:</h4>
               <h5>Options to control line breaks in the text file, such as to ensure the file uses windows(CRLF) mode or unix(LF)</h5>
-            </li>
-            <li>
-              <h4>XmlElementRepeatBehavior:</h4>
-              <h5>To control the repeat behavior of repeating a group of XElement, e.g: '&lt;a/&gt;&lt;b/&gt;' -&gt; '&lt;a/&gt;&lt;a/&gt;&lt;b/&gt;&lt;b/&gt;' or '&lt;a/&gt;&lt;b/&gt;&lt;a/&gt;&lt;b/&gt;'</h5>
             </li>
             <li>
               <h4>IgnoreUnknownKeyword:</h4>
@@ -127,6 +344,26 @@
               <h4>Regexes:</h4>
               <h5>Pre-defined regular expressions (stored with a key of its name) for the parser to use, the parser will try to find a match with param string as name in this dict and pull the value otherwise use the param string as the regex </h5>
             </li>
+            <li>
+              <h4>XmlFieldElementName:</h4>
+              <h5>The TextHolder Element name when parsing xml format input</h5>
+            </li>
+            <li>
+              <h4>XmlValueNodeName:</h4>
+              <h5>The TextHolder Value Element name when parsing xml format input</h5>
+            </li>
+            <li>
+              <h4>XmlNameNodeName:</h4>
+              <h5>The TextHolder Name Element name when parsing xml format input</h5>
+            </li>
+            <li>
+              <h4>XmlCollectionNodeName:</h4>
+              <h5>The TextHolder Child collection Element name when parsing xml format input</h5>
+            </li>
+            <li>
+              <h4>KeyHolders:</h4>
+              <h5>The key used by the parser to store preparsed Holder definitions.</h5>
+            </li>
           </ul>
           <h3>Keywords</h3>
           <ul>
@@ -134,13 +371,350 @@
               <h4>Collection</h4>
               <p>Indicates an Array/Collection/Repeat, correspoding input should be an array : IDictionary&lt;string,object&gt;[], templator will repeat the template starting from this Holder till the matching 'CollectionEnd'(in plain text) or the close tag of the element(in xml).</p>
             </li>
+            <li id="Key_CollectionBegin">
+              <h4>CollectionBegin</h4>
+              <p>Indicates begining position of an Array/Repeat/Collection (or begining xml element in xml), must match with 'CollectionEnd', it functions the same as Collection in plain text format</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Group</dt><dd>To control the repeat behavior of repeating a group of XElement, e.g: double '&lt;a/&gt;&lt;b/&gt;' -&gt; '&lt;a/&gt;&lt;b/&gt;&lt;a/&gt;&lt;b/&gt;' instead of '&lt;a/&gt;&lt;a/&gt;&lt;b/&gt;&lt;b/&gt;'</dd></dl></div>
+            </li>
             <li id="Key_CollectionEnd">
               <h4>CollectionEnd</h4>
               <p>Indicates then end position (end element in xml) of Array/Collection/Repeat</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Group</dt><dd>To control the repeat behavior of repeating a group of XElement, e.g: double '&lt;a/&gt;&lt;b/&gt;' with &lt;c/&gt; -&gt; '&lt;a/&gt;&lt;b/&gt;&lt;a/&gt;&lt;b/&gt;&lt;c/&gt;' instead of '&lt;a/&gt;&lt;b/&gt;&lt;c/&gt;&lt;a/&gt;&lt;b/&gt;'</dd></dl></div>
+            </li>
+            <li id="Key_Nested">
+              <h4>Nested</h4>
+              <p>If a TextHolder's value contains Templator syntax, mark the holder with this Keyword to enable the template in the value string to be processed with the same context</p>
+            </li>
+            <li id="Key_NestedXml">
+              <h4>NestedXml</h4>
+              <p>Allow a xml Template value provided for a TextHolder marked with this keyword to be processed</p>
+            </li>
+            <li id="Key_Inherited">
+              <h4>Inherited</h4>
+              <p>Allow the parser to seek upper level of the input when current context is inside a child array/repeat/collection loop</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Number value</dt><dd>Indicates the number of levels that allowed to seek upwords</dd></dl></div>
+            </li>
+            <li id="Key_Js">
+              <h4>Js</h4>
+              <p>Evaluate a piece of JS code based on current input</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The js code</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_MathMax">
+              <h4>MathMax</h4>
+              <p>Aggregate the max value of given Holder names</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>HolderNames seperated by ';', or hierachy seperated by '.'</dt><dd>Something like: 'Holder1;Holder2;Collection.ChildName'</dd></dl></div>
+            </li>
+            <li id="Key_MathMin">
+              <h4>MathMin</h4>
+              <p>Aggregate the min value of given Holder names</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>HolderNames seperated by ';', or hierachy seperated by '.'</dt><dd>Something like: 'Holder1;Holder2;Collection.ChildName'</dd></dl></div>
+            </li>
+            <li id="Key_Sum">
+              <h4>Sum</h4>
+              <p>Aggregate the sum value of given Holder names</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>HolderNames seperated by ';', or hierachy seperated by '.'</dt><dd>Something like: 'Holder1;Holder2;Collection.ChildName'</dd></dl></div>
+            </li>
+            <li id="Key_Avg">
+              <h4>Avg</h4>
+              <p>Aggregate the average value of given Holder names</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>HolderNames seperated by ';', or hierachy seperated by '.'</dt><dd>Something like: 'Holder1;Holder2;Collection.ChildName'</dd></dl></div>
+            </li>
+            <li id="Key_Count">
+              <h4>Count</h4>
+              <p>Aggregate the count of given Holder which is an Array/Repeat/Collection </p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>HolderNames seperated by ';', or hierachy seperated by '.'</dt><dd>Something like: 'CollectionName1;CollectionName2.ChildCollectionName'</dd></dl></div>
+            </li>
+            <li id="Key_Multi">
+              <h4>Multi</h4>
+              <p>Aggregate the multiplied value of given Holder names</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>HolderNames seperated by ';', or hierachy seperated by '.'</dt><dd>Something like: 'Holder1;Holder2;Collection.ChildName'</dd></dl></div>
+            </li>
+            <li id="Key_Refer">
+              <h4>Refer</h4>
+              <p>Retrieve another 'refered' TextHolder's value as the value</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The refered Holder's Name</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Even">
+              <h4>Even</h4>
+              <p>Specify the method of rounding a decimal as 'Even', only works with keyword 'Number'</p>
+            </li>
+            <li id="Key_AwayZero">
+              <h4>AwayZero</h4>
+              <p>Specify the method of rounding a decimal as 'AwayFromZero', only works with keyword 'Number'</p>
+            </li>
+            <li id="Key_Default">
+              <h4>Default</h4>
+              <p>Provide a default INPUT value of the TextHolder if no value found from input</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The default value, none as String.Empty</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Optional">
+              <h4>Optional</h4>
+              <p>Provide a default OUTPUT value of the TextHolder if no value found from input</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The default value, none as String.Empty</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_RegExp">
+              <h4>RegExp</h4>
+              <p>Validate the input with specified regular expresion, this keyword will try to find a preset regex in config using the given string as key. if not found will use the given string as the expression</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The name/key of the expressions in config object, or the regular expression string</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Length">
+              <h4>Length</h4>
+              <p>Validate input strings' length, or fix the output length if current TextHolder indicates an Array/Repeat/Collection</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The valid length values</dt><dd>E.g.: '3', '1;3;5', '1-7'</dd></dl></div>
+            </li>
+            <li id="Key_Min">
+              <h4>Min</h4>
+              <p>Validate the min value of the value when it is a Number</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The numeric value</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Max">
+              <h4>Max</h4>
+              <p>Validate the max value of the value when it is a Number</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The numeric value</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Bool">
+              <h4>Bool</h4>
+              <p>Indicates the value is functioning as 'Bit', refered by 'If', has value means 'true', null indicates 'false'</p>
+            </li>
+            <li id="Key_Enum">
+              <h4>Enum</h4>
+              <p>Indicates the value of this holder is an Enum listed in config object.Enums, with the enum name as key</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The Enum type name as key in the config object</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Number">
+              <h4>Number</h4>
+              <p>Indicates and validate that the input value is a Number</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>None or the output format of the number</dt><dd>E.g.: Number(0.00) with value 0.1 -&gt; 0.10</dd></dl></div>
+            </li>
+            <li id="Key_DateTime">
+              <h4>DateTime</h4>
+              <p>Indicates and validate that the input value is a DateTime, parsing with the 'DateFormat' in config</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>None or the format of the output of the DateTime value</dt><dd>E.g.: DateTime(yyyy) with value 07/07/2015 -&gt; 2015</dd></dl></div>
+            </li>
+            <li id="Key_Format">
+              <h4>Format</h4>
+              <p>Use String.Format to put the value into param string's '{0}' postion</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The string pattern</dt><dd>E.g.: 'hellow {0}' with value 'world' -&gt; 'hellow world'</dd></dl></div>
+            </li>
+            <li id="Key_Map">
+              <h4>Map</h4>
+              <p>Map/replace output with the pair provided in the param to transform input</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Pairs(seperated by ';') of values(seperated by ':') to map with input value</dt><dd>E.g.: a:1;b:2 with value a -&gt; 1</dd></dl></div>
+            </li>
+            <li id="Key_Replace">
+              <h4>Replace</h4>
+              <p>Replace spcific string with another value in the output</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Pair of values(seperated by ';')</dt><dd>E.g.: a;1 with value abc -&gt; 1bc</dd></dl></div>
+            </li>
+            <li id="Key_Transform">
+              <h4>Transform</h4>
+              <p>Transform the output based on paramter options</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Lower/Upper</dt><dd>Support only to upper or to lower for now</dd></dl></div>
+            </li>
+            <li id="Key_Upper">
+              <h4>Upper</h4>
+              <p>Transform the output string to upper case</p>
+            </li>
+            <li id="Key_Lower">
+              <h4>Lower</h4>
+              <p>Transform the output string to lower case</p>
+            </li>
+            <li id="Key_Trim">
+              <h4>Trim</h4>
+              <p>Trim the ouput string</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>'Begin'/'End' or none</dt><dd>Trim Begin or End or no param for both</dd></dl></div>
+            </li>
+            <li id="Key_Csv">
+              <h4>Csv</h4>
+              <p>Transform the output string to encode for used as a csv cell</p>
+            </li>
+            <li id="Key_Base32">
+              <h4>Base32</h4>
+              <p>Transform the output string to encode with base32</p>
+            </li>
+            <li id="Key_Base64">
+              <h4>Base64</h4>
+              <p>Transform the output string to encode with base64</p>
+            </li>
+            <li id="Key_Url">
+              <h4>Url</h4>
+              <p>Transform the output string to encode with url encode</p>
+            </li>
+            <li id="Key_Html">
+              <h4>Html</h4>
+              <p>Transform the output string to encode with html encode</p>
+            </li>
+            <li id="Key_Encode">
+              <h4>Encode</h4>
+              <p>Transform the output string to encode with the options in Parameter</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The encode method </dt><dd>Base32/Base64/Html/Csv/Url</dd></dl></div>
+            </li>
+            <li id="Key_Decode">
+              <h4>Decode</h4>
+              <p>Decode the output string with the options in Parameter</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The decode method </dt><dd>Base32/Base64/Html/Csv/Url</dd></dl></div>
+            </li>
+            <li id="Key_RemoveChar">
+              <h4>RemoveChar</h4>
+              <p>Remove a specific character from the output</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The char to remove </dt><dd>E.g.: RemoveChar(.) with input 1.00 -&gt; 100</dd></dl></div>
+            </li>
+            <li id="Key_FixedLength">
+              <h4>FixedLength</h4>
+              <p>Ensure the output length is fixed by the number specified in Param, truncate if too long or fill with the Char provides by keyword 'Fill', default is white space</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>Length needed</dt><dd>E.g.: FixedLength(3) with input 'a' -&gt; 'a  '</dd></dl></div>
+            </li>
+            <li id="Key_Holder">
+              <h4>Holder</h4>
+              <p>Indicates this TextHolder only required input but will not ouput anything</p>
+            </li>
+            <li id="Key_Ifnot">
+              <h4>Ifnot</h4>
+              <p>If the given value is null or not provided, remove the xml element based on the xpath specified in param, default removing current element</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>An xpath based on current element</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_EnumElement">
+              <h4>EnumElement</h4>
+              <p>Validate the input with the enum and put the enum value as the name of current xml element</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The Enum type name in the config object</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_ElementName">
+              <h4>ElementName</h4>
+              <p>Use the value as current xml element name instead of value</p>
+            </li>
+            <li id="Key_AttributeIf">
+              <h4>AttributeIf</h4>
+              <p>Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>No Params or another TextHolder's name</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_AttributeName">
+              <h4>AttributeName</h4>
+              <p>Use the value as current attribute's name instead of value</p>
+            </li>
+            <li id="Key_If">
+              <h4>If</h4>
+              <p>Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>No Params or another TextHolder's name</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Tips">
+              <h4>Tips</h4>
+              <p>Put a comment of the TextHolder in the parsed result holder list</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The comment string</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_DisplayName">
+              <h4>DisplayName</h4>
+              <p>A display name for the TextHolder</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The displayname string</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Truncate">
+              <h4>Truncate</h4>
+              <p>If a value string's length is longer than the max value of keyword 'Length' and this keyword exists, the string will be trucated to that length without producing an error</p>
+            </li>
+            <li id="Key_Fill">
+              <h4>Fill</h4>
+              <p>Specifies a character used to append to the ouput if keyword 'FixedLength' is specified and the length is less than the fixed-length.</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The char used to fill</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_Prepend">
+              <h4>Prepend</h4>
+              <p>Specifies a character used to fill the ouput if keyword 'FixedLength' is specified and the length is less than the fixed-length, this will pre-fill the string instead of append</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The char used to fill</dt><dd></dd></dl></div>
+            </li>
+            <li id="Key_AlignCount">
+              <h4>AlignCount</h4>
+              <p>If multiple arraies/repeat/collections are provided in the input and this option exists, the ouput will make sure evey array/repeat/collecion's length is the same as the max length of the input, the empty part will be filled with null values without producing errors</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The holder name of the parent array/repeat/collection</dt><dd></dd></dl></div>
             </li>
           </ul>
         </div>
       </div>
     </div>
+    <style type="text/css">
+    .row {
+    display: table;
+}
+[class*="col-"] {
+    float: none;
+    display: table-cell;
+    vertical-align: top;
+}
+</style>
+    <script type="text/javascript"></script>
   </body>
 </html>
