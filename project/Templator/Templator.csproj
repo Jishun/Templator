@@ -36,9 +36,6 @@
     <BuildPackage>true</BuildPackage>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearScript">
-      <HintPath>..\packages\ClearScript.Installer.5.4.1.23392\lib\net45\ClearScript.dll</HintPath>
-    </Reference>
     <Reference Include="CsvEnumerator">
       <HintPath>..\packages\CsvEnumerator.1.0.0.0\lib\net45\CsvEnumerator.dll</HintPath>
     </Reference>
@@ -79,32 +76,6 @@
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\TemplatorUtil.cs" />
     <Compile Include="Utils\Utils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ClearScriptV8-32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ClearScriptV8-32.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ClearScriptV8-64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ClearScriptV8-64.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="v8-ia32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="v8-ia32.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="v8-x64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="v8-x64.pdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Templator.nuspec" />
