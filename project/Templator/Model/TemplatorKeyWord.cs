@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using DotNetUtils;
-using Irony.Parsing;
-using Microsoft.SqlServer.Server;
 
 namespace Templator
 {

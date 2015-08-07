@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Templator
 {
@@ -26,21 +27,34 @@ namespace Templator
         public string End = "}}";
         [Description("The delimiter of keywords, configurable in case of symbol conflict, default ','")]
         public string Delimiter = ",";
-        [Description("The begginng of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default '('")]
+        [Description("The begginng of a keyword's param, configurable in case of symbol conflict, default '('")]
         public string ParamBegin = "(";
-        [Description("The ending of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'")]
+        [Description("The ending of a keyword's param, configurable in case of symbol conflict, default ')'")]
         public string ParamEnd = ")";
+        [Description("The begginng of the TextHolders' name if category exists, configurable in case of symbol conflict, default '('")]
+        public string CategorizedNameBegin = "(";
+        [Description("The ending of the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'")]
+        public string CategorizedNameEnd = ")";
         [Description("The begginng of the keyword collection, configurable in case of symbol conflict, default '['")]
         public string KeywordsBegin = "[";
         [Description("The ending of the keyword collection, configurable in case of symbol conflict, default ']'")]
         public string KeywordsEnd = "]";
 
-        public string TermCategory = "tCategory";
-        public string TermName = "tName";
-        public string TermValue = "tValue";
-        public string TermText = "tText";
-        public string TermKeyword = "tKeyword";
-        public string TermParamedKeyword = "tParamedKeyword";
+        public string SyntaxErrorCategoryNotFound = "SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config";
+        public string SyntaxErrorOverLappedHolder = "SyntaxError: Overlapped TextHolders";
+        public string SyntaxErrorUnmatchedBeginTag = "SyntaxError: Reached document end before finding the closing tag";
+        public string SyntaxErrorUnmatchedKeywordsBeginTag = "SyntaxError: Reached document end before finding keywords the closing tag";
+        public string SyntaxErrorUnmatchedBeginNameTag = "SyntaxError: Reached document end before finding the name closing tag";
+        public string SyntaxErrorHolderNameNotFound = "SyntaxError: TextHolder's Name not defined";
+        public string SyntaxErrorUnexpecetedString = "SyntaxError: Unexpcted string";
+        public string SyntaxErrorUnexpecetedKeywordParam = "SyntaxError: Unexpcted param for keyword";
+        public string SyntaxErrorUnexpecetedKeyword = "SyntaxError: Unexpcted keyword";
+
+        public string TermCategory = "Category";
+        public string TermName = "Name";
+        public string TermValue = "ParamValue";
+        public string TermKeyword = "Keyword";
+        public string TermParam = "Parameter";
 
         public string KeywordRepeatBegin = "CollectionBegin";
         public string KeywordRepeat = "Collection";

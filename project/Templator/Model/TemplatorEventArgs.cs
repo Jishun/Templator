@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Templator
 {
-    public class TemplateEventArgs
+    public class TemplatorEventArgs
     {
         public object Value { get; set; }
         public TextHolder Holder { get; set; }
-        public IDictionary<string, object> Input { get; set; } 
+        public IDictionary<string, object> Input { get; set; }
+
     }
 }

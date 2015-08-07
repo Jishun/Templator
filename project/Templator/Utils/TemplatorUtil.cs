@@ -54,7 +54,7 @@ namespace Templator
                 {
                     parser.GrammarCheck(sr.ReadToEnd(), name);
                 }
-                if (parser.GrammarParser.Context.HasErrors)
+                if (parser.ReachedMaxError)
                 {
                     return;
                 }
@@ -64,7 +64,7 @@ namespace Templator
                 foreach (var d in Directory.EnumerateDirectories(path))
                 {
                     parser.GrammarCheckDirectory(d, filters, depth);
-                    if (parser.GrammarParser.Context.HasErrors)
+                    if (parser.ReachedMaxError)
                     {
                         return;
                     }

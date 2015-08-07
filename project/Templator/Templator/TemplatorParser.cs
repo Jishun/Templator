@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using DotNetUtils;
-using Irony.Parsing;
 
 namespace Templator
 {
     public class TemplatorParser
     {
+        private bool _clearedSyntaxError = true;
+
         public bool Csv;
         public TemplatorConfig Config;
         public TemplatorKeyword ParsingKeyword;
@@ -42,120 +44,52 @@ namespace Templator
         public TemplatorParser(TemplatorConfig config)
         {
             Config = config;
-            var grammar = new TemplatorGrammar(Config);
-            GrammarParser = new Parser(grammar);
-            if (!config.SyntaxCheckOnly)
-            {
-                GrammarParser.Context.TokenCreated += OnGrammerTokenCreated;
-            }
             Context = new TemplatorParsingContext();
         }
 
-#region Grammar
+        public int ErrorCount { get; private set; }
 
-        private int _parsingStart = 0;
-        public readonly Parser GrammarParser;
-        public ParseTree GrammarParseTree;
-        public string TemplateString;
-
-        public virtual void OnHolderCreated(string text, TextHolder holder, ParsingContext grammarContext)
+        public bool ReachedMaxError
         {
-            if (holder != null)
-            {
-                if (ParsingHolder.Keywords.Any(k => k.Name == Config.KeywordRepeatEnd))
-                {
-                    PopContext();
-                }
-                else
-                {
-                    Context.Holders[ParsingHolder.Name] = ParsingHolder;
-                    if (ParsingHolder.Keywords.Any(k => k.Name == Config.KeywordRepeat || k.Name == Config.KeywordRepeatBegin))
-                    {
-                        PushContext(null, null, holder);
-                    }
-                }
-            }
-            AppendResult(text);
+            get { return ErrorCount > Config.MaxErrorCount; }
         }
 
-        public virtual void OnGrammerTokenCreated(object sender, ParsingEventArgs e)
-        {
-            var context = (ParsingContext)sender;
-            if (context.HasErrors)
-            {
-                return;
-            }
-            var v = context.CurrentToken.ValueString;
-            if (context.CurrentToken.Terminal != null)
-            {
-                var t = context.CurrentToken.Terminal.Name;
-                if (context.OpenBraces.Count == 0)
-                {
-                    if (ParsingHolder != null)
-                    {
-                        ParsingHolder.Position = _parsingStart;
-                        var end = context.PreviousToken.Location.Position + context.PreviousToken.Length;
-#if DEBUG
-                        ParsingHolder.SourceText = TemplateString.Substring(_parsingStart, end - _parsingStart);
-#endif
-                        OnHolderCreated(ParsingHolder.SourceText, ParsingHolder, context);
-                        ParsingHolder = null;
-                    }
-                    if (t == Config.TermText)
-                    {
-                        OnHolderCreated(v, null, context);
-                    }
-                    _parsingStart = context.CurrentToken.Location.Position;
-                    return;
-                }
-                if (ParsingHolder == null)
-                {
-                    ParsingHolder = new TextHolder();
-                }
+        #region Grammar
 
-                if (t == Config.TermCategory)
+
+        public virtual void OnHolderCreated(string text, TextHolder holder)
+        {
+            if (holder != null && Config.OnHolderFound != null)
+            {
+                Config.OnHolderFound(this, new TemplatorEventArgs(){Holder = holder, Input =  Context.Input});
+            }
+        }
+
+        public virtual void OnGrammerTokenCreated(string token, string tokenName)
+        {
+            if (token != null)
+            {
+                if (Config.OnTokenFound != null)
                 {
-                    ParsingHolder.Category = v;
-                }
-                else if (t == Config.TermName)
-                {
-                    ParsingHolder.Name = v;
-                }
-                else if (t == Config.TermValue)
-                {
-                    if (ParsingKeyword == null)
+                    Config.OnTokenFound(this, new TemplatorSyntaxEventArgs()
                     {
-                        //throw new TemplatorSyntaxException();
-                    }
-                    else
-                    {
-                        ParsingKeyword.Parse(this, v);
-                        ParsingHolder.Keywords.Add(ParsingKeyword);
-                        ParsingKeyword = null;
-                    }
+                        TokenName = tokenName, 
+                        TokenText = token, 
+                        Line = Context.Text.Line,
+                        Column = Context.Text.Column,
+                        Position = Context.Text.Position,
+                        HasError = !_clearedSyntaxError
+                    });
                 }
-                else if (Config.Keywords.ContainsKey(t))
-                {
-                    if (ParsingKeyword != null)
-                    {
-                        throw new TemplatorSyntaxException();
-                    }
-                    ParsingKeyword = Config.Keywords[v];
-                    ParsingHolder.Keywords.Add(ParsingKeyword);
-                    ParsingKeyword = null;
-                }
+                _clearedSyntaxError = true;
             }
         }
 
         public virtual IDictionary<string, TextHolder> GrammarCheck(string template, string fileName)
         {
-#if DEBUG
-            TemplateString = template;
-#endif
             ParsingHolder = null;
             ParsingKeyword = null;
             PushContext(null, null, null);
-            GrammarParseTree = GrammarParser.Parse(template, fileName);
             return Context.Holders;
         }
 
@@ -184,10 +118,10 @@ namespace Templator
                 return defaultRet;
             }
             dict[recursiveCheckKey] = true;
-            if (Config.RequireInput != null)
+            if (Config.OnRequireInput != null)
             {
-                var args = new TemplateEventArgs(){Holder = holder, Input = input ?? Context.Input};
-                Config.RequireInput(this, args);
+                var args = new TemplatorEventArgs(){Holder = holder, Input = input ?? Context.Input};
+                Config.OnRequireInput(this, args);
                 dict.Remove(recursiveCheckKey);
                 return args.Value ?? defaultRet;
             }
@@ -476,11 +410,25 @@ namespace Templator
         {
             XmlContext = XmlStack.Pop();
         }
-        #endregion Contexts
+#endregion Contexts
+        public void LogSyntextError(string pattern, params object[] args)
+        {
+            _clearedSyntaxError = false;
+            if (State != null)
+            {
+                State.Error = true;
+            }
+            LogError(pattern, args);
+            if (!Config.ContinueOnError || ReachedMaxError)
+            {
+                throw new TemplatorSyntaxException(pattern.FormatInvariantCulture(args));
+            }
+        }
         public void LogError(string pattern, params object[] args)
         {
             if (Context.Logger != null )
             {
+                ErrorCount++;
                 Context.Logger.LogError(pattern, args);
             }
         }
