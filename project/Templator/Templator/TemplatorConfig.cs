@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using DotNetUtils;
 
@@ -90,6 +91,11 @@ namespace Templator
         public TemplatorConfig()
         {
             PrepareKeywords();
+        }
+
+        public static TemplatorConfig FromXml(string path = "TemplatorConfig.xml")
+        {
+            return XDocument.Load(path).Root.FromXElement<TemplatorConfig>();
         }
     }
 }
