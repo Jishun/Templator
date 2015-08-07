@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Templator</id>
-    <version>1.0.0.0</version>
+    <version>1.0.0.1</version>
     <title>Templator</title>
     <authors>Jishun Duan</authors>
     <owners>Jishun Duan</owners>
@@ -15,4 +15,8 @@
     <copyright>Copyright Jishun Duan, 2011-2015</copyright>
     <tags>Template, Parse, String Replace</tags>
   </metadata>
+    <files>
+        <file src="TemplatorConfig.xml" target="content" />
+        <file src="Install.ps1" target="tools" />
+    </files>
 </package>
