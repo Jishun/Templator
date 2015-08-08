@@ -92,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="msbuild.txt" />
-    <Content Include="TemplatorConfig.xml" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
