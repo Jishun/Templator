@@ -25,11 +25,13 @@ namespace Templator.Utils
         private readonly bool _isXml;
         private static readonly object LockObject = new object();
 
+        private ProjectItemsEvents _solutionEvents;
+        private IDictionary<string, DocumentEvents> _documentEvents = new Dictionary<string, DocumentEvents>();
         private int _lastPosition = 0;
+        private int _start = 0;
         private string _activeProjectName;
-        private bool _buildDefaultConfig = false;
+        private bool _buildDefaultConfig = true;
         private TemplatorParser _parser;
-        private TemplatorConfig _defaultConfig;
         private readonly IDictionary<string, TemplatorParser> _parsers = new ConcurrentDictionary<string, TemplatorParser>();
 
         private static HashSet<string> _standardFields;
@@ -76,175 +78,12 @@ namespace Templator.Utils
             }
         }
 
-        private void BuildReference()
-        {
-            var project = _dte.ActiveDocument.ProjectItem.ContainingProject;
-            if (project != null && _activeProjectName != project.FullName && !_parsers.ContainsKey(project.FullName))
-            {
-                _activeProjectName = project.FullName;
-                var doc = project.ProjectItems.Item(TemplatorConfigFileName);
-                var config = TryGeTemplatorConfig(doc);
-                if (config != null)
-                {
-                    config.ContinueOnError = true;
-                    config.OnTokenFound = OnTemplatorTokenFound;
-                    _parsers.Add(_activeProjectName, new TemplatorParser(config));
-                }
-            }
-            else if (project == null)
-            {
-                _activeProjectName = null;
-            }
-            lock (LockObject)
-            {
-                _parser = _parsers.GetOrDefault(_activeProjectName);
-            }
-            TemplatorConfig defaultConfig = null;
-            if (_buildDefaultConfig)
-            {
-                _buildDefaultConfig = false;
-                if (_dte != null && _dte.Solution != null)
-                {
-                    _dte.Solution.DTE.Events.SolutionItemsEvents.ItemAdded -= SolutionItemsEvents_ItemChanged;
-                    _dte.Solution.DTE.Events.SolutionItemsEvents.ItemAdded += SolutionItemsEvents_ItemChanged;
-                    _dte.Solution.DTE.Events.SolutionItemsEvents.ItemRemoved -= SolutionItemsEvents_ItemChanged;
-                    _dte.Solution.DTE.Events.SolutionItemsEvents.ItemRemoved += SolutionItemsEvents_ItemChanged;
-                    _dte.Solution.DTE.Events.SolutionItemsEvents.ItemRenamed -= SolutionItemsEventsOnItemRenamed;
-                    _dte.Solution.DTE.Events.SolutionItemsEvents.ItemRenamed += SolutionItemsEventsOnItemRenamed;
-                    var projectItem = _dte.Solution.FindProjectItem(TemplatorConfigFileName);
-                    if (projectItem != null && projectItem.FileCount > 0)
-                    {
-                        projectItem.DTE.Events.DocumentEvents.DocumentSaved -= Document_Changed;
-                        projectItem.DTE.Events.DocumentEvents.DocumentSaved += Document_Changed;
-                        defaultConfig = TryGeTemplatorConfig(projectItem);
-                    }
-                }
-                else
-                {
-                    defaultConfig = TemplatorConfig.DefaultInstance;
-                }
-                if (defaultConfig != null)
-                {
-                    defaultConfig.OnTokenFound = OnTemplatorTokenFound;
-                    lock (LockObject)
-                    {
-                        _defaultConfig = defaultConfig;
-                    }
-                }
-            }
-        }
-
-        private TemplatorConfig TryGeTemplatorConfig(ProjectItem item)
-        {
-            if (item != null && item.FileCount > 0)
-            {
-                try
-                {
-                    return XDocument.Load(item.FileNames[1]).Root.FromXElement<TemplatorConfig>();
-                }
-                catch (Exception e)
-                {
-
-                }
-            }
-            return null;
-        }
-
-        private void OnTemplatorTokenFound(object sender, TemplatorSyntaxEventArgs args)
-        {
-            IClassificationType type = _default;
-            if (args.HasError)
-            {
-                if (args.Position > _lastPosition)
-                {
-                    AddSpan(args.Position - _lastPosition, _fault, args.TokenText);
-                }
-            }
-            if (args.TokenText.IsNullOrEmpty())
-            {
-                return;
-            }
-            //_recognized;
-            if (args.TokenName == _parser.Config.Begin)
-            {
-                type = _brace;
-            }
-            else if (args.TokenName == _parser.Config.TermName)
-            {
-                type = _name;
-            }
-            else if (args.TokenName == _parser.Config.TermCategory)
-            {
-                type = _type;
-            }
-            else if (args.TokenName == _parser.Config.TermParam)
-            {
-                type = _param;
-            }
-            else if (args.TokenName == _parser.Config.ParamEnd)
-            {
-                type = _paramBrace;
-            }
-            else if (args.TokenName == _parser.Config.KeywordsBegin)
-            {
-                type = _descBrace;
-            }
-            else if (args.TokenName == _parser.Config.CategorizedNameBegin)
-            {
-                type = _typeBrace;
-            }
-            AddSpan(args.TokenText.Length, type);
-        }
-
-        private bool OnProjectItemChanged(ProjectItem item)
-        {
-            if (item.ContainingProject != null)
-            {
-                _activeProjectName = null;
-                if (_parsers.ContainsKey(item.ContainingProject.FullName))
-                {
-                    _parsers.Remove(item.ContainingProject.FullName);
-                }
-                return true;
-            }
-            return false;
-        }
-
-        private void Document_Changed(Document document)
-        {
-            if (!OnProjectItemChanged(document.ProjectItem))
-            {
-                _buildDefaultConfig = true;
-            }
-        }
-
-        private void SolutionItemsEventsOnItemRenamed(ProjectItem projectItem, string oldName)
-        {
-            if (!OnProjectItemChanged(projectItem))
-            {
-                if (oldName.EndsWith(TemplatorConfigFileName) ||
-                    (projectItem.FileCount > 0 && projectItem.FileNames[1].EndsWith(TemplatorConfigFileName)))
-                {
-                    _buildDefaultConfig = true;
-                }
-            }
-        }
-
-        private void SolutionItemsEvents_ItemChanged(ProjectItem projectItem)
-        {
-            if (!OnProjectItemChanged(projectItem))
-            {
-                if (projectItem.FileCount > 0 && projectItem.FileNames[1].EndsWith(TemplatorConfigFileName))
-                {
-                    _buildDefaultConfig = true;
-                }
-            }
-        }
-
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
         {
             _snapshot = span.Snapshot;
             _spans = new List<ClassificationSpan>();
+            _lastPosition = 0;
+            _start = span.Start.Position;
             BuildReference();
             if (_snapshot.Length == 0)
                 return _spans;
@@ -257,6 +96,176 @@ namespace Templator.Utils
             return _spans;
         }
 
+        private void BuildReference()
+        {
+            var project = _dte.ActiveDocument.ProjectItem.ContainingProject;
+            string projectName = null;
+            if (project != null)
+            {
+                if (_activeProjectName != project.FullName)
+                {
+                    if (!_parsers.ContainsKey(project.FullName))
+                    {
+                        ProjectItem doc = null;
+                        for (var i = 1; i <= project.ProjectItems.Count; i++)
+                        {
+                            doc = project.ProjectItems.Item(i);
+                            if (doc.Name == TemplatorConfigFileName)
+                            {
+                                break;
+                            }
+                            doc = null;
+                        }
+                        if (doc != null)
+                        {
+                            if (_documentEvents.ContainsKey(project.FullName))
+                            {
+                                _documentEvents[project.FullName].DocumentSaved -= Document_Changed;
+                                _documentEvents.Remove(project.FullName);
+                            }
+                            var de = doc.DTE.Events.DocumentEvents;
+                            _documentEvents.AddOrOverwrite(project.FullName, de);
+                            de.DocumentSaved -= Document_Changed;
+                            de.DocumentSaved += Document_Changed;
+                            var config = TryGeTemplatorConfig(doc);
+                            if (config != null)
+                            {
+                                config.ContinueOnError = true;
+                                config.OnTokenFound = OnTemplatorTokenFound;
+                                _parsers.AddOrOverwrite(project.FullName, new TemplatorParser(config));
+                            }
+                        }
+                    }
+                }
+                projectName = project.FullName;
+            }
+            else
+            {
+                _activeProjectName = null;
+            }
+            if (_activeProjectName != projectName 
+                || (_dte.ActiveDocument.Name == TemplatorConfigFileName) == (_parser != null))
+            {
+                lock (LockObject)
+                {
+                    _parser = _dte.ActiveDocument.Name == TemplatorConfigFileName ? null : projectName == null ? null : _parsers.GetOrDefault(projectName);
+                }
+            }
+            _activeProjectName = projectName;
+            if (_buildDefaultConfig)
+            {
+                if (_dte != null && _dte.Solution != null)
+                {
+                    _solutionEvents = _dte.Solution.DTE.Events.SolutionItemsEvents;
+                    _solutionEvents.ItemAdded -= SolutionItemsEvents_ItemChanged;
+                    _solutionEvents.ItemAdded += SolutionItemsEvents_ItemChanged;
+                    _solutionEvents.ItemRemoved -= SolutionItemsEvents_ItemChanged;
+                    _solutionEvents.ItemRemoved += SolutionItemsEvents_ItemChanged;
+                    _solutionEvents.ItemRenamed -= SolutionItemsEventsOnItemRenamed;
+                    _solutionEvents.ItemRenamed += SolutionItemsEventsOnItemRenamed;
+                    _buildDefaultConfig = false;
+                }
+            }
+        }
+
+        private TemplatorConfig TryGeTemplatorConfig(ProjectItem item)
+        {
+            if (item != null && item.FileCount > 0)
+            {
+                try
+                {
+                    return TemplatorConfig.FromXml(item.FileNames[1]);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+            return null;
+        }
+
+        private void OnTemplatorTokenFound(object sender, TemplatorSyntaxEventArgs args)
+        {
+            if (_dte.ActiveDocument.Name == TemplatorConfigFileName)
+            {
+                return;
+            }
+            IClassificationType type = null;
+            if (args.TokenText.IsNullOrEmpty())
+            {
+                return;
+            }
+            if (args.HasError)
+            {
+                if (args.Position > _lastPosition)
+                {
+                    AddSpan(args.Position - _lastPosition, _fault, args.TokenText);
+                }
+            }
+            _lastPosition = args.Position - args.TokenText.Length;
+            if (args.TokenName == _parser.Config.TermBeginEnd)
+            {
+                type = _brace;
+            }
+            else if (args.TokenName == _parser.Config.TermName)
+            {
+                type = _recognized;
+            }
+            else if (args.TokenName == _parser.Config.TermKeyword)
+            {
+                type = _name;
+            }
+            else if (args.TokenName == _parser.Config.TermCategory)
+            {
+                type = _type;
+            }
+            else if (args.TokenName == _parser.Config.TermParam)
+            {
+                type = _param;
+            }
+            else if (args.TokenName == _parser.Config.TermParamBeginEnd)
+            {
+                type = _paramBrace;
+            }
+            else if (args.TokenName == _parser.Config.TermKeywordsBeginEnd)
+            {
+                type = _descBrace;
+            }
+            else if (args.TokenName == _parser.Config.TermCategorizedNameBeginEnd)
+            {
+                type = _typeBrace;
+            }
+            AddSpan(args.TokenText.Length, type);
+            _lastPosition = args.Position;
+        }
+
+        private void ProjectItemChanges(ProjectItem projectItem, string oldName = "")
+        {
+            if (oldName.EndsWith(TemplatorConfigFileName) ||  (projectItem.FileCount > 0 && projectItem.FileNames[1].EndsWith(TemplatorConfigFileName) ))
+            {
+                _activeProjectName = null;
+                if (_parsers.ContainsKey(projectItem.ContainingProject.FullName))
+                {
+                    _parsers.Remove(projectItem.ContainingProject.FullName);
+                }
+            }
+        }
+
+        private void Document_Changed(Document document)
+        {
+            ProjectItemChanges(document.ProjectItem);
+        }
+
+        private void SolutionItemsEventsOnItemRenamed(ProjectItem projectItem, string oldName)
+        {
+            ProjectItemChanges(projectItem, oldName);
+        }
+
+        private void SolutionItemsEvents_ItemChanged(ProjectItem projectItem)
+        {
+            ProjectItemChanges(projectItem);
+        }
+
         private void AddSpan(int length, IClassificationType classification, string backward = null)
         {
             if (backward != null)
@@ -265,8 +274,7 @@ namespace Templator.Utils
             }
             if (classification != null && length > 0)
             {
-                _spans.Add(new ClassificationSpan(new SnapshotSpan(_snapshot, _lastPosition, length), classification));
-                _lastPosition += length;
+                _spans.Add(new ClassificationSpan(new SnapshotSpan(_snapshot, _start+_lastPosition, length), classification));
             }
         }
 

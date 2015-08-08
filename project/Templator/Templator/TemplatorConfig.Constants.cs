@@ -50,11 +50,16 @@ namespace Templator
         public string SyntaxErrorUnexpecetedKeywordParam = "SyntaxError: Unexpcted param for keyword";
         public string SyntaxErrorUnexpecetedKeyword = "SyntaxError: Unexpcted keyword";
 
+        public string TermBeginEnd = "BeginEnd";
+        public string TermCategorizedNameBeginEnd = "CBeginEnd";
+        public string TermParamBeginEnd = "PBeginEnd";
+        public string TermKeywordsBeginEnd = "KBeginEnd";
         public string TermCategory = "Category";
         public string TermName = "Name";
         public string TermValue = "ParamValue";
         public string TermKeyword = "Keyword";
         public string TermParam = "Parameter";
+        public string TermDelimiter = "Delimeter";
 
         public string KeywordRepeatBegin = "CollectionBegin";
         public string KeywordRepeat = "Collection";

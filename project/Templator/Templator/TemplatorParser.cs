@@ -26,6 +26,7 @@ namespace Templator
         public TemplatorParsingContext Context;
         public Stack<TemplatorParsingContext> Stack;
         public Stack<TemplatorXmlParsingContext> XmlStack = new Stack<TemplatorXmlParsingContext>();
+        public bool NoInput { get; private set; }
 
         public TemplatorXmlParsingContext ParentXmlContext
         {
@@ -44,6 +45,7 @@ namespace Templator
         public TemplatorParser(TemplatorConfig config)
         {
             Config = config;
+            config.PrepareKeywords();
             Context = new TemplatorParsingContext();
         }
 
@@ -65,7 +67,7 @@ namespace Templator
             }
         }
 
-        public virtual void OnGrammerTokenCreated(string token, string tokenName)
+        public virtual void OnGrammerTokenCreated(string token, string tokenName, string backwords = null)
         {
             if (token != null)
             {
@@ -77,7 +79,7 @@ namespace Templator
                         TokenText = token, 
                         Line = Context.Text.Line,
                         Column = Context.Text.Column,
-                        Position = Context.Text.Position,
+                        Position = Context.Text.Position - (backwords == null ? 0 : backwords.Length),
                         HasError = !_clearedSyntaxError
                     });
                 }
@@ -103,6 +105,7 @@ namespace Templator
             XmlContext = null;
             Context = new TemplatorParsingContext();
             Csv = false;
+            NoInput = false;
             if (clearHolders)
             {
                 Holders.Clear();
@@ -377,11 +380,16 @@ namespace Templator
             {
                 Context = newC;
                 Stack = new Stack<TemplatorParsingContext>();
+                if (input == null)
+                {
+                    NoInput = true;
+                }
                 return;
             }
             Stack.Push(Context);
             Context = newC;
         }
+
 
         public void PushXmlContext(XElement element)
         {

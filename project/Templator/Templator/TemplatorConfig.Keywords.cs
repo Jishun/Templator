@@ -33,6 +33,10 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
                     PostParse = (parser, parsedHolder) =>
                     {
+                        if (parser.NoInput)
+                        {
+                            return false;
+                        }
                         Keywords[KeywordRepeatBegin].PostParse(parser, parsedHolder);
                         if (parser.InXmlManipulation())
                         {
@@ -51,6 +55,10 @@ namespace Templator
                     },
                     PostParse = (parser, parsedHolder) =>
                     {
+                        if (parser.NoInput)
+                        {
+                            return false;
+                        }
                         var childInputs = TemplatorUtil.GetChildCollection(parser.Context.Input, parsedHolder.Name, parser.Config);
                         IDictionary<string, object> input = null;
                         var l = parser.StackLevel + parsedHolder.Name;
@@ -135,6 +143,10 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => String.Empty,
                     PostParse = (parser, parsedHolder) =>
                     {
+                        if (parser.NoInput)
+                        {
+                            return false;
+                        }
                         if (parser.InXmlManipulation())
                         {
                             parser.ParentXmlContext.OnAfterParsingElement = p =>
@@ -1167,6 +1179,10 @@ namespace Templator
                     },
                     Parse = ((parser, s) =>
                     {
+                        if (parser.NoInput)
+                        {
+                            return;
+                        }
                         if (s.IsNullOrWhiteSpace())
                         {
                             throw new TemplatorParamsException();

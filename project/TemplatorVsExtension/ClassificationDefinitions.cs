@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using System.ComponentModel.Composition;
+using System.Windows;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -150,7 +151,15 @@ namespace Templator.Utils
         {
             public TextTemplateFieldFaultFormat()
             {
-                this.BackgroundColor = Colors.Red;
+                var c = new TextDecorationCollection();
+                var s = new TextDecoration
+                {
+                    Location = TextDecorationLocation.Underline,
+                    Pen = new Pen(Brushes.Red, 2),
+                    PenThicknessUnit = TextDecorationUnit.FontRecommended,
+                };
+                c.Add(s);
+                this.TextDecorations = c;
             }
         }
 

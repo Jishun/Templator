@@ -88,14 +88,14 @@ namespace Templator
         public string XmlCollectionNodeName = "CollectionItem";
         [Description("The key used by the parser to store preparsed Holder definitions.")]
         public string KeyHolders = "$Fields";
-        public TemplatorConfig()
-        {
-            PrepareKeywords();
-        }
 
         public static TemplatorConfig FromXml(string path = "TemplatorConfig.xml")
         {
-            return XDocument.Load(path).Root.FromXElement<TemplatorConfig>();
+            return FromXml(XDocument.Load(path).Root);
+        }
+        public static TemplatorConfig FromXml(XElement element)
+        {
+            return element.FromXElement<TemplatorConfig>();
         }
     }
 }

@@ -47,6 +47,10 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetUtils.1.0.0.3\lib\net45\DotNetUtils.dll</HintPath>
+    </Reference>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -117,10 +121,6 @@
     <Folder Include="References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DotNetUtils\project\DotNetUtils\DotNetUtils.csproj">
-      <Project>{87d9fe4b-8d29-46dc-83bf-77218875d91c}</Project>
-      <Name>DotNetUtils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Templator\Templator.csproj">
       <Project>{000db9f3-9744-43b8-9467-af79437132e6}</Project>
       <Name>Templator</Name>

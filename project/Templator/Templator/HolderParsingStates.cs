@@ -15,6 +15,21 @@ namespace Templator
         public static IDictionary<HolderParseState, Func<TemplatorParser, TextHolder>> States = new Dictionary<HolderParseState, Func<TemplatorParser, TextHolder>>()
         {
             {
+                new HolderParseState(){Error = true}, parser =>
+                {
+                    if (parser.Config.ContinueOnError && !parser.ReachedMaxError)
+                    {
+                        parser.State.Error = false;
+                        parser.State.End = true;
+                    }
+                    else
+                    {
+                        throw new TemplatorUnexpecetedStateException();
+                    }
+                    return null;
+                }
+            },
+            {
                 new HolderParseState(), parser =>
                 {
                     string matched;
@@ -30,8 +45,8 @@ namespace Templator
                             parser.ParsingHolder = new TextHolder() { Position = parser.Context.Text.Position - parser.Config.Begin.Length };
                         }
                         parser.State.Begin = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
                     }
-                    parser.OnGrammerTokenCreated(matched, matched);
                     parser.AppendResult(str);
                     return null;
                 }
@@ -49,6 +64,7 @@ namespace Templator
                     {
                         parser.ParsingHolder.Category = str;
                         parser.State.Category = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermCategorizedNameBeginEnd);
                     }
                     else
                     {
@@ -58,21 +74,22 @@ namespace Templator
                         }
                         parser.ParsingHolder.Name = str.Replace(" ", "");
                         parser.State.Name = true;
-                        parser.OnGrammerTokenCreated(parser.ParsingHolder.Name, parser.Config.TermName);
+                        parser.OnGrammerTokenCreated(parser.ParsingHolder.Name, parser.Config.TermName, matched);
                         if (matched == parser.Config.End)
                         {
                             if (str.IsNullOrWhiteSpace())
                             {
-                                parser.LogSyntextError(parser.Config.SyntaxErrorHolderNameNotFound);
+                                parser.LogSyntextError(parser.Config.TermBeginEnd);
                             }
                             parser.State.End = true;
+                            parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
                         }
                         else if (matched == parser.Config.KeywordsBegin)
                         {
                             parser.State.KeywordsBegin = true;
+                            parser.OnGrammerTokenCreated(matched, parser.Config.TermKeywordsBeginEnd);
                         }
                     }
-                    parser.OnGrammerTokenCreated(matched, matched);
                     return null;
                 }
             },
@@ -89,11 +106,16 @@ namespace Templator
                     {
                         parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginNameTag);
                         parser.State.End = true;
+                        parser.OnGrammerTokenCreated(parser.ParsingHolder.Name, parser.Config.TermName, matched);
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
+                    }
+                    else
+                    {
+                        parser.OnGrammerTokenCreated(str, parser.Config.TermName, matched);
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermCategorizedNameBeginEnd);
                     }
                     parser.ParsingHolder.Name = str.Replace(" ", "");
                     parser.State.Name = true;
-                    parser.OnGrammerTokenCreated(parser.ParsingHolder.Name, parser.Config.TermName);
-                    parser.OnGrammerTokenCreated(matched, matched);
                     return null;
                 }
             },
@@ -113,12 +135,13 @@ namespace Templator
                     else if (matched == parser.Config.KeywordsBegin)
                     {
                         parser.State.KeywordsBegin = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermKeywordsBeginEnd);
                     }
                     else
                     {
                         parser.State.End = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
                     }
-                    parser.OnGrammerTokenCreated(matched, matched);
                     return null;
                 }
             },
@@ -131,6 +154,7 @@ namespace Templator
                     {
                         parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedKeywordsBeginTag);
                         parser.State.End = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
                     }
                     else if (matched == null)
                     {
@@ -151,7 +175,7 @@ namespace Templator
                             parser.ParsingKeyword = parser.Config.Keywords[str].Create();
                             parser.ParsingHolder.Keywords = parser.ParsingHolder.Keywords ?? new List<TemplatorKeyword>();
                             parser.ParsingHolder.Keywords.Add(parser.ParsingKeyword);
-                            parser.OnGrammerTokenCreated(str, parser.Config.TermKeyword);
+                            parser.OnGrammerTokenCreated(str, parser.Config.TermKeyword, matched);
                         }
                         else
                         {
@@ -164,18 +188,20 @@ namespace Templator
                     if (matched == parser.Config.ParamBegin)
                     {
                         parser.State.KeywordParamBegin = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermParamBeginEnd);
                     }
                     else if(matched == parser.Config.Delimiter)
                     {
                         ParseKeywordParam(parser, String.Empty);
                         parser.ParsingKeyword = null;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermDelimiter);
                     }
                     else if (matched == parser.Config.KeywordsEnd)
                     {
                         ParseKeywordParam(parser, String.Empty);
                         parser.State.KeywordsEnd = true;
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermKeywordsBeginEnd);
                     }
-                    parser.OnGrammerTokenCreated(matched, matched);
                     return null;
                 }
             },
@@ -187,7 +213,7 @@ namespace Templator
                     if (matched == parser.Config.End)
                     {
                         parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedKeywordsBeginTag);
-                        parser.OnGrammerTokenCreated(parser.Config.End, parser.Config.End);
+                        parser.OnGrammerTokenCreated(parser.Config.End, parser.Config.TermBeginEnd);
                         parser.State.End = true;
                     }
                     else if (matched == null)
@@ -197,9 +223,12 @@ namespace Templator
                     if (!(parser.Config.IgnoreUnknownKeyword && parser.ParsingKeyword == null))
                     {
                         ParseKeywordParam(parser, str);
-                        parser.OnGrammerTokenCreated(str, parser.Config.TermParam);
+                        parser.OnGrammerTokenCreated(str, parser.Config.TermParam, matched);
                     }
-                    parser.OnGrammerTokenCreated(matched, matched);
+                    if (matched == parser.Config.ParamEnd)
+                    {
+                        parser.OnGrammerTokenCreated(matched, parser.Config.TermParamBeginEnd);
+                    }
                     parser.ParsingKeyword = null;
                     parser.State.KeywordParamBegin = false;
                     return null;
@@ -219,14 +248,15 @@ namespace Templator
                         parser.LogSyntextError(parser.Config.SyntaxErrorUnexpecetedString);
                     }
                     parser.State.End = true;
-                    parser.OnGrammerTokenCreated(matched, matched);
+                    parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
                     return null;
                 }
             },
             {
                 new HolderParseState(){ End = true}, parser =>
                 {
-                    if (parser.ParsingHolder.Name == null )
+                    parser.State = new HolderParseState();
+                    if (parser.ParsingHolder == null || parser.ParsingHolder.Name == null )
                     {
                         return null;
                     }
@@ -234,18 +264,20 @@ namespace Templator
                     parser.OnHolderCreated(ret.Name, ret);
                     parser.ParsingHolder = null;
                     parser.ParsingKeyword = null;
-                    parser.State = new HolderParseState();
-                    ret.Keywords = ret.Keywords.OrderBy(k => k.PostParse == null)
-                            .ThenByDescending(k => k.CalculateInput)
-                            .ThenByDescending(k => k.ManipulateInput)
-                            .ThenByDescending(k => k.IsValidation && !k.ManipulateOutput)
-                            .ThenByDescending(k => k.IsValidation)
-                            .ThenByDescending(k => k.ManipulateOutput)
-                            .ThenBy(k => k.Preority)
-                            .ToList();
-                    var value = parser.GetValue<object>(ret);
+                    if (!parser.NoInput)
+                    {
+                        ret.Keywords = ret.Keywords.OrderBy(k => k.PostParse == null)
+                                .ThenByDescending(k => k.CalculateInput)
+                                .ThenByDescending(k => k.ManipulateInput)
+                                .ThenByDescending(k => k.IsValidation && !k.ManipulateOutput)
+                                .ThenByDescending(k => k.IsValidation)
+                                .ThenByDescending(k => k.ManipulateOutput)
+                                .ThenBy(k => k.Preority)
+                                .ToList();
+                        var value = parser.GetValue<object>(ret);
+                        parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value.SafeToString());
+                    }
                     var notSKip = ret.Keywords.EmptyIfNull().Where(key => key.PostParse != null).Aggregate(true, (current, key) => current & key.PostParse(parser, ret));
-                    parser.AppendResult(parser.Csv ? value.SafeToString().EncodeCsvField() : value.SafeToString());
                     return notSKip? ret : null;
                 }
             }

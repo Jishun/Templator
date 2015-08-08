@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Templator</id>
-    <version>1.0.0.1</version>
+    <version>1.0.0.4</version>
     <title>Templator</title>
     <authors>Jishun Duan</authors>
     <owners>Jishun Duan</owners>
@@ -14,6 +14,11 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright Jishun Duan, 2011-2015</copyright>
     <tags>Template, Parse, String Replace</tags>
+      <dependencies>
+          <dependency id="CsvEnumerator" version="1.0.0.0" />
+          <dependency id="Newtonsoft.Json" version="6.0.8" />
+          <dependency id="DotNetUtils" version="1.0.0.3" />
+      </dependencies>
   </metadata>
     <files>
         <file src="TemplatorConfig.xml" target="content" />
