@@ -21,6 +21,11 @@
                 </a>
               </li>
               <li>
+                <a href="#Sec_Get Started">
+                  <h4>Get Started</h4>
+                </a>
+              </li>
+              <li>
                 <a href="#Sec_Philosophy">
                   <h4>Philosophy</h4>
                 </a>
@@ -33,6 +38,16 @@
               <li>
                 <a href="#Sec_Syntax of a TextHolder">
                   <h4>Syntax of a TextHolder</h4>
+                </a>
+              </li>
+              <li>
+                <a href="#Sec_Build phase validation">
+                  <h4>Build phase validation</h4>
+                </a>
+              </li>
+              <li>
+                <a href="#Sec_Editor SyntaxHighlighting">
+                  <h4>Editor SyntaxHighlighting</h4>
                 </a>
               </li>
               <li>
@@ -227,12 +242,18 @@
             <li>Check the logger object (((Logger)config.Logger).Errors by default) for parsing errors</li>
             <li>parser.Holders will give out the holders defined inside the template</li>
           </ul>
+          <h3 id="Sec_Get Started">Get Started</h3>
+          <h5>Search for 'Templator' in nuget package manager, current version 1.0.0.5</h5>
           <h3 id="Sec_Philosophy">Philosophy</h3>
           <h5>Try to Create a text processing engine with the ablity to produce all kinds of formated text using a unified input structure, with the ablity to be fully cusomized in order to overcome any possible symbol conflicts.</h5>
           <h3 id="Sec_Template Usage">Template Usage</h3>
           <h5>Simply put the a place holder at the position of the text which you what to output, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value</h5>
           <h3 id="Sec_Syntax of a TextHolder">Syntax of a TextHolder</h3>
           <h5>With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object  </h5>
+          <h3 id="Sec_Build phase validation">Build phase validation</h3>
+          <h5>working in progress, there will be a MSBuild task available in nuget package store to enable syntax validation happenning during each project build process</h5>
+          <h3 id="Sec_Editor SyntaxHighlighting">Editor SyntaxHighlighting</h3>
+          <h5>Working in progress, The project 'TemplatorVsExtension' is going to provide syntax highlighting in visual studio. based on TemplatorConfig.xml in the project, in order not get less impact to vs, the extension will only try to parse the active document if the project contains a valid 'TemplatorConfig.xml'</h5>
           <h3 id="Sec_Configuration">Configuration</h3>
           <h5>Templator allows to be fully customized through config object, see the following options for details:</h5>
           <ul>
@@ -270,11 +291,19 @@
             </li>
             <li>
               <h4>ParamBegin:</h4>
-              <h5>The begginng of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default '('</h5>
+              <h5>The begginng of a keyword's param, configurable in case of symbol conflict, default '('</h5>
             </li>
             <li>
               <h4>ParamEnd:</h4>
-              <h5>The ending of a keyword's param, or the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'</h5>
+              <h5>The ending of a keyword's param, configurable in case of symbol conflict, default ')'</h5>
+            </li>
+            <li>
+              <h4>CategorizedNameBegin:</h4>
+              <h5>The begginng of the TextHolders' name if category exists, configurable in case of symbol conflict, default '('</h5>
+            </li>
+            <li>
+              <h4>CategorizedNameEnd:</h4>
+              <h5>The ending of the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'</h5>
             </li>
             <li>
               <h4>KeywordsBegin:</h4>
@@ -285,20 +314,32 @@
               <h5>The ending of the keyword collection, configurable in case of symbol conflict, default ']'</h5>
             </li>
             <li>
-              <h4>DateFormat:</h4>
-              <h5>The DateTime format used by the parser to parse DateTime values</h5>
-            </li>
-            <li>
               <h4>Logger:</h4>
               <h5>The Logger object used for parser to log errors</h5>
             </li>
             <li>
-              <h4>RequireInput:</h4>
+              <h4>OnRequireInput:</h4>
               <h5>A event fired by the parser when no input found in the input dictionary to allow additional logic to find the value</h5>
+            </li>
+            <li>
+              <h4>OnTokenFound:</h4>
+              <h5>A event fired by the parser when it finds a token while doing syntax parsing.</h5>
+            </li>
+            <li>
+              <h4>OnHolderFound:</h4>
+              <h5>A event fired by the parser when it finds a TextHolder.</h5>
             </li>
             <li>
               <h4>Encoding:</h4>
               <h5>The deafult text encoding used</h5>
+            </li>
+            <li>
+              <h4>MaxErrorCount:</h4>
+              <h5>The maximum number of errors found by parser before it stops parsing.</h5>
+            </li>
+            <li>
+              <h4>DateFormat:</h4>
+              <h5>The DateTime format used by the parser to parse DateTime values</h5>
             </li>
             <li>
               <h4>LineBreakOption:</h4>
@@ -317,7 +358,7 @@
               <h5>Whether to make the category property optional of a TextHolder</h5>
             </li>
             <li>
-              <h4>SyntaxCheckOnly:</h4>
+              <h4>ContinueOnError:</h4>
               <h5>Set to true if this parse is only for checking syntax of the template</h5>
             </li>
             <li>
@@ -330,7 +371,7 @@
             </li>
             <li>
               <h4>AllowCachingNullValues:</h4>
-              <h5>Set to true to allow the parser to cache the result(from calculation or 'RequireInput' event) of a TextHolder which is null</h5>
+              <h5>Set to true to allow the parser to cache the result(from calculation or 'OnRequireInput' event) of a TextHolder which is null</h5>
             </li>
             <li>
               <h4>Keywords:</h4>
