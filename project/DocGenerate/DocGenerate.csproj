@@ -63,16 +63,16 @@
     <Compile Include="TemplatorHelpDoc.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Templator\Templator.csproj">
-      <Project>{000db9f3-9744-43b8-9467-af79437132e6}</Project>
-      <Name>Templator</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\index.html" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Templator\Templator.csproj">
+      <Project>{000db9f3-9744-43b8-9467-af79437132e6}</Project>
+      <Name>Templator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

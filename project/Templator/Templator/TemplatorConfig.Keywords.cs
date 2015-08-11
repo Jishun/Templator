@@ -178,6 +178,11 @@ namespace Templator
                             var position = (int)parser.Context["ParentPosition"];
                             parser.PopContext();
                             var l = parser.StackLevel + parsedHolder.Name;
+                            if (parser.Context[l + "InputIndex"] == null)
+                            {
+                                parser.LogSyntextError("Probably the CollectionEnd holder didn't use the same name with the beginning Holder, end holder name : '{0}'".FormatInvariantCulture(parsedHolder.Name));
+                                return false;
+                            }
                             if ((int)parser.Context[l + "InputCount"] > (int)parser.Context[l + "InputIndex"])
                             {
                                 parser.Context.Text.Position = position;

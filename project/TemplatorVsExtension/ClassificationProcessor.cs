@@ -186,6 +186,7 @@ namespace Templator.Utils
 
         private void OnTemplatorTokenFound(object sender, TemplatorSyntaxEventArgs args)
         {
+            var parser = (TemplatorParser) sender;
             if (_dte.ActiveDocument.Name == TemplatorConfigFileName)
             {
                 return;
@@ -203,35 +204,35 @@ namespace Templator.Utils
                 }
             }
             _lastPosition = args.Position - args.TokenText.Length;
-            if (args.TokenName == _parser.Config.TermBeginEnd)
+            if (args.TokenName == parser.Config.TermBeginEnd)
             {
                 type = _brace;
             }
-            else if (args.TokenName == _parser.Config.TermName)
+            else if (args.TokenName == parser.Config.TermName)
             {
                 type = _recognized;
             }
-            else if (args.TokenName == _parser.Config.TermKeyword)
+            else if (args.TokenName == parser.Config.TermKeyword)
             {
                 type = _name;
             }
-            else if (args.TokenName == _parser.Config.TermCategory)
+            else if (args.TokenName == parser.Config.TermCategory)
             {
                 type = _type;
             }
-            else if (args.TokenName == _parser.Config.TermParam)
+            else if (args.TokenName == parser.Config.TermParam)
             {
                 type = _param;
             }
-            else if (args.TokenName == _parser.Config.TermParamBeginEnd)
+            else if (args.TokenName == parser.Config.TermParamBeginEnd)
             {
                 type = _paramBrace;
             }
-            else if (args.TokenName == _parser.Config.TermKeywordsBeginEnd)
+            else if (args.TokenName == parser.Config.TermKeywordsBeginEnd)
             {
                 type = _descBrace;
             }
-            else if (args.TokenName == _parser.Config.TermCategorizedNameBeginEnd)
+            else if (args.TokenName == parser.Config.TermCategorizedNameBeginEnd)
             {
                 type = _typeBrace;
             }
