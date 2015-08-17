@@ -93,6 +93,7 @@
   <KeywordBase32>Base32</KeywordBase32>
   <KeywordUrl>Url</KeywordUrl>
   <KeywordHtml>Html</KeywordHtml>
+  <KeywordJoin>Join</KeywordJoin>
   <KeywordExpression>Expression</KeywordExpression>
   <KeywordMath>Math</KeywordMath>
   <MaxErrorCount>1000</MaxErrorCount>
