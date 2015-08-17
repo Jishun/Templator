@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Templator</id>
-    <version>1.0.0.5</version>
+    <version>1.0.0.6</version>
     <title>Templator</title>
     <authors>Jishun Duan</authors>
     <owners>Jishun Duan</owners>
@@ -11,7 +11,7 @@
     <iconUrl>https://github.com/djsxp/Templator</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An addvanced text based replacing-template engin designed for using simplified dictionary input</description>
-    <releaseNotes>Fix package dependency error in previous version, bug fixes</releaseNotes>
+    <releaseNotes>Add keyword "Join" for collection</releaseNotes>
     <copyright>Copyright Jishun Duan, 2011-2015</copyright>
     <tags>Template, Parse, String Replace</tags>
       <dependencies>
@@ -20,8 +20,8 @@
           <dependency id="DotNetUtils" version="1.0.0.3" />
       </dependencies>
   </metadata>
-    <files>
-        <file src="TemplatorConfig.xml" target="content" />
-        <file src="Install.ps1" target="tools" />
-    </files>
+  <files>
+      <file src="TemplatorConfig.xml" target="content" />
+      <file src="Install.ps1" target="tools" />
+  </files>
 </package>

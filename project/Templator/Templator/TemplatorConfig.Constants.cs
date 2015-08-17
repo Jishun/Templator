@@ -123,6 +123,7 @@ namespace Templator
         public string KeywordBase32 = "Base32";
         public string KeywordUrl = "Url";
         public string KeywordHtml = "Html";
+        public string KeywordJoin = "Join";
 
         public string KeywordExpression = "Expression";
         public string KeywordMath = "Math"; //Math expression,js?

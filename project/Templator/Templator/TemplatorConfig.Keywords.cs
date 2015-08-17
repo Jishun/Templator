@@ -972,6 +972,22 @@ namespace Templator
                         parser.ParsingHolder[KeywordFixedLength] = str.ParseIntParam();
                     })
                 },
+                new TemplatorKeyword(KeywordJoin)
+                {
+                    ManipulateOutput = true,
+                    HandleNullOrEmpty = true,
+                    Description = "Apply logic as String.Join to an collection/array, e.g. insert specific string before each item except the first one",
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        var key = parser.StackLevel + holder.Name + "InputIndex";
+                        var i = (int?) parser.Context[key];
+                        if (i.HasValue && i > 0)
+                        {
+                            parser.AppendResult(holder["Join"]);
+                        }
+                        return value;
+                    }
+                },
                 new TemplatorKeyword(KeywordHolder)
                 {
                     ManipulateOutput = true,

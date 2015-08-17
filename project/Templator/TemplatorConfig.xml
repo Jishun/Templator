@@ -90,6 +90,7 @@
   <KeywordHtml>Html</KeywordHtml>
   <KeywordExpression>Expression</KeywordExpression>
   <KeywordMath>Math</KeywordMath>
+  <KeywordJoin>Join</KeywordJoin>
   <MaxErrorCount>1000</MaxErrorCount>
   <XmlFieldElementName>Field</XmlFieldElementName>
   <XmlValueNodeName>Value</XmlValueNodeName>
