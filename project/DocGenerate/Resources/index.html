@@ -34,12 +34,12 @@
             <h5>To use this libary: </h5>
             <ul>
                 <li>Initialize an instance of Templator Config. cutomize it if necessary</li>
-                <li>Assign an instance of ILogger to the config object, or leave it default an later use ((Logger)config.Logger).Errors to retrieve parser errors</li>
+                <li>Assign an instance of ILogger to the config object, or leave it default an later use ((TemplatorLogger)config.TemplatorLogger).Errors to retrieve parser errors</li>
                 <li>Initialize an instans of TemplatorParser with the config object</li>
                 <li>Construct a IDictionary&lt;string, object&gt; as input or use TemplatorUtil.ParseJsonDict(string) method to parse a Json object as input</li>
                 <li>Load text/xml templat as string or stream</li>
                 <li>var outPut = parser.LoadXmlTemplate(stream, input); or parser.ParseXml, or parser.LoadTextTemplate etc.. will generate the parsed string</li>
-                <li>Check the logger object (((Logger)config.Logger).Errors by default) for parsing errors</li>
+                <li>Check the logger object (((TemplatorLogger)config.TemplatorLogger).Errors by default) for parsing errors</li>
                 <li>parser.Holders will give out the holders defined inside the template</li>
             </ul>
             <h3 id="Sec_{{Name}}" bindings="{{Sections[CollectionBegin(Group)]}}">{{Name}}</h3>

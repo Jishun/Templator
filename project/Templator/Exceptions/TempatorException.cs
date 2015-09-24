@@ -41,17 +41,17 @@ namespace Templator
         }
     }
 
-    public class TemplatorUnexpecetedKeywordException : TemplatorException
+    public class TemplatorUnexpectedKeywordException : TemplatorException
     {
-        public TemplatorUnexpecetedKeywordException(string message = null)
+        public TemplatorUnexpectedKeywordException(string message = null)
             : base(message)
         {
 
         }
     }
-    public class TemplatorUnexpecetedStateException : TemplatorException
+    public class TemplatorUnexpectedStateException : TemplatorException
     {
-        public TemplatorUnexpecetedStateException(string message = null)
+        public TemplatorUnexpectedStateException(string message = null)
             : base(message)
         {
 

@@ -25,9 +25,9 @@ namespace DocGenerate
             {
                 sw.Write(outPut);
             }
-            if (((Logger)config.Logger).Errors.Count > 0)
+            if (((TemplatorLogger)config.Logger).Errors.Count > 0)
             {
-                Assert.Fail(((Logger)config.Logger).Errors.First());
+                Assert.Fail(((TemplatorLogger)config.Logger).Errors.First().Message);
             }
             using (var sw = new StreamWriter(docPath + "TemplatorConfig.xml", false))
             {

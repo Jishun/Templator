@@ -24,7 +24,7 @@ namespace Templator
                     }
                     else
                     {
-                        throw new TemplatorUnexpecetedStateException();
+                        throw new TemplatorUnexpectedStateException();
                     }
                     return null;
                 }
@@ -130,7 +130,7 @@ namespace Templator
                     }
                     else if (str != String.Empty)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnexpecetedString);
+                        parser.LogSyntextError(parser.Config.SyntaxErrorUnexpectedString);
                     }
                     else if (matched == parser.Config.KeywordsBegin)
                     {
@@ -169,7 +169,7 @@ namespace Templator
                             {
                                 if (!parser.Config.IgnoreUnknownParam)
                                 {
-                                    parser.LogSyntextError(parser.Config.SyntaxErrorUnexpecetedKeywordParam);
+                                    parser.LogSyntextError(parser.Config.SyntaxErrorUnexpectedKeywordParam, str);
                                 }
                             }
                             parser.ParsingKeyword = parser.Config.Keywords[str].Create();
@@ -181,7 +181,7 @@ namespace Templator
                         {
                             if (!parser.Config.IgnoreUnknownKeyword)
                             {
-                                parser.LogSyntextError(parser.Config.SyntaxErrorUnexpecetedKeyword);
+                                parser.LogSyntextError(parser.Config.SyntaxErrorUnexpectedKeyword, str);
                             }
                         }
                     }
@@ -245,7 +245,7 @@ namespace Templator
                     }
                     else if (str != String.Empty)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnexpecetedString);
+                        parser.LogSyntextError(parser.Config.SyntaxErrorUnexpectedString, str);
                     }
                     parser.State.End = true;
                     parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);

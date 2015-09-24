@@ -7,9 +7,20 @@ using DotNetUtils;
 
 namespace Templator
 {
-    public class Logger : ILogger
+    public class TemplatorLogger : ILogger
     {
-        public IList<string> Errors = new List<string>(); 
+        public class TemplatorLogEntry
+        {
+            public int Line;
+            public int Column;
+            public int EndLineNumber;
+            public int EndColumnNumber;
+            public string FileName;
+            public string Message;
+        }
+
+
+        public IList<TemplatorLogEntry> Errors = new List<TemplatorLogEntry>(); 
         public void Log(string pattern, params object[] args)
         {
         }
@@ -28,12 +39,20 @@ namespace Templator
 
         public void LogError(string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message)
         {
-            throw new NotImplementedException();
+            Errors.Add(new TemplatorLogEntry()
+            {
+                FileName = file,
+                Message = message,
+                Column = columnNumber,
+                Line = lineNumber,
+                EndColumnNumber = endColumnNumber,
+                EndLineNumber = endLineNumber
+            });
         }
 
         public void LogError(string pattern, params object[] args)
         {
-            Errors.AddString(pattern, args);
+            Errors.Add(new TemplatorLogEntry(){Message = pattern.FormatInvariantCulture(args)});
         }
 
         public void LogWarning(string pattern, params object[] args)

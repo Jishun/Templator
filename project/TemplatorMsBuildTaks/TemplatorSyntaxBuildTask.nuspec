@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>TemplatorSyntaxBuildTask</id>
+    <version>1.0.0.0</version>
+    <title>Templator's build time syntax checking task</title>
+      <authors>Jishun Duan</authors>
+      <owners>Jishun Duan</owners>
+      <licenseUrl>https://github.com/djsxp/Templator/blob/master/LICENSE</licenseUrl>
+      <projectUrl>https://djsxp.github.io/Templator/</projectUrl>
+      <iconUrl>https://github.com/djsxp/Templator</iconUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Msbuild task for Syntax checking against "Templator"'s text template</description>
+    <releaseNotes>
+        
+    </releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>Templator, Template, Parse, String Replace</tags>
+  </metadata>
+    <files>
+        <!--<file src="Install.ps1" target="tools" />-->
+        <file src="**" exclude="**" />
+        <file src="..\Templator\TemplatorConfig.xml" target="content" />
+        <file src="TemplatorSyntaxBuildTask.targets" target="build" />
+        <file src="bin\$configuration$\*.exe" target="build" />
+        <file src="bin\$configuration$\*.dll" target="build" />
+        <file src="bin\$configuration$\*.pdb" target="build" />
+    </files>
+</package>

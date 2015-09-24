@@ -14,6 +14,8 @@ namespace TemplatorSyntaxBuildTask
 {
     public class TemplatorBuildTask : Task
     {
+        private const string ConfigCategory = "SyntaxBuildTask";
+
         public string Path { get; set; }
         public string ConfigFilePath { get; set; }
         public string ProjectPath { get; set; }
@@ -23,13 +25,13 @@ namespace TemplatorSyntaxBuildTask
 
         public override bool Execute()
         {
-            var m = new BuildMessageEventArgs("Templator Syntax checking", "", "TemplatorSyntaxChecker", MessageImportance.Normal);
-            BuildEngine.LogMessageEvent(m);
+            var msg = new BuildMessageEventArgs("Templator Syntax checking", "", "TemplatorSyntaxChecker", MessageImportance.Normal);
+            BuildEngine.LogMessageEvent(msg);
             if (ConfigFilePath.IsNullOrWhiteSpace())
             {
-                var proj = new Project(ProjectPath ?? BuildEngine.ProjectFileOfTaskNode);
-                var configFile = proj.Items
-                        .FirstOrDefault(i => i.EvaluatedInclude.Equals("TemplatorConfig.xml", StringComparison.OrdinalIgnoreCase));
+                var proj = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(ProjectPath).FirstOrDefault() ?? new Project(ProjectPath);
+                var configFile = proj.GetItemsByEvaluatedInclude(TemplatorConfig.DefaultConfigFileName).FirstOrDefault();
+
                 if (configFile != null)
                 {
                     ConfigFilePath = configFile.EvaluatedInclude;
@@ -40,13 +42,22 @@ namespace TemplatorSyntaxBuildTask
             if (ConfigFilePath.IsNullOrWhiteSpace())
             {
                 config = TemplatorConfig.DefaultInstance;
+                const string url = "https://github.com/djsxp/Templator/blob/master/project/Templator/TemplatorConfig.xml";
+                msg = new BuildMessageEventArgs("Unable to find '{0}', using defaults, for a config file, please find; '{1}'".FormatInvariantCulture(TemplatorConfig.DefaultConfigFileName, url), "", "TemplatorSyntaxChecker", MessageImportance.Normal);
+                BuildEngine.LogMessageEvent(msg);
             }
             else
             {
                 try
                 {
-                    var x = XDocument.Load(ConfigFilePath);
-                    config = x.Root.FromXElement<TemplatorConfig>();
+                    config = TemplatorConfig.FromXml(ConfigFilePath);
+                    var path = config.CustomOptions.EmptyIfNull().PropertyOfFirstOrDefault(c => c.Category == ConfigCategory && c.Key== "Path", pr => pr.Value);
+                    Path = path ?? Path;
+                    var filter = config.CustomOptions.EmptyIfNull().PropertyOfFirstOrDefault(c => c.Category == ConfigCategory && c.Key == "Filters", pr => pr.Value);
+                    Filters = filter ?? Filters;
+                    var depth = config.CustomOptions.EmptyIfNull().PropertyOfFirstOrDefault(c => c.Category == ConfigCategory && c.Key == "Depth", pr => pr.Value);
+                    var d = 0;
+                    Depth = int.TryParse(depth, out d) ? d : Depth;
                 }
                 catch (Exception e)
                 {
@@ -57,7 +68,7 @@ namespace TemplatorSyntaxBuildTask
             }
             if (Path.IsHtmlNullOrWhiteSpace() || !Directory.Exists(Path))
             {
-                var message = new BuildErrorEventArgs("TemplatorSyntaxConfig", "TemplatorSyntaxError", "project", 0, 0, 0, 0, "", "TemplatorBuildTask", "TemplatorBuildTask");
+                var message = new BuildErrorEventArgs("TemplatorSyntaxConfig", "Unable to find the template path: '{0}'".FormatInvariantCulture(Path), "project", 0, 0, 0, 0, "", "TemplatorBuildTask", "TemplatorBuildTask");
                 BuildEngine.LogErrorEvent(message);
                 return false;
             }
@@ -66,16 +77,17 @@ namespace TemplatorSyntaxBuildTask
             {
                 filters = Filters.Split(',');
             }
-
+            var logger = new TemplatorLogger();
+            config.Logger = logger;
             var p = new TemplatorParser(config);
             p.GrammarCheckDirectory(Path, filters, Depth);
             if (p.ErrorCount > 0)
             {
-                //foreach (var parserMessage in p.GrammarParseTree.ParserMessages)
-                //{
-                //    var message = new BuildErrorEventArgs("TemplatorSyntaxChecker", "TemplatorSyntaxError", p.GrammarParseTree.FileName, parserMessage.Location.Line, parserMessage.Location.Column, parserMessage.Location.Line, parserMessage.Location.Column, parserMessage.Message, "TemplatorBuildTask", "TemplatorBuildTask");
-                //    BuildEngine.LogErrorEvent(message);
-                //}
+                foreach (var m in logger.Errors)
+                {
+                    var message = new BuildErrorEventArgs("TemplatorSyntaxChecker", "TemplatorSyntaxError", m.FileName, m.Line+1, m.Column+1, m.EndLineNumber+1, m.EndColumnNumber+1, m.Message, "TemplatorBuildTask", "TemplatorBuildTask");
+                    BuildEngine.LogErrorEvent(message);
+                }
             }
             return p.ErrorCount ==  0;
         }

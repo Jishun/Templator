@@ -14,6 +14,8 @@ namespace Templator
 {
     public partial class TemplatorConfig
     {
+        public const string DefaultConfigFileName = "TemplatorConfig.xml";
+
         private static TemplatorConfig _instance;
         [XmlIgnore]
         public static TemplatorConfig DefaultInstance
@@ -23,8 +25,8 @@ namespace Templator
         }
 
         [XmlIgnore]
-        [Description("The Logger object used for parser to log errors")]
-        public ILogger Logger = new Logger();
+        [Description("The TemplatorLogger object used for parser to log errors")]
+        public ILogger Logger = new TemplatorLogger();
         [XmlIgnore]
         [Description("A event fired by the parser when no input found in the input dictionary to allow additional logic to find the value")]
         public EventHandler<TemplatorEventArgs> OnRequireInput;
@@ -45,10 +47,8 @@ namespace Templator
         [XmlIgnore]
         [Description("Options to control line breaks in the text file, such as to ensure the file uses windows(CRLF) mode or unix(LF)")]
         public LineBreakOption LineBreakOption;
-        [XmlIgnore]
         [Description("Whether to throw exception when parser finds an unknown keyword")]
         public bool IgnoreUnknownKeyword = true;
-        [XmlIgnore]
         [Description("Whether to throw exception when parser finds an unknown keyword Parameter")]
         public bool IgnoreUnknownParam = true;
         [XmlIgnore]
@@ -89,13 +89,30 @@ namespace Templator
         [Description("The key used by the parser to store preparsed Holder definitions.")]
         public string KeyHolders = "$Fields";
 
+        [XmlElement]
+        public string[] CustomKeywordNames { get; set; }
+        [XmlElement]
+        public TemplatorCustomerConfigEntry[] CustomOptions { get; set; }
+
         public static TemplatorConfig FromXml(string path = "TemplatorConfig.xml")
         {
             return FromXml(XDocument.Load(path).Root);
         }
+
         public static TemplatorConfig FromXml(XElement element)
         {
-            return element.FromXElement<TemplatorConfig>();
+            var ret = element.FromXElement<TemplatorConfig>();
+            return ret;
+        }
+
+        public class TemplatorCustomerConfigEntry
+        {
+            [XmlAttribute]
+            public string Key;
+            [XmlAttribute]
+            public string Value;
+            [XmlAttribute]
+            public string Category;
         }
     }
 }

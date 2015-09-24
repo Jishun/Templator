@@ -17,6 +17,22 @@ namespace Templator
 {
     public partial class TemplatorConfig
     {
+
+        private IList<TemplatorKeyword> _customKeywords;
+
+        public void AddKeyword(TemplatorKeyword newKeyword)
+        {
+            if (newKeyword == null)
+            {
+                return;
+            }
+            if (_customKeywords == null)
+            {
+                _customKeywords = new List<TemplatorKeyword>();
+            }
+            _customKeywords.Add(newKeyword);
+        }
+
         public void PrepareKeywords()
         {
             Keywords = (new List<TemplatorKeyword>()
@@ -387,6 +403,11 @@ namespace Templator
                     {
                         if (str.IsNullOrWhiteSpace())
                         {
+                            parser.State.Error = true;
+                            if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                            {
+                                return;
+                            }
                             throw new TemplatorParamsException();
                         }
                         parser.ParsingHolder[KeywordRefer] = str;
@@ -534,6 +555,11 @@ namespace Templator
                             lengths = str.Split('-').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
                             if (lengths.Count != 2)
                             {
+                                parser.State.Error = true;
+                                if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                                {
+                                    return;
+                                }
                                 throw new TemplatorParamsException("Invalid length defined");
                             }
                             lengths.Insert(0, -1);
@@ -543,6 +569,11 @@ namespace Templator
                             lengths = str.Split(';').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
                             if (lengths.Count == 0)
                             {
+                                parser.State.Error = true;
+                                if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                                {
+                                    return;
+                                }
                                 throw new TemplatorParamsException("Invalid length defined");
                             }
                         }
@@ -551,6 +582,11 @@ namespace Templator
                             var l = str.ParseIntNullable();
                             if (!l.HasValue)
                             {
+                                parser.State.Error = true;
+                                if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                                {
+                                    return;
+                                }
                                 throw new TemplatorParamsException("Invalid length defined");
                             }
                             lengths = l.Value.Single().ToList();
@@ -646,7 +682,7 @@ namespace Templator
                         {
                             parser.ParsingHolder[KeywordEnum] = str;
                         }
-                        else
+                        else if(!parser.Config.IgnoreUnknownParam && !parser.Config.ContinueOnError)
                         {
                             throw new TemplatorParamsException();
                         }
@@ -771,6 +807,11 @@ namespace Templator
                         if (arr.Length == 2)
                         {
                             parser.ParsingHolder[KeywordReplace] = arr;
+                            return;
+                        }
+                        parser.State.Error = true;
+                        if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                        {
                             return;
                         }
                         throw new TemplatorParamsException();
@@ -939,6 +980,11 @@ namespace Templator
                     {
                         if (str.Length != 1)
                         {
+                            parser.State.Error = true;
+                            if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                            {
+                                return;
+                            }
                             throw new TemplatorParamsException();
                         }
                         parser.ParsingHolder[KeywordRemoveChar] = str.ToCharArray();
@@ -1206,6 +1252,11 @@ namespace Templator
                         }
                         if (s.IsNullOrWhiteSpace())
                         {
+                            parser.State.Error = true;
+                            if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
+                            {
+                                return;
+                            }
                             throw new TemplatorParamsException();
                         }
                         parser.ParsingHolder[KeywordAlignCount] = s;
@@ -1222,6 +1273,14 @@ namespace Templator
                     })
                 },
             }).Where(k => !k.Name.IsNullOrEmpty()).ToDictionary(k => k.Name);
+            foreach (var c in _customKeywords.EmptyIfNull().Where(k => !k.Name.IsNullOrEmpty()))
+            {
+                Keywords.AddOrOverwrite(c.Name, c);
+            }
+            foreach (var custom in CustomKeywordNames.EmptyIfNull())
+            {
+                Keywords.AddOrSkip(custom, new TemplatorKeyword(custom));
+            }
             var index = 1;
             foreach (var key in Keywords.Values)
             {

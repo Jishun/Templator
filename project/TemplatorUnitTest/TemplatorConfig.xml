@@ -18,9 +18,9 @@
   <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
   <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
   <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
-  <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string: '{0}'</SyntaxErrorUnexpectedString>
-  <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword: '{0}'</SyntaxErrorUnexpectedKeywordParam>
-  <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword: '{0}'</SyntaxErrorUnexpectedKeyword>
+  <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string</SyntaxErrorUnexpectedString>
+  <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword</SyntaxErrorUnexpectedKeywordParam>
+  <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword</SyntaxErrorUnexpectedKeyword>
   <TermCategory>Category</TermCategory>
   <TermName>Name</TermName>
   <TermValue>ParamValue</TermValue>
@@ -91,16 +91,14 @@
   <KeywordExpression>Expression</KeywordExpression>
   <KeywordMath>Math</KeywordMath>
   <KeywordJoin>Join</KeywordJoin>
-  <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames><!--Allow multiple, used for build task to validate-->
   <MaxErrorCount>1000</MaxErrorCount>
   <XmlFieldElementName>Field</XmlFieldElementName>
   <XmlValueNodeName>Value</XmlValueNodeName>
   <XmlNameNodeName>Name</XmlNameNodeName>
   <XmlCollectionNodeName>CollectionItem</XmlCollectionNodeName>
   <KeyHolders>$Fields</KeyHolders>
-  <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
+  <IgnoreUnknownKeyword>false</IgnoreUnknownKeyword>
   <IgnoreUnknownParam>true</IgnoreUnknownParam>
-    <!--for build task configurations-->
     <CustomOptions Key="Filters" Value=".xml,.csv,.txt" Category="SyntaxBuildTask"></CustomOptions>
     <CustomOptions Key="Path" Value="Templates" Category="SyntaxBuildTask"></CustomOptions>
     <CustomOptions Key="Depth" Value="3" Category="SyntaxBuildTask"></CustomOptions>

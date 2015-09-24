@@ -1,4 +1,4 @@
-﻿{{(Holder Name)[Sum(Holder1;Holder2;HolderRepeat.Holder3)]}}{{(Holder1)[Number]}}{{(Holder2)[Number]}}{{(HolderRepeat)[Collection]}}{{(Holder3)[Number]}}{{(HolderRepeat)[CollectionEnd]}}
+﻿{{(Holder Name)[Sum(Holder1;Holder2;HolderRepeat.Holder3)]}}{{(Holder1)[Number,Encrypt]}}{{(Holder2)[Number]}}{{(HolderRepeat)[Collection]}}{{(Holder3)[Number]}}{{(HolderRepeat)[CollectionEnd]}}
 {Holder1: 1, Holder2:2, HolderRepeat: [{Holder3:3},{Holder3:4}]}
 101234
 4

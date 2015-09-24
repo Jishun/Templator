@@ -12,6 +12,7 @@ namespace Templator
     public class TemplatorParser
     {
         private bool _clearedSyntaxError = true;
+        private string _syntaxCheckFileName = null;
 
         public bool Csv;
         public TemplatorConfig Config;
@@ -46,6 +47,7 @@ namespace Templator
         {
             Config = config;
             config.PrepareKeywords();
+            config.Logger = config.Logger ?? new TemplatorLogger();
             Context = new TemplatorParsingContext();
         }
 
@@ -89,9 +91,12 @@ namespace Templator
 
         public virtual IDictionary<string, TextHolder> GrammarCheck(string template, string fileName)
         {
+            _syntaxCheckFileName = fileName;
             ParsingHolder = null;
             ParsingKeyword = null;
             PushContext(null, null, null);
+            Config.ContinueOnError = true;
+            ParseText(template, null);
             return Context.Holders;
         }
 
@@ -287,7 +292,7 @@ namespace Templator
                 }
                 else
                 {
-                    throw new TemplatorUnexpecetedStateException();
+                    throw new TemplatorUnexpectedStateException();
                 }
             }
             return ret;
@@ -426,7 +431,11 @@ namespace Templator
             {
                 State.Error = true;
             }
-            LogError(pattern, args);
+            if (Context.Logger != null)
+            {
+                ErrorCount++;
+                Context.Logger.LogError(_syntaxCheckFileName, Context.Text.PreviousLine, Context.Text.PreviousColumn, Context.Text.Line, Context.Text.Column, pattern.FormatInvariantCulture(args));
+            }
             if (!Config.ContinueOnError || ReachedMaxError)
             {
                 throw new TemplatorSyntaxException(pattern.FormatInvariantCulture(args));

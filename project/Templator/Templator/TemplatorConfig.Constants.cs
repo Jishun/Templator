@@ -46,9 +46,9 @@ namespace Templator
         public string SyntaxErrorUnmatchedKeywordsBeginTag = "SyntaxError: Reached document end before finding keywords the closing tag";
         public string SyntaxErrorUnmatchedBeginNameTag = "SyntaxError: Reached document end before finding the name closing tag";
         public string SyntaxErrorHolderNameNotFound = "SyntaxError: TextHolder's Name not defined";
-        public string SyntaxErrorUnexpecetedString = "SyntaxError: Unexpcted string";
-        public string SyntaxErrorUnexpecetedKeywordParam = "SyntaxError: Unexpcted param for keyword";
-        public string SyntaxErrorUnexpecetedKeyword = "SyntaxError: Unexpcted keyword";
+        public string SyntaxErrorUnexpectedString = "SyntaxError: Unexpcted string";
+        public string SyntaxErrorUnexpectedKeywordParam = "SyntaxError: Unexpcted param for keyword";
+        public string SyntaxErrorUnexpectedKeyword = "SyntaxError: Unexpcted keyword";
 
         public string TermBeginEnd = "BeginEnd";
         public string TermCategorizedNameBeginEnd = "CBeginEnd";

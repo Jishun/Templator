@@ -44,7 +44,7 @@
     </Reference>
     <Reference Include="DotNetUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DotNetUtils.1.0.0.3\lib\net45\DotNetUtils.dll</HintPath>
+      <HintPath>..\packages\DotNetUtils.1.0.0.6\lib\net45\DotNetUtils.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,7 +80,7 @@
     <Compile Include="Templator\HolderParsingStates.cs" />
     <Compile Include="Model\TextHolder.cs" />
     <Compile Include="Utils\HolderUtils.cs" />
-    <Compile Include="Utils\Logger.cs" />
+    <Compile Include="Utils\TemplatorLogger.cs" />
     <Compile Include="Utils\TemplatorUtil.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
@@ -91,7 +91,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="msbuild.txt" />
+    <Content Include="TemplatorConfig.xml" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

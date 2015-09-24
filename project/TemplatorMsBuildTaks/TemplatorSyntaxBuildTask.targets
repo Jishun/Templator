@@ -1,0 +1,6 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <UsingTask AssemblyFile="TemplatorSyntaxBuildTask.dll" TaskName="TemplatorSyntaxBuildTask.TemplatorBuildTask" />
+    <Target Name="BeforeBuild">
+        <TemplatorBuildTask Path="$(ProjectDir)\Templates" Depth="3" Filters=".xml,.csv,.txt" ProjectPath="$(ProjectPath)" />
+    </Target>
+</Project>
