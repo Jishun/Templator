@@ -18,9 +18,9 @@
   <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
   <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
   <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
-  <SyntaxErrorUnexpecetedString>SyntaxError: Unexpcted string</SyntaxErrorUnexpecetedString>
-  <SyntaxErrorUnexpecetedKeywordParam>SyntaxError: Unexpcted param for keyword</SyntaxErrorUnexpecetedKeywordParam>
-  <SyntaxErrorUnexpecetedKeyword>SyntaxError: Unexpcted keyword</SyntaxErrorUnexpecetedKeyword>
+  <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string</SyntaxErrorUnexpectedString>
+  <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword</SyntaxErrorUnexpectedKeywordParam>
+  <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword</SyntaxErrorUnexpectedKeyword>
   <TermBeginEnd>BeginEnd</TermBeginEnd>
   <TermCategorizedNameBeginEnd>CBeginEnd</TermCategorizedNameBeginEnd>
   <TermParamBeginEnd>PBeginEnd</TermParamBeginEnd>
@@ -97,6 +97,8 @@
   <KeywordExpression>Expression</KeywordExpression>
   <KeywordMath>Math</KeywordMath>
   <MaxErrorCount>1000</MaxErrorCount>
+  <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
+  <IgnoreUnknownParam>true</IgnoreUnknownParam>
   <XmlFieldElementName>Field</XmlFieldElementName>
   <XmlValueNodeName>Value</XmlValueNodeName>
   <XmlNameNodeName>Name</XmlNameNodeName>
