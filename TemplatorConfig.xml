@@ -14,23 +14,19 @@
   <KeywordsEnd>]</KeywordsEnd>
   <SyntaxErrorCategoryNotFound>SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config</SyntaxErrorCategoryNotFound>
   <SyntaxErrorOverLappedHolder>SyntaxError: Overlapped TextHolders</SyntaxErrorOverLappedHolder>
+  <SyntaxErrorInvalidCategory>SyntaxError: Invalid category : '{0}'</SyntaxErrorInvalidCategory>
   <SyntaxErrorUnmatchedBeginTag>SyntaxError: Reached document end before finding the closing tag</SyntaxErrorUnmatchedBeginTag>
   <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
   <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
   <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
-  <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string</SyntaxErrorUnexpectedString>
-  <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword</SyntaxErrorUnexpectedKeywordParam>
-  <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword</SyntaxErrorUnexpectedKeyword>
-  <TermBeginEnd>BeginEnd</TermBeginEnd>
-  <TermCategorizedNameBeginEnd>CBeginEnd</TermCategorizedNameBeginEnd>
-  <TermParamBeginEnd>PBeginEnd</TermParamBeginEnd>
-  <TermKeywordsBeginEnd>KBeginEnd</TermKeywordsBeginEnd>
+  <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string: '{0}'</SyntaxErrorUnexpectedString>
+  <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword: '{0}'</SyntaxErrorUnexpectedKeywordParam>
+  <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword: '{0}'</SyntaxErrorUnexpectedKeyword>
   <TermCategory>Category</TermCategory>
   <TermName>Name</TermName>
   <TermValue>ParamValue</TermValue>
   <TermKeyword>Keyword</TermKeyword>
   <TermParam>Parameter</TermParam>
-  <TermDelimiter>Delimeter</TermDelimiter>
   <KeywordRepeatBegin>CollectionBegin</KeywordRepeatBegin>
   <KeywordRepeat>Collection</KeywordRepeat>
   <KeywordRepeatEnd>CollectionEnd</KeywordRepeatEnd>
@@ -93,15 +89,22 @@
   <KeywordBase32>Base32</KeywordBase32>
   <KeywordUrl>Url</KeywordUrl>
   <KeywordHtml>Html</KeywordHtml>
-  <KeywordJoin>Join</KeywordJoin>
   <KeywordExpression>Expression</KeywordExpression>
   <KeywordMath>Math</KeywordMath>
+  <KeywordJoin>Join</KeywordJoin>
+  <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames><!--Allow multiple, used for build task to validate-->
+  <AvailableCategories>User</AvailableCategories>
+  <AvailableCategories>Data</AvailableCategories>
   <MaxErrorCount>1000</MaxErrorCount>
-  <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
-  <IgnoreUnknownParam>true</IgnoreUnknownParam>
   <XmlFieldElementName>Field</XmlFieldElementName>
   <XmlValueNodeName>Value</XmlValueNodeName>
   <XmlNameNodeName>Name</XmlNameNodeName>
   <XmlCollectionNodeName>CollectionItem</XmlCollectionNodeName>
   <KeyHolders>$Fields</KeyHolders>
+  <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
+  <IgnoreUnknownParam>true</IgnoreUnknownParam>
+    <!--for build task configurations-->
+    <CustomOptions Key="Filters" Value=".xml,.csv,.txt" Category="SyntaxBuildTask"></CustomOptions>
+    <CustomOptions Key="Path" Value="Templates" Category="SyntaxBuildTask"></CustomOptions>
+    <CustomOptions Key="Depth" Value="3" Category="SyntaxBuildTask"></CustomOptions>
 </TemplatorConfig>
