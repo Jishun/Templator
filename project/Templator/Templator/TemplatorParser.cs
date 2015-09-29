@@ -427,13 +427,9 @@ namespace Templator
         public void LogSyntextError(string pattern, params object[] args)
         {
             _clearedSyntaxError = false;
-            if (State != null)
-            {
-                State.Error = true;
-            }
+            ErrorCount++;
             if (Context.Logger != null)
             {
-                ErrorCount++;
                 Context.Logger.LogError(_syntaxCheckFileName, Context.Text.PreviousLine, Context.Text.PreviousColumn, Context.Text.Line, Context.Text.Column, pattern.FormatInvariantCulture(args));
             }
             if (!Config.ContinueOnError || ReachedMaxError)

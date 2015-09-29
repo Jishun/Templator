@@ -13,8 +13,9 @@
   <KeywordsBegin>[</KeywordsBegin>
   <KeywordsEnd>]</KeywordsEnd>
   <SyntaxErrorCategoryNotFound>SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config</SyntaxErrorCategoryNotFound>
-  <SyntaxErrorOverLappedHolder>SyntaxError: Overlapped TextHolders</SyntaxErrorOverLappedHolder>
-  <SyntaxErrorUnmatchedBeginTag>SyntaxError: Reached document end before finding the closing tag</SyntaxErrorUnmatchedBeginTag>
+    <SyntaxErrorOverLappedHolder>SyntaxError: Overlapped TextHolders</SyntaxErrorOverLappedHolder>
+    <SyntaxErrorInvalidCategory>SyntaxError: Invalid category : '{0}'</SyntaxErrorInvalidCategory>
+    <SyntaxErrorUnmatchedBeginTag>SyntaxError: Reached document end before finding the closing tag</SyntaxErrorUnmatchedBeginTag>
   <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
   <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
   <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
@@ -92,6 +93,8 @@
   <KeywordMath>Math</KeywordMath>
   <KeywordJoin>Join</KeywordJoin>
   <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames><!--Allow multiple, used for build task to validate-->
+  <AvailableCategories>User</AvailableCategories>
+  <AvailableCategories>Data</AvailableCategories>
   <MaxErrorCount>1000</MaxErrorCount>
   <XmlFieldElementName>Field</XmlFieldElementName>
   <XmlValueNodeName>Value</XmlValueNodeName>

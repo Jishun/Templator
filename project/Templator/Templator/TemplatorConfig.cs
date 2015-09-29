@@ -90,9 +90,14 @@ namespace Templator
         public string KeyHolders = "$Fields";
 
         [XmlElement]
-        public string[] CustomKeywordNames { get; set; }
+        [Description("List of custom added keyword names to let syntax check task and highlight extension pass the validation")]
+        public string[] CustomKeywordNames;
         [XmlElement]
-        public TemplatorCustomerConfigEntry[] CustomOptions { get; set; }
+        [Description("List of category names to enable syntax check task and highlight extension do validation, remove to skip verifying categories")]
+        public HashSet<string> AvailableCategories;
+        [XmlElement]
+        [Description("Custom option entries to allow other libs to load config from TemplatorConfig file. the example ships is the syntax checking build task configuration")]
+        public TemplatorCustomerConfigEntry[] CustomOptions;
 
         public static TemplatorConfig FromXml(string path = "TemplatorConfig.xml")
         {

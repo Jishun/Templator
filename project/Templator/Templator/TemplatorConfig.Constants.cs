@@ -42,6 +42,7 @@ namespace Templator
 
         public string SyntaxErrorCategoryNotFound = "SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config";
         public string SyntaxErrorOverLappedHolder = "SyntaxError: Overlapped TextHolders";
+        public string SyntaxErrorInvalidCategory = "SyntaxError: Invalid category '{0}'";
         public string SyntaxErrorUnmatchedBeginTag = "SyntaxError: Reached document end before finding the closing tag";
         public string SyntaxErrorUnmatchedKeywordsBeginTag = "SyntaxError: Reached document end before finding keywords the closing tag";
         public string SyntaxErrorUnmatchedBeginNameTag = "SyntaxError: Reached document end before finding the name closing tag";
