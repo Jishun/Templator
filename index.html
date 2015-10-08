@@ -188,6 +188,9 @@
                     <a href="#Key_Join">Join</a>
                   </li>
                   <li>
+                    <a href="#Key_Wrap">Wrap</a>
+                  </li>
+                  <li>
                     <a href="#Key_Holder">Holder</a>
                   </li>
                   <li>
@@ -613,7 +616,7 @@
               <p>Map/replace output with the pair provided in the param to transform input</p>
               <div>
                         Parameters:
-                        <dl style="padding-left: 30px;"><dt>Pairs(seperated by ';') of values(seperated by ':') to map with input value</dt><dd>E.g.: a:1;b:2 with value a -&gt; 1</dd></dl></div>
+                        <dl style="padding-left: 30px;"><dt>Pairs(seperated by ';') of values(seperated by ':') to map with input value</dt><dd>E.g.: a:1;b:2 with value a -&gt; 1 and b -&gt; 2</dd></dl></div>
             </li>
             <li id="Key_Replace">
               <h4>Replace</h4>
@@ -695,6 +698,13 @@
             <li id="Key_Join">
               <h4>Join</h4>
               <p>Apply logic as String.Join to an collection/array, e.g. insert specific string before each item except the first one</p>
+            </li>
+            <li id="Key_Wrap">
+              <h4>Wrap</h4>
+              <p>Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>The begin tag for at collectionBegin or the end tag at the collectionEnd</dt><dt>Optional field Name used to determine if to wrap instead of the collection itself</dt><dd>E.g.: Collection,Wrap([) or CollectionEnd,Wrap(])</dd><dd>E.g.: Collection,Wrap([;AnotherHolder) or CollectionEnd,Wrap(\];AnotherHolder)</dd></dl></div>
             </li>
             <li id="Key_Holder">
               <h4>Holder</h4>
