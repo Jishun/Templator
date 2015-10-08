@@ -125,6 +125,7 @@ namespace Templator
         public string KeywordUrl = "Url";
         public string KeywordHtml = "Html";
         public string KeywordJoin = "Join";
+        public string KeywordWrap = "Wrap";
 
         public string KeywordExpression = "Expression";
         public string KeywordMath = "Math"; //Math expression,js?

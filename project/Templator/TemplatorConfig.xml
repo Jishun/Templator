@@ -92,6 +92,7 @@
   <KeywordExpression>Expression</KeywordExpression>
   <KeywordMath>Math</KeywordMath>
   <KeywordJoin>Join</KeywordJoin>
+  <KeywordWrap>Wrap</KeywordWrap>
   <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames><!--Allow multiple, used for build task to validate-->
   <AvailableCategories>User</AvailableCategories>
   <AvailableCategories>Data</AvailableCategories>

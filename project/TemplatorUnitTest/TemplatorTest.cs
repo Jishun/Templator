@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using DotNetUtils;
@@ -12,7 +13,7 @@ namespace TemplatorUnitTest
     [TestClass]
     public class TemplatorTest
     {
-        private readonly Logger _logs = new Logger();
+        private readonly TemplatorLogger _logs = new TemplatorLogger();
         private readonly TemplatorConfig _config = new TemplatorConfig();
         [TestMethod]
         public void SimpleDataTest()
@@ -39,7 +40,7 @@ namespace TemplatorUnitTest
                 Assert.AreEqual(entry.FieldCount, parser.Holders.Count);
                 if (_logs.Errors.Count > 0)
                 {
-                    var errors = _logs.Errors.Join("$$");
+                    var errors = _logs.Errors.Select(i => i.Message).Join("$$");
                     Assert.AreEqual(entry.Log, errors);
                 }
                 else

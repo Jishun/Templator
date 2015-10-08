@@ -331,6 +331,70 @@ namespace Templator
             return holder ?? (creatIfNoFound ? new TextHolder(key) : null);
         }
 
+        public static void SetInputCount(TemplatorParser parser, TextHolder holder, int? count)
+        {
+            var key = parser.StackLevel + holder.Name + "InputCount";
+            parser.Context[key] = count;
+        }
+
+        public static void SetParentInputCount(TemplatorParser parser, TextHolder holder, int? count)
+        {
+            if (parser.ParentContext == null)
+            {
+                return;
+            }
+            var key = (parser.StackLevel - 1) + holder.Name + "InputCount";
+            parser.ParentContext[key] = count;
+        }
+
+        public static int? GetInputCount(TemplatorParser parser, TextHolder holder)
+        {
+            var key = parser.StackLevel + holder.Name + "InputCount";
+            return (int?)parser.Context[key];
+        }
+
+        public static int? GetParentInputCount(TemplatorParser parser, TextHolder holder)
+        {
+            if (parser.ParentContext == null)
+            {
+                return null;
+            }
+            var key = (parser.StackLevel - 1) + holder.Name + "InputCount";
+            return (int?)parser.ParentContext[key];
+        }
+
+        public static void SetInputIndex(TemplatorParser parser, TextHolder holder, int? index)
+        {
+            var key = parser.StackLevel + holder.Name + "InputIndex";
+            parser.Context[key] = index;
+        }
+
+        public static void SetParentInputIndex(TemplatorParser parser, TextHolder holder, int? index)
+        {
+            if (parser.ParentContext == null)
+            {
+                return;
+            }
+            var key = (parser.StackLevel - 1) + holder.Name + "InputIndex";
+            parser.ParentContext[key] = index;
+        }
+
+        public static int? GetInputIndex(TemplatorParser parser, TextHolder holder)
+        {
+            var key = parser.StackLevel + holder.Name + "InputIndex";
+            return (int?)parser.Context[key];
+        }
+
+        public static int? GetParentInputIndex(TemplatorParser parser, TextHolder holder)
+        {
+            if (parser.ParentContext == null)
+            {
+                return null;
+            }
+            var key = (parser.StackLevel -1) + holder.Name + "InputIndex";
+            return (int?)parser.ParentContext[key];
+        }
+
         private static object KeywordPostParse(TemplatorParser parser, TextHolder holder, object current, TemplatorKeyword key)
         {
             if (current.IsNullOrEmptyValue() && !key.HandleNullOrEmpty)

@@ -1,0 +1,17 @@
+﻿{{HolderRepeat[Collection,Optional,Join(,)]}}{{AnItem}}AnItem{{HolderRepeat[CollectionEnd]}}
+{HolderRepeat: [{AnItem: "This is "}]}
+This is AnItem
+1
+
+
+{{HolderRepeat[Collection,Optional,Join(,)]}}{{AnItem}}AnItem{{HolderRepeat[CollectionEnd]}}
+{HolderRepeat: []}
+
+1
+
+
+{{HolderRepeat[Collection,Optional,Join(,)]}}{{AnItem}}AnItem{{HolderRepeat[CollectionEnd]}}
+{HolderRepeat: [{AnItem: "This is "},{AnItem: "This is "}]}
+This is AnItem,This is AnItem
+1
+

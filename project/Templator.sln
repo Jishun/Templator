@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{62785A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Templator", "Templator\Templator.csproj", "{000DB9F3-9744-43B8-9467-AF79437132E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTest", "TemplatorUnitTest\UTest.csproj", "{92355B20-2D1E-4B72-ABB6-1E9740D647EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplatorUnitTest", "TemplatorUnitTest\TemplatorUnitTest.csproj", "{0156BD07-BE3C-4251-93E8-F3DB8D938B13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,8 +46,10 @@ Global
 		{000DB9F3-9744-43B8-9467-AF79437132E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{000DB9F3-9744-43B8-9467-AF79437132E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{000DB9F3-9744-43B8-9467-AF79437132E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92355B20-2D1E-4B72-ABB6-1E9740D647EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92355B20-2D1E-4B72-ABB6-1E9740D647EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0156BD07-BE3C-4251-93E8-F3DB8D938B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0156BD07-BE3C-4251-93E8-F3DB8D938B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0156BD07-BE3C-4251-93E8-F3DB8D938B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0156BD07-BE3C-4251-93E8-F3DB8D938B13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

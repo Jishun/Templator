@@ -1,14 +1,10 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
+using System.Web.Instrumentation;
 using System.Xml.Linq;
-using System.Xml.Schema;
 using System.Xml.XPath;
 using CsvEnumerator;
 using DotNetUtils;
@@ -17,7 +13,6 @@ namespace Templator
 {
     public partial class TemplatorConfig
     {
-
         private IList<TemplatorKeyword> _customKeywords;
 
         public void AddKeyword(TemplatorKeyword newKeyword)
@@ -78,14 +73,14 @@ namespace Templator
                         var childInputs = TemplatorUtil.GetChildCollection(parser.Context.Input, parsedHolder.Name, parser.Config);
                         IDictionary<string, object> input = null;
                         var l = parser.StackLevel + parsedHolder.Name;
-                        var inputIndex = (int?)parser.Context[l + "InputIndex"] ?? 0;
+                        var inputIndex = TemplatorUtil.GetInputIndex(parser, parsedHolder) ?? 0;
                         var inputCount = 0;
                         var noOutput = false;
                         if (childInputs.IsNullOrEmpty())
                         {
                             noOutput = parsedHolder.IsOptional();
-                            parser.Context[l + "InputCount"] = 0;
-                            parser.Context[l + "InputIndex"] = inputIndex;
+                            TemplatorUtil.SetInputCount(parser, parsedHolder, 0);
+                            TemplatorUtil.SetInputIndex(parser, parsedHolder, inputIndex);
                             input = parser.Context.Input == null ? null : new Dictionary<string, object>() { { ReservedKeywordParent, parser.Context.Input } };
                         }
                         else
@@ -99,15 +94,15 @@ namespace Templator
                                 noOutput = true;
                                 input = new Dictionary<string, object>() { { ReservedKeywordParent, parser.Context.Input } };
                             }
-                            parser.Context[l + "InputIndex"] = inputIndex;
-                            if (parser.Context[l + "InputCount"] == null || !(parsedHolder.ContainsKey(KeywordLength) || parsedHolder.ContainsKey(KeywordAlignCount)))
+                            TemplatorUtil.SetInputIndex(parser, parsedHolder, inputIndex);
+                            if (TemplatorUtil.GetInputCount(parser, parsedHolder) == null || !(parsedHolder.ContainsKey(KeywordLength) || parsedHolder.ContainsKey(KeywordAlignCount)))
                             {
                                 inputCount = childInputs.Length;
-                                parser.Context[l + "InputCount"] = inputCount;
+                                TemplatorUtil.SetInputCount(parser, parsedHolder, inputCount);
                             }
                             else
                             {
-                                inputCount = (int) parser.Context[l + "InputCount"];
+                                inputCount = (int) TemplatorUtil.GetInputCount(parser, parsedHolder);
                             }
                         }
                         parser.Context.Holders.AddOrSkip(parsedHolder.Name, parsedHolder);
@@ -169,13 +164,13 @@ namespace Templator
                             {
                                 p.PopContext();
                                 var ll = p.StackLevel + parsedHolder.Name;
-                                if ((int)p.Context[ll + "InputCount"] > (int)p.Context[ll + "InputIndex"])
+                                if (TemplatorUtil.GetInputCount(p, parsedHolder) > TemplatorUtil.GetInputIndex(p, parsedHolder))
                                 {
                                     p.XmlContext.ElementIndex = (int)p.XmlContext[ll + "XmlElementIndex"] - 1;
                                 }
                                 else
                                 {
-                                    p.Context[ll + "InputIndex"] = null;
+                                    TemplatorUtil.SetInputIndex(p, parsedHolder, null);
                                     p.XmlContext.OnBeforeParsingElement = null;
                                     if ((string)parsedHolder[KeywordRepeatEnd] == "Group")
                                     {
@@ -194,19 +189,19 @@ namespace Templator
                             var position = (int)parser.Context["ParentPosition"];
                             parser.PopContext();
                             var l = parser.StackLevel + parsedHolder.Name;
-                            if (parser.Context[l + "InputIndex"] == null)
+                            if (TemplatorUtil.GetInputIndex(parser, parsedHolder) == null)
                             {
                                 parser.LogSyntextError("Probably the CollectionEnd holder didn't use the same name with the beginning Holder, end holder name : '{0}'".FormatInvariantCulture(parsedHolder.Name));
                                 parser.State.Error = true;
                                 return false;
                             }
-                            if ((int)parser.Context[l + "InputCount"] > (int)parser.Context[l + "InputIndex"])
+                            if (TemplatorUtil.GetInputCount(parser, parsedHolder) > TemplatorUtil.GetInputIndex(parser, parsedHolder))
                             {
                                 parser.Context.Text.Position = position;
                             }
                             else
                             {
-                                parser.Context[l + "InputIndex"] = null;
+                                TemplatorUtil.SetInputIndex(parser, parsedHolder, null);
                             }
                         }
                         return false;
@@ -536,8 +531,7 @@ namespace Templator
                         {
                             if (isArray && child != null)
                             {
-                                var l = parser.StackLevel + holder.Name;
-                                parser.Context[l + "InputCount"] = maxLength.Value;
+                                TemplatorUtil.SetInputCount(parser, holder, maxLength.Value);
                             }
                             else
                             {
@@ -760,7 +754,7 @@ namespace Templator
                     Description = "Map/replace output with the pair provided in the param to transform input",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("Pairs(seperated by ';') of values(seperated by ':') to map with input value", "E.g.: a:1;b:2 with value a -> 1" )
+                        new Pair<string, string>("Pairs(seperated by ';') of values(seperated by ':') to map with input value", "E.g.: a:1;b:2 with value a -> 1 and b -> 2" )
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -1024,13 +1018,77 @@ namespace Templator
                     ManipulateOutput = true,
                     HandleNullOrEmpty = true,
                     Description = "Apply logic as String.Join to an collection/array, e.g. insert specific string before each item except the first one",
+                    
                     OnGetValue = (holder, parser, value) =>
                     {
-                        var key = parser.StackLevel + holder.Name + "InputIndex";
-                        var i = (int?) parser.Context[key];
+                        var i = TemplatorUtil.GetInputIndex(parser, holder);
                         if (i.HasValue && i > 0)
                         {
-                            parser.AppendResult(holder["Join"]);
+                            parser.AppendResult(holder[KeywordJoin]);
+                        }
+                        return value;
+                    }
+                },
+                new TemplatorKeyword(KeywordWrap)
+                {
+                    ManipulateOutput = true,
+                    HandleNullOrEmpty = true,
+                    Description = "Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty",
+                    Params = new List<Pair<string, string>>
+                    {
+                        new Pair<string, string>("The begin tag for at collectionBegin or the end tag at the collectionEnd", "E.g.: Collection,Wrap([) or CollectionEnd,Wrap(])" ),
+                        new Pair<string, string>("Optional field Name used to determine if to wrap instead of the collection itself", "E.g.: Collection,Wrap([;AnotherHolder) or CollectionEnd,Wrap(\\];AnotherHolder)" )
+                    },
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        bool begin = false, end = false;
+                        if (holder.ContainsKey(parser.Config.KeywordRepeat) || holder.ContainsKey(parser.Config.KeywordRepeatBegin))
+                        {
+                            var i = TemplatorUtil.GetInputIndex(parser, holder);
+                            if (!i.HasValue)
+                            {
+                                begin = true;
+                            }
+                        }
+                        else if(holder.ContainsKey(parser.Config.KeywordRepeatEnd))
+                        {
+                            var c = TemplatorUtil.GetParentInputCount(parser, holder);
+                            var i = TemplatorUtil.GetParentInputIndex(parser, holder);
+                            if (i.HasValue && i == c)
+                            {
+                                end = true;
+                            }
+                        }
+                        
+                        if (begin || end)
+                        {
+                            var p = new SeekableString((string)holder[KeywordWrap]);
+                            var wrap = p.ReadTo(true, parser.Config.EscapePrefix, ";");
+                            var name = p.Left;
+                            if (name.IsNullOrEmpty())
+                            {
+                                if (end)
+                                {
+                                    parser.AppendResult(wrap);
+                                }
+                                else
+                                {
+                                    var collection = TemplatorUtil.GetChildCollection(parser.Context.Input, holder.Name, parser.Config);
+                                    if (!collection.IsNullOrEmpty())
+                                    {
+                                        parser.AppendResult(wrap);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var eav = TemplatorUtil.GetInputValue(parser, name, parser.Context.Input);
+                                eav = eav ?? parser.RequireValue(parser, TemplatorUtil.GetHolder(parser.Context.Input, name, parser.Config));
+                                if (!eav.IsNullOrEmptyValue())
+                                {
+                                    parser.AppendResult(wrap);
+                                }
+                            }
                         }
                         return value;
                     }
@@ -1265,11 +1323,11 @@ namespace Templator
                         if (!childInputs.IsNullOrEmpty())
                         {
                             var l = parser.StackLevel + parser.ParsingHolder.Name;
-                            parser.Context[l + "InputCount"] = childInputs.Max(c =>
+                            TemplatorUtil.SetInputCount(parser, parser.ParsingHolder, childInputs.Max(c =>
                             {
                                 var child = TemplatorUtil.GetChildCollection(c, parser.ParsingHolder.Name, parser.Config);
                                 return child == null ? 0 : child.Length;
-                            });
+                            }));
                         }
                     })
                 },

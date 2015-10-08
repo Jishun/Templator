@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{92355B20-2D1E-4B72-ABB6-1E9740D647EC}</ProjectGuid>
+    <ProjectGuid>{0156BD07-BE3C-4251-93E8-F3DB8D938B13}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TemplatorUnitTest</RootNamespace>
@@ -39,7 +39,7 @@
   <ItemGroup>
     <Reference Include="DotNetUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DotNetUtils.1.0.0.3\lib\net45\DotNetUtils.dll</HintPath>
+      <HintPath>..\packages\DotNetUtils.1.0.0.8\lib\net45\DotNetUtils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.XML" />
@@ -103,6 +103,8 @@
     <Content Include="..\..\doc\TemplatorConfig.xml">
       <Link>TemplatorConfig.xml</Link>
     </Content>
+    <EmbeddedResource Include="SimpleData\KeywordJoin.txt" />
+    <EmbeddedResource Include="SimpleData\KeywordWrap.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

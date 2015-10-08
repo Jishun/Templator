@@ -33,6 +33,7 @@ namespace Templator
         {
             get { return XmlStack.Peek(); }
         }
+
         public TemplatorParsingContext ParentContext
         {
             get { return Stack.Peek(); }
@@ -116,6 +117,7 @@ namespace Templator
                 Holders.Clear();
             }
         }
+
         public object RequireValue(object sender, TextHolder holder, object defaultRet = null, IDictionary<string, object> input = null)
         {
             var recursiveCheckKey = StackLevel + holder.Name + "$Processing";
@@ -432,7 +434,7 @@ namespace Templator
             {
                 Context.Logger.LogError(_syntaxCheckFileName, Context.Text.PreviousLine, Context.Text.PreviousColumn, Context.Text.Line, Context.Text.Column, pattern.FormatInvariantCulture(args));
             }
-            if (!Config.ContinueOnError || ReachedMaxError)
+            if (!Config.ContinueOnError && ReachedMaxError)
             {
                 throw new TemplatorSyntaxException(pattern.FormatInvariantCulture(args));
             }
@@ -456,8 +458,13 @@ namespace Templator
 
         private void CollectHolderResults(string mergeInto = null)
         {
+            if (StackLevel > 0)
+            {
+                LogSyntextError("Collection Level not cleared: levels at {0}, possibly missing end holder of a collection/repeat holder", StackLevel);
+            }
             TemplatorUtil.MergeHolders(Holders, Context.Holders.Values, mergeInto);
         }
+
 #endregion results
     }
 }
