@@ -51,6 +51,11 @@
                 </a>
               </li>
               <li>
+                <a href="#Sec_Extensibility">
+                  <h4>Extensibility</h4>
+                </a>
+              </li>
+              <li>
                 <a href="#Sec_Configuration">
                   <h4>Configuration</h4>
                 </a>
@@ -185,6 +190,9 @@
                     <a href="#Key_FixedLength">FixedLength</a>
                   </li>
                   <li>
+                    <a href="#Key_Select">Select</a>
+                  </li>
+                  <li>
                     <a href="#Key_Join">Join</a>
                   </li>
                   <li>
@@ -255,7 +263,37 @@
           <h3 id="Sec_Template Usage">Template Usage</h3>
           <h5>Simply put the a place holder at the position of the text which you what to output, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value</h5>
           <h3 id="Sec_Syntax of a TextHolder">Syntax of a TextHolder</h3>
-          <h5>With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object  </h5>
+          <h5>With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object. See examples below:</h5>
+          <ul>
+            <li>
+              <h4>Basic:</h4>
+              <h5>{{HolderName}}</h5>
+            </li>
+            <li>
+              <h4>Categorized:</h4>
+              <h5>{{Category(HolderName)}}</h5>
+            </li>
+            <li>
+              <h4>With Parameter:</h4>
+              <h5>{{HolderName[Number(#.##)]}},{{Category(HolderName)[Number(#.##)]}}, see keywords document for details</h5>
+            </li>
+            <li>
+              <h4>Nested holders:</h4>
+              <h5>Nested holders is to make a block which wraps other TextHolers so that it can be controlled by If conditions</h5>
+            </li>
+            <li>
+              <h4>Nested Text:</h4>
+              <h5>{{Holder[]FreeTextAfterHolderInput}} or {{(Holder)FreeTextBeforeHolderItSelf[If]}}</h5>
+            </li>
+            <li>
+              <h4>Nested holders, nested value comes before:</h4>
+              <h5>{{(Holder){{AnotherOne}}[]}} or {{(Holder){{AnotherOne}}}}</h5>
+            </li>
+            <li>
+              <h4>Nested holders, nested value comes After:</h4>
+              <h5>{{(Holder)[]{{AnotherOne}}}} or {{(Holder)[If(ConditionHolder)]{{AnotherOne}}}}</h5>
+            </li>
+          </ul>
           <h3 id="Sec_Build phase validation">Build phase validation</h3>
           <h5>Nuget Search for package 'TemplatorSyntaxBuildTask', install it to the project which contains your templates, the task will add a 'TemplatorConfig.xml' into the project and load configurations from it:</h5>
           <ul>
@@ -274,6 +312,54 @@
           </ul>
           <h3 id="Sec_Editor SyntaxHighlighting">Editor SyntaxHighlighting</h3>
           <h5>Working in progress, The project 'TemplatorVsExtension' is going to provide syntax highlighting in visual studio. based on TemplatorConfig.xml in the project, in order to get less impact to vs performace in regular work, the extension will only try to parse the active document if the project contains a valid 'TemplatorConfig.xml'</h5>
+          <h3 id="Sec_Extensibility">Extensibility</h3>
+          <h5>Implement an TemplatorKeyWord and use AddKeyword method to add it to config object before passing it to the parser(or if after, call PrepareKeywords() to refresh the keywords), See below for the options:</h5>
+          <ul>
+            <li>
+              <h4>Name:</h4>
+              <h5>The identifier of the Keyword</h5>
+            </li>
+            <li>
+              <h4>Preority:</h4>
+              <h5>Affects the order of the keywords while processing, the order logic is Desending: CalculateInput -&gt; ManipulateInput -&gt; IsValidation &amp;&amp; !k.ManipulateOutput -&gt; IsValidation ManipulateOutput -&gt; ascending, Priority</h5>
+            </li>
+            <li>
+              <h4>HandleNullOrEmpty:</h4>
+              <h5>Indicates if Null or Empty string will be passed in to the OnGetValue or skip</h5>
+            </li>
+            <li>
+              <h4>IndicatesOptional:</h4>
+              <h5>Indicates this holder becomes optional if the keyword presents</h5>
+            </li>
+            <li>
+              <h4>CalculateInput:</h4>
+              <h5>Indicates if the keyword will calculate a value as input, the input will be cached automatically for it</h5>
+            </li>
+            <li>
+              <h4>ManipulateInput:</h4>
+              <h5>Indicates if the keyword will change a input value, the changed input will be cached automatically for it</h5>
+            </li>
+            <li>
+              <h4>ManipulateOutput:</h4>
+              <h5>Indicates if the keyword will change a output value, the changed value will NOT be cached</h5>
+            </li>
+            <li>
+              <h4>IsValidation:</h4>
+              <h5>Indicates if the keyword is doing validation</h5>
+            </li>
+            <li>
+              <h4>PostParse:</h4>
+              <h5>Delegate called after the TextHolder is parsed before trying to get the value</h5>
+            </li>
+            <li>
+              <h4>Parse:</h4>
+              <h5>Delegate called when a keyword's param is found, if null, the param will be stored as is, to access the param, use holder["keywordname"]</h5>
+            </li>
+            <li>
+              <h4>OnGetValue:</h4>
+              <h5>Delegate called when the holder is being processed to get value</h5>
+            </li>
+          </ul>
           <h3 id="Sec_Configuration">Configuration</h3>
           <h5>Templator allows to be fully customized through config object, see the following options for details:</h5>
           <ul>
@@ -374,6 +460,14 @@
               <h5>Whether to throw exception when parser finds an unknown keyword Parameter</h5>
             </li>
             <li>
+              <h4>AllowNested:</h4>
+              <h5>Whether to Allow nested holders</h5>
+            </li>
+            <li>
+              <h4>EmptyAsNulls:</h4>
+              <h5>Whether to treat empty string as a valid input, default true to treat empty as no input</h5>
+            </li>
+            <li>
               <h4>CategoryOptional:</h4>
               <h5>Whether to make the category property optional of a TextHolder</h5>
             </li>
@@ -460,11 +554,11 @@
             </li>
             <li id="Key_Nested">
               <h4>Nested</h4>
-              <p>If a TextHolder's value contains Templator syntax, mark the holder with this Keyword to enable the template in the value string to be processed with the same context</p>
+              <p>If a TextHolder's input value contains Templator syntax, mark the holder with this Keyword to enable the template in the value string to be processed with the same context</p>
             </li>
             <li id="Key_NestedXml">
               <h4>NestedXml</h4>
-              <p>Allow a xml Template value provided for a TextHolder marked with this keyword to be processed</p>
+              <p>Allow a xml Template's input value provided for a TextHolder marked with this keyword to be processed</p>
             </li>
             <li id="Key_Inherited">
               <h4>Inherited</h4>
@@ -695,16 +789,23 @@
                         Parameters:
                         <dl style="padding-left: 30px;"><dt>Length needed</dt><dd>E.g.: FixedLength(3) with input 'a' -&gt; 'a  '</dd></dl></div>
             </li>
+            <li id="Key_Select">
+              <h4>Select</h4>
+              <p>Perform a logic '?:' operator</p>
+              <div>
+                        Parameters:
+                        <dl style="padding-left: 30px;"><dt>3 Params delimited by ';', 3rd one optional. leave blank means using the field name itself as condition.</dt><dd>if the condition is true (condition accepts '!' operator), output 1st param, else output the 2nd one</dd></dl></div>
+            </li>
             <li id="Key_Join">
               <h4>Join</h4>
               <p>Apply logic as String.Join to an collection/array, e.g. insert specific string before each item except the first one</p>
             </li>
             <li id="Key_Wrap">
               <h4>Wrap</h4>
-              <p>Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty</p>
+              <p>Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty, condition accepts '!' operator</p>
               <div>
                         Parameters:
-                        <dl style="padding-left: 30px;"><dt>The begin tag for at collectionBegin or the end tag at the collectionEnd</dt><dt>Optional field Name used to determine if to wrap instead of the collection itself</dt><dd>E.g.: Collection,Wrap([) or CollectionEnd,Wrap(])</dd><dd>E.g.: Collection,Wrap([;AnotherHolder) or CollectionEnd,Wrap(\];AnotherHolder)</dd></dl></div>
+                        <dl style="padding-left: 30px;"><dt>If specified at a non-collection item : The begin tag + ';' + end tag + ';' + optional conditional holder name</dt><dt>The begin tag at collectionBegin or the end tag at the collectionEnd</dt><dt>Optional field Name used to determine if to wrap instead of the collection itself</dt><dd>E.g.: Wrap([) or Wrap([;]) or Wrap(;]) or Wrap([;];AnotherHolder)</dd><dd>E.g.: Collection,Wrap([) or CollectionEnd,Wrap(])</dd><dd>E.g.: Collection,Wrap([;AnotherHolder) or CollectionEnd,Wrap(];AnotherHolder)</dd></dl></div>
             </li>
             <li id="Key_Holder">
               <h4>Holder</h4>
@@ -733,7 +834,7 @@
               <p>Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied</p>
               <div>
                         Parameters:
-                        <dl style="padding-left: 30px;"><dt>No Params or another TextHolder's name</dt><dd></dd></dl></div>
+                        <dl style="padding-left: 30px;"><dt>No Params or another TextHolder's name</dt><dd>Condition accepts '!' operator</dd></dl></div>
             </li>
             <li id="Key_AttributeName">
               <h4>AttributeName</h4>
@@ -744,7 +845,7 @@
               <p>Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied</p>
               <div>
                         Parameters:
-                        <dl style="padding-left: 30px;"><dt>No Params or another TextHolder's name</dt><dd></dd></dl></div>
+                        <dl style="padding-left: 30px;"><dt>No Params or another TextHolder's name</dt><dd>condition accepts '!' operator</dd></dl></div>
             </li>
             <li id="Key_Tips">
               <h4>Tips</h4>

@@ -13,6 +13,7 @@
   <KeywordsBegin>[</KeywordsBegin>
   <KeywordsEnd>]</KeywordsEnd>
   <SyntaxErrorCategoryNotFound>SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config</SyntaxErrorCategoryNotFound>
+  <SyntaxErrorNestedHolders>SyntaxError: Nested Holders Found: '{0}', Prevent nesting or set AllowNested=true</SyntaxErrorNestedHolders>
   <SyntaxErrorOverLappedHolder>SyntaxError: Overlapped TextHolders</SyntaxErrorOverLappedHolder>
   <SyntaxErrorInvalidCategory>SyntaxError: Invalid category '{0}'</SyntaxErrorInvalidCategory>
   <SyntaxErrorUnmatchedBeginTag>SyntaxError: Reached document end before finding the closing tag</SyntaxErrorUnmatchedBeginTag>
@@ -101,6 +102,8 @@
   <MaxErrorCount>1000</MaxErrorCount>
   <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
   <IgnoreUnknownParam>true</IgnoreUnknownParam>
+  <AllowNested>true</AllowNested>
+  <EmptyAsNulls>true</EmptyAsNulls>
   <XmlFieldElementName>Field</XmlFieldElementName>
   <XmlValueNodeName>Value</XmlValueNodeName>
   <XmlNameNodeName>Name</XmlNameNodeName>
