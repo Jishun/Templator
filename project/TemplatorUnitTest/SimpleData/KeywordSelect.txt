@@ -1,0 +1,23 @@
+﻿{{Holder[Select(A;B)]}}
+{Holder:"Hehe"}
+A
+1
+
+
+{{Holder[Select(A;B)]}}
+{}
+B
+1
+
+
+{{Holder[Select(A;B;Holder2)]}}
+{}
+B
+1
+
+
+{{Holder[Select(A;B;Holder2)]}}
+{Holder: "hehe", Holder2 : "hehe"}
+A
+1
+

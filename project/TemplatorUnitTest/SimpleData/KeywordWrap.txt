@@ -10,7 +10,7 @@
 1
 
 
-{{HolderRepeat[Collection,Optional,Wrap([;Holder)]}}AnItem{{HolderRepeat[CollectionEnd,Wrap(]);Holder)]}}
+{{HolderRepeat[Collection,Optional,Wrap([;Holder)]}}AnItem{{HolderRepeat[CollectionEnd,Wrap(];Holder)]}}
 {Holder: "nameholder", HolderRepeat: [{Repeat2:[{Name: "name"},{Name: "name"}]},{Repeat2:[{Name: "name"}]}]}
 [AnItemAnItem]
 1
@@ -31,5 +31,41 @@
 {{HolderRepeat[Collection,Optional,Wrap([;Holder)]}}AnItem{{HolderRepeat[CollectionEnd,Wrap(])]}}
 {HolderRepeat: [{Holder3:3},{Holder3:4}]}
 AnItemAnItem]
+1
+
+
+{{Holder[Optional,Wrap([;])]}}
+{Holder: "AnItem"}
+[AnItem]
+1
+
+
+{{Holder[Optional,Wrap([)]}}
+{Holder: "AnItem"}
+[AnItem
+1
+
+
+{{Holder[Optional,Wrap(;])]}}
+{Holder: "AnItem"}
+AnItem]
+1
+
+
+{{Holder[Optional,Wrap(;];Another)]}}
+{Holder: "AnItem"}
+AnItem
+1
+
+
+{{Holder[Optional,Wrap([;];Another)]}}
+{Holder: "AnItem", Another:"Here"}
+[AnItem]
+1
+
+
+{{Holder[Optional,Wrap((;\))]}}
+{Holder: "AnItem"}
+(AnItem)
 1
 

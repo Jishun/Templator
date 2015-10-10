@@ -1,6 +1,6 @@
 ﻿param($installPath, $toolsPath, $package, $project)
 
-$configItem = $project.ProjectItems.Item("CodeGeneratorSettings.xml")
+$configItem = $project.ProjectItems.Item("TemplatorConfig.xml")
 
 # set 'Copy To Output Directory' to 'Copy if newer'
 $copyToOutput = $configItem.Properties.Item("CopyToOutputDirectory")

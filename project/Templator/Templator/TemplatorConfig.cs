@@ -51,6 +51,10 @@ namespace Templator
         public bool IgnoreUnknownKeyword = true;
         [Description("Whether to throw exception when parser finds an unknown keyword Parameter")]
         public bool IgnoreUnknownParam = true;
+        [Description("Whether to Allow nested holders")]
+        public bool AllowNested = true;
+        [Description("Whether to treat empty string as a valid input, default true to treat empty as no input")]
+        public bool EmptyAsNulls = true;
         [XmlIgnore]
         [Description("Whether to make the category property optional of a TextHolder")]
         public bool CategoryOptional = true;

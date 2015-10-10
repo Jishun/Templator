@@ -102,7 +102,10 @@
   <ItemGroup>
     <Content Include="..\..\doc\TemplatorConfig.xml">
       <Link>TemplatorConfig.xml</Link>
+      <SubType>Designer</SubType>
     </Content>
+    <EmbeddedResource Include="SimpleData\KeywordSelect.txt" />
+    <EmbeddedResource Include="SimpleData\NestedHolders.txt" />
     <EmbeddedResource Include="SimpleData\KeywordJoin.txt" />
     <EmbeddedResource Include="SimpleData\KeywordWrap.txt" />
   </ItemGroup>

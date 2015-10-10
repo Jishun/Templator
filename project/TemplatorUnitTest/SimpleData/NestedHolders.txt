@@ -1,0 +1,59 @@
+﻿{{(Holder Name){{HolderInside}}[If]}}
+{HolderName:"Out", HolderInside: "In"}
+InOut
+2
+
+
+{{(Holder Name)[If]{{HolderInside}}}}
+{HolderName:"Out", HolderInside: "In"}
+OutIn
+2
+
+
+{{(Holder Name){{HolderInside}}[If,Optional]}}
+{HolderInside: "In"}
+
+2
+
+
+{{(Holder Name)TextInside[If,Optional]}}
+{HolderName: "Out"}
+TextInsideOut
+1
+
+
+{{(Holder Name)[If,Optional]TextInside}}
+{HolderName: "Out"}
+OutTextInside
+1
+
+
+{{(Holder Name)TextInside[If]{{HolderInside}}}}
+{HolderName:"Out", HolderInside: "In"}
+TextInsideOutIn
+2
+
+
+{{(Holder Name){{HolderInside}}[If,Optional]TextInside}}
+{HolderName:"Out", HolderInside: "In"}
+InOutTextInside
+2
+
+
+{{(Holder Name){{HolderInside}}[If,Optional]TextInside}}
+{HolderInside: "In"}
+
+2
+
+
+{{(Holder Name){{HolderInside}}[If,Optional]TextInside}}
+{HolderName:"Out"}
+InOutTextInside
+2
+
+'HolderInside' is required
+{{(Holder Name){{HolderInside}}[If,Optional]TextInside}}
+{}
+
+2
+

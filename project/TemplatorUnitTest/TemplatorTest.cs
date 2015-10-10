@@ -20,6 +20,7 @@ namespace TemplatorUnitTest
         {
             //TTODO: test repeat witn multiple deep collection merge e.g. c{d(e)}, c{d(g)} => c{d(e,g)}
             _config.Logger = _logs;
+            _config.EscapePrefix = "\\";
             var parser = new TemplatorParser(_config);
             foreach (var entry in GetSimpleDataEntries())
             {

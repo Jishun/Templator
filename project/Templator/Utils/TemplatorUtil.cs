@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.Web.UI;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -305,6 +306,21 @@ namespace Templator
             value = value ?? parser.RequireValue(parser, holder, defaultRet, input);
             value = holder.Keywords.EmptyIfNull().Where(key => !key.CalculateInput && key.OnGetValue != null)
                 .Aggregate(value, (current, k) => KeywordPostParse(parser, holder, current, k));
+            if (parser.Context.ChildResultBefore.Length > 0 || parser.Context.ChildResultAfter.Length > 0)
+            {
+                value = String.Concat(parser.Context.ChildResultBefore, value, parser.Context.ChildResultAfter);
+            }
+            var logger = parser.Context.ChildLogger as TemplatorLogger;
+            if (logger != null)
+            {
+                foreach (var en in logger.Errors)
+                {
+                    if (parser.Context.Logger != null)
+                    {
+                        parser.Context.Logger.LogError(en.FileName, en.Line, en.Column, en.EndLineNumber, en.EndColumnNumber, en.Message);
+                    }
+                }
+            }
             if (null == value)
             {
                 if (defaultRet != null)
@@ -393,6 +409,44 @@ namespace Templator
             }
             var key = (parser.StackLevel -1) + holder.Name + "InputIndex";
             return (int?)parser.ParentContext[key];
+        }
+
+        public static Pair<string, string> Get2Params(TemplatorParser parser, TextHolder holder, string keyword, string delimitor)
+        {
+            var p = new SeekableString((string)holder[keyword]);
+            var p1 = p.ReadTo(true, parser.Config.EscapePrefix, delimitor);
+            var p2 = p.Left;
+            return new Pair<string, string>(p1, p2);
+        }
+
+        public static Triple<string, string, string> Get3Params(TemplatorParser parser, TextHolder holder, string keyword, string delimitor)
+        {
+            var p = new SeekableString((string)holder[keyword]);
+            var p1 = p.ReadTo(true, parser.Config.EscapePrefix, delimitor);
+            var p2 = p.ReadTo(true, parser.Config.EscapePrefix, delimitor);
+            var p3 = p.Left;
+            return new Triple<string, string, string>(p1, p2, p3);
+        }
+
+        public static bool EvalulateCondition(TemplatorParser parser, TextHolder holder, string condition, object eav)
+        {
+            return EvalulateCondition(parser, parser.Context.Input, holder, condition, eav);
+        }
+        public static bool EvalulateCondition(TemplatorParser parser, IDictionary<string, object> input, TextHolder holder, string condition, object eav)
+        {
+            var not = false;
+            if (condition != null && condition.StartsWith("!"))
+            {
+                not = true;
+                condition = condition.Substring(1, condition.Length - 1);
+            }
+            if (!condition.IsNullOrEmptyValue())
+            {
+                eav = GetInputValue(parser, condition, input);
+                eav = eav ?? parser.RequireValue(parser, GetHolder(input, condition, parser.Config));
+            }
+            var hasValue = eav == null || (parser.Config.EmptyAsNulls && eav.IsNullOrEmptyValue());
+            return not == hasValue;
         }
 
         private static object KeywordPostParse(TemplatorParser parser, TextHolder holder, object current, TemplatorKeyword key)

@@ -192,7 +192,7 @@ namespace Templator
                             if (TemplatorUtil.GetInputIndex(parser, parsedHolder) == null)
                             {
                                 parser.LogSyntextError("Probably the CollectionEnd holder didn't use the same name with the beginning Holder, end holder name : '{0}'".FormatInvariantCulture(parsedHolder.Name));
-                                parser.State.Error = true;
+                                parser.Context.State.Error = true;
                                 return false;
                             }
                             if (TemplatorUtil.GetInputCount(parser, parsedHolder) > TemplatorUtil.GetInputIndex(parser, parsedHolder))
@@ -209,7 +209,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordNested)
                 {
-                    Description = "If a TextHolder's value contains Templator syntax, mark the holder with this Keyword to enable the template in the value string to be processed with the same context",
+                    Description = "If a TextHolder's input value contains Templator syntax, mark the holder with this Keyword to enable the template in the value string to be processed with the same context",
                     OnGetValue = (holder, parser, value) =>
                     {
                         if (value != null)
@@ -224,7 +224,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordNestedXml)
                 {
-                    Description = "Allow a xml Template value provided for a TextHolder marked with this keyword to be processed",
+                    Description = "Allow a xml Template's input value provided for a TextHolder marked with this keyword to be processed",
                     PostParse = (parser, holder) => parser.Context.Input != null,
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -271,7 +271,7 @@ namespace Templator
                     }, 
                     Parse = ((parser, str) =>
                     {
-                        parser.ParsingHolder[KeywordSeekup] = str.ParseIntParam(1);
+                        parser.Context.Holder[KeywordSeekup] = str.ParseIntParam(1);
                     })
                 },
                 new TemplatorKeyword(KeywordJs)
@@ -399,14 +399,14 @@ namespace Templator
                     {
                         if (str.IsNullOrWhiteSpace())
                         {
-                            parser.State.Error = true;
+                            parser.Context.State.Error = true;
                             if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                             {
                                 return;
                             }
                             throw new TemplatorParamsException();
                         }
-                        parser.ParsingHolder[KeywordRefer] = str;
+                        parser.Context.Holder[KeywordRefer] = str;
                     }
                 },
                 new TemplatorKeyword(KeywordEven)
@@ -484,7 +484,7 @@ namespace Templator
                     },
                     Parse = (parser, str) =>
                     {
-                        parser.ParsingHolder[KeywordRegex] = str;
+                        parser.Context.Holder[KeywordRegex] = str;
                     }
                 },
                 new TemplatorKeyword(KeywordLength)
@@ -550,7 +550,7 @@ namespace Templator
                             lengths = str.Split('-').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
                             if (lengths.Count != 2)
                             {
-                                parser.State.Error = true;
+                                parser.Context.State.Error = true;
                                 if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                                 {
                                     return;
@@ -564,7 +564,7 @@ namespace Templator
                             lengths = str.Split(';').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
                             if (lengths.Count == 0)
                             {
-                                parser.State.Error = true;
+                                parser.Context.State.Error = true;
                                 if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                                 {
                                     return;
@@ -577,7 +577,7 @@ namespace Templator
                             var l = str.ParseIntNullable();
                             if (!l.HasValue)
                             {
-                                parser.State.Error = true;
+                                parser.Context.State.Error = true;
                                 if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                                 {
                                     return;
@@ -586,10 +586,9 @@ namespace Templator
                             }
                             lengths = l.Value.Single().ToList();
                         }
-                        parser.ParsingHolder[KeywordLength] = new Pair<string,IList<int>>(str, lengths);
+                        parser.Context.Holder[KeywordLength] = new Pair<string,IList<int>>(str, lengths);
                     })
                 },
-                //new TemplatorKeyword(KeywordSelect){},
                 //new TemplatorKeyword(KeywordExpression){},
                 new TemplatorKeyword(KeywordMin)
                 {
@@ -616,7 +615,7 @@ namespace Templator
                     },
                     Parse = ((parser, str) =>
                     {
-                        parser.ParsingHolder[KeywordMin] = str.ParseNumberParam();
+                        parser.Context.Holder[KeywordMin] = str.ParseNumberParam();
                     })
                 },
                 new TemplatorKeyword(KeywordMax)
@@ -644,7 +643,7 @@ namespace Templator
                     },
                     Parse = ((parser, str) =>
                     {
-                        parser.ParsingHolder[KeywordMax] = str.ParseNumberParam();
+                        parser.Context.Holder[KeywordMax] = str.ParseNumberParam();
                     })
                 },
                 //DataType/format Keywords
@@ -675,7 +674,7 @@ namespace Templator
                     {
                         if (!str.IsNullOrWhiteSpace() && Enums.ContainsKey(str))
                         {
-                            parser.ParsingHolder[KeywordEnum] = str;
+                            parser.Context.Holder[KeywordEnum] = str;
                         }
                         else if(!parser.Config.IgnoreUnknownParam && !parser.Config.ContinueOnError)
                         {
@@ -776,7 +775,7 @@ namespace Templator
                             var key = item.GetUntil(":", out value);
                             ret.Add(key.Trim(), value.Trim());
                         }
-                        parser.ParsingHolder[KeywordMap] = ret;
+                        parser.Context.Holder[KeywordMap] = ret;
                     }
                 },
                 new TemplatorKeyword(KeywordReplace)
@@ -801,10 +800,10 @@ namespace Templator
                         var arr = str.Split(';');
                         if (arr.Length == 2)
                         {
-                            parser.ParsingHolder[KeywordReplace] = arr;
+                            parser.Context.Holder[KeywordReplace] = arr;
                             return;
                         }
-                        parser.State.Error = true;
+                        parser.Context.State.Error = true;
                         if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                         {
                             return;
@@ -975,14 +974,14 @@ namespace Templator
                     {
                         if (str.Length != 1)
                         {
-                            parser.State.Error = true;
+                            parser.Context.State.Error = true;
                             if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                             {
                                 return;
                             }
                             throw new TemplatorParamsException();
                         }
-                        parser.ParsingHolder[KeywordRemoveChar] = str.ToCharArray();
+                        parser.Context.Holder[KeywordRemoveChar] = str.ToCharArray();
                     })
                 },
                 new TemplatorKeyword(KeywordFixedLength)
@@ -1010,8 +1009,25 @@ namespace Templator
                     },
                     Parse = ((parser, str) =>
                     {
-                        parser.ParsingHolder[KeywordFixedLength] = str.ParseIntParam();
+                        parser.Context.Holder[KeywordFixedLength] = str.ParseIntParam();
                     })
+                },
+                new TemplatorKeyword(KeywordSelect)
+                {
+                    ManipulateOutput = true,
+                    HandleNullOrEmpty = true,
+                    IndicatesOptional = true,
+                    Description = "Perform a logic '?:' operator",
+                    Params = new List<Pair<string, string>>
+                    {
+                        new Pair<string, string>("3 Params delimited by ';', 3rd one optional. leave blank means using the field name itself as condition.", "if the condition is true (condition accepts '!' operator), output 1st param, else output the 2nd one" ),
+                    },
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        var p = TemplatorUtil.Get3Params(parser, holder, KeywordSelect, ";");
+                        var condition = TemplatorUtil.EvalulateCondition(parser, holder, p.Third, value);
+                        return condition ? p.First : p.Second;
+                    }
                 },
                 new TemplatorKeyword(KeywordJoin)
                 {
@@ -1024,7 +1040,7 @@ namespace Templator
                         var i = TemplatorUtil.GetInputIndex(parser, holder);
                         if (i.HasValue && i > 0)
                         {
-                            parser.AppendResult(holder[KeywordJoin]);
+                            return String.Concat(holder[KeywordJoin], value);
                         }
                         return value;
                     }
@@ -1033,17 +1049,19 @@ namespace Templator
                 {
                     ManipulateOutput = true,
                     HandleNullOrEmpty = true,
-                    Description = "Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty",
+                    Description = "Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty, condition accepts '!' operator",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("The begin tag for at collectionBegin or the end tag at the collectionEnd", "E.g.: Collection,Wrap([) or CollectionEnd,Wrap(])" ),
-                        new Pair<string, string>("Optional field Name used to determine if to wrap instead of the collection itself", "E.g.: Collection,Wrap([;AnotherHolder) or CollectionEnd,Wrap(\\];AnotherHolder)" )
+                        new Pair<string, string>("If specified at a non-collection item : The begin tag + ';' + end tag + ';' + optional conditional holder name", "E.g.: Wrap([) or Wrap([;]) or Wrap(;]) or Wrap([;];AnotherHolder)" ),
+                        new Pair<string, string>("The begin tag at collectionBegin or the end tag at the collectionEnd", "E.g.: Collection,Wrap([) or CollectionEnd,Wrap(])" ),
+                        new Pair<string, string>("Optional field Name used to determine if to wrap instead of the collection itself", "E.g.: Collection,Wrap([;AnotherHolder) or CollectionEnd,Wrap(];AnotherHolder)" )
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
-                        bool begin = false, end = false;
+                        bool isCollection = false, begin = false, end = false;
                         if (holder.ContainsKey(parser.Config.KeywordRepeat) || holder.ContainsKey(parser.Config.KeywordRepeatBegin))
                         {
+                            isCollection = true;
                             var i = TemplatorUtil.GetInputIndex(parser, holder);
                             if (!i.HasValue)
                             {
@@ -1052,6 +1070,7 @@ namespace Templator
                         }
                         else if(holder.ContainsKey(parser.Config.KeywordRepeatEnd))
                         {
+                            isCollection = true;
                             var c = TemplatorUtil.GetParentInputCount(parser, holder);
                             var i = TemplatorUtil.GetParentInputIndex(parser, holder);
                             if (i.HasValue && i == c)
@@ -1059,34 +1078,34 @@ namespace Templator
                                 end = true;
                             }
                         }
-                        
-                        if (begin || end)
+
+                        if (!isCollection || begin || end)
                         {
-                            var p = new SeekableString((string)holder[KeywordWrap]);
-                            var wrap = p.ReadTo(true, parser.Config.EscapePrefix, ";");
-                            var name = p.Left;
+                            var p = TemplatorUtil.Get3Params(parser, holder, KeywordWrap, ";");
+                            var name = isCollection ? p.Second : p.Third;
+                            if (!isCollection)
+                            {
+                                var condition = TemplatorUtil.EvalulateCondition(parser, holder, name, value);
+                                return condition ? String.Concat(p.First, value, p.Second) : value;
+                            }
                             if (name.IsNullOrEmpty())
                             {
                                 if (end)
                                 {
-                                    parser.AppendResult(wrap);
+                                    return p.First;
                                 }
-                                else
+                                var collection = TemplatorUtil.GetChildCollection(parser.Context.Input, holder.Name, parser.Config);
+                                if (!collection.IsNullOrEmpty())
                                 {
-                                    var collection = TemplatorUtil.GetChildCollection(parser.Context.Input, holder.Name, parser.Config);
-                                    if (!collection.IsNullOrEmpty())
-                                    {
-                                        parser.AppendResult(wrap);
-                                    }
+                                    return p.First;
                                 }
                             }
                             else
                             {
-                                var eav = TemplatorUtil.GetInputValue(parser, name, parser.Context.Input);
-                                eav = eav ?? parser.RequireValue(parser, TemplatorUtil.GetHolder(parser.Context.Input, name, parser.Config));
-                                if (!eav.IsNullOrEmptyValue())
+                                var condition = TemplatorUtil.EvalulateCondition(parser, end? parser.ParentContext.Input : parser.Context.Input, holder, name, value);
+                                if (condition)
                                 {
-                                    parser.AppendResult(wrap);
+                                    return p.First;
                                 }
                             }
                         }
@@ -1120,7 +1139,8 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var ifQuery = (string)holder[KeywordIfnot];
-                        if (value.IsNullOrEmptyValue())
+                        var condition = TemplatorUtil.EvalulateCondition(parser, holder, null, value);
+                        if (!condition)
                         {
                             parser.RemovingElements.Add(ifQuery.IsNullOrWhiteSpace()
                             ? parser.XmlContext.Element
@@ -1138,9 +1158,9 @@ namespace Templator
                     },
                     Parse = (parser, str) =>
                     {
-                        parser.ParsingHolder.Keywords.Add(Keywords[KeywordEnum].Create());
-                        parser.ParsingHolder[KeywordEnum] = str;
-                        parser.ParsingHolder.Keywords.Add(Keywords[KeywordElementName].Create());
+                        parser.Context.Holder.Keywords.Add(Keywords[KeywordEnum].Create());
+                        parser.Context.Holder[KeywordEnum] = str;
+                        parser.Context.Holder.Keywords.Add(Keywords[KeywordElementName].Create());
                     }
                 },
                 new TemplatorKeyword(KeywordElementName)
@@ -1175,20 +1195,14 @@ namespace Templator
                     Description = "Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("No Params or another TextHolder's name","" )
+                        new Pair<string, string>("No Params or another TextHolder's name","Condition accepts '!' operator" )
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
                         if (parser.XmlContext != null && parser.XmlContext.Attribute != null)
                         {
-                            var eav = value;
-                            var name = (string)holder[KeywordAttributeIf];
-                            if (!name.IsNullOrEmptyValue())
-                            {
-                                eav = TemplatorUtil.GetInputValue(parser, name, parser.Context.Input);
-                                eav = eav ?? parser.RequireValue(parser, TemplatorUtil.GetHolder(parser.Context.Input, name, parser.Config));
-                            }
-                            if (eav.IsNullOrEmptyValue())
+                            var condition = TemplatorUtil.EvalulateCondition(parser, holder, (string)holder[KeywordAttributeIf], value);
+                            if (!condition)
                             {
                                 parser.XmlContext.Attribute.Remove();
                             }
@@ -1234,20 +1248,24 @@ namespace Templator
                     Description = "Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("No Params or another TextHolder's name","" )
+                        new Pair<string, string>("No Params or another TextHolder's name","condition accepts '!' operator" )
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
-                        var eav = value;
-                        var name = (string) holder[KeywordIf];
-                        if (!name.IsNullOrEmptyValue())
+                        var condition = TemplatorUtil.EvalulateCondition(parser, holder, (string)holder[KeywordIf], value);
+                        if (!condition)
                         {
-                            eav = TemplatorUtil.GetInputValue(parser, name, parser.Context.Input);
-                            eav = eav ?? parser.RequireValue(parser, TemplatorUtil.GetHolder(parser.Context.Input, name, parser.Config));
-                        }
-                        if (eav.IsNullOrEmptyValue())
-                        {
-                            parser.RemovingElements.Add(parser.XmlContext.Element);
+                            parser.Context.ChildResultAfter.Clear();
+                            parser.Context.ChildResultBefore.Clear();
+                            var logger = parser.Context.ChildLogger as TemplatorLogger;
+                            if (logger != null)
+                            {
+                                logger.Errors.Clear();
+                            }
+                            if (parser.XmlContext != null)
+                            {
+                                parser.RemovingElements.Add(parser.XmlContext.Element);
+                            }
                         }
                         return value ?? string.Empty;
                     },
@@ -1260,7 +1278,7 @@ namespace Templator
                     {
                         new Pair<string, string>("The comment string","" )
                     },
-                    Parse = ((parser, s) => parser.ParsingHolder[KeywordComments] = s)
+                    Parse = ((parser, s) => parser.Context.Holder[KeywordComments] = s)
                 },
                 new TemplatorKeyword(KeywordDisplayName)
                 {
@@ -1311,21 +1329,21 @@ namespace Templator
                         }
                         if (s.IsNullOrWhiteSpace())
                         {
-                            parser.State.Error = true;
+                            parser.Context.State.Error = true;
                             if (parser.Config.IgnoreUnknownParam || parser.Config.ContinueOnError)
                             {
                                 return;
                             }
                             throw new TemplatorParamsException();
                         }
-                        parser.ParsingHolder[KeywordAlignCount] = s;
+                        parser.Context.Holder[KeywordAlignCount] = s;
                         var childInputs = TemplatorUtil.GetChildCollection(parser.ParentContext.Input, s, parser.Config);
                         if (!childInputs.IsNullOrEmpty())
                         {
-                            var l = parser.StackLevel + parser.ParsingHolder.Name;
-                            TemplatorUtil.SetInputCount(parser, parser.ParsingHolder, childInputs.Max(c =>
+                            var l = parser.StackLevel + parser.Context.Holder.Name;
+                            TemplatorUtil.SetInputCount(parser, parser.Context.Holder, childInputs.Max(c =>
                             {
-                                var child = TemplatorUtil.GetChildCollection(c, parser.ParsingHolder.Name, parser.Config);
+                                var child = TemplatorUtil.GetChildCollection(c, parser.Context.Holder.Name, parser.Config);
                                 return child == null ? 0 : child.Length;
                             }));
                         }
@@ -1345,6 +1363,7 @@ namespace Templator
             {
                 key.Preority = key.Preority > 0 ? key.Preority : index += KeywordPriorityIncreamental;
             }
+            EscapePrefix = EscapePrefix == String.Empty ? null : EscapePrefix;
         }
     }
 }

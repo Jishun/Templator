@@ -19,7 +19,7 @@ namespace Templator
         [Description("When looping arries/repeat/collection, retrieve the 0 based index with this name")]
         public string ReservedKeyword0Index = "$0Index";
 
-        [Description("An escape character when parsing template")]
+        [Description("An escape character when parsing template")] 
         public string EscapePrefix = null;//"\\";
         [Description("The begginng of a TextHolder, configurable in case of symbol conflict, default '{{'")]
         public string Begin = "{{";
@@ -41,6 +41,7 @@ namespace Templator
         public string KeywordsEnd = "]";
 
         public string SyntaxErrorCategoryNotFound = "SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config";
+        public string SyntaxErrorNestedHolders = "SyntaxError: Nested Holders Found: '{0}', Prevent nesting or set AllowNested=true";
         public string SyntaxErrorOverLappedHolder = "SyntaxError: Overlapped TextHolders";
         public string SyntaxErrorInvalidCategory = "SyntaxError: Invalid category '{0}'";
         public string SyntaxErrorUnmatchedBeginTag = "SyntaxError: Reached document end before finding the closing tag";

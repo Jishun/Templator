@@ -1,109 +1,118 @@
 <TemplatorConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <XmlTemplatorAttributeName>bindings</XmlTemplatorAttributeName>
-  <ReservedKeywordParent>$$P$$</ReservedKeywordParent>
-  <ReservedKeywordIndex>$Index</ReservedKeywordIndex>
-  <ReservedKeyword0Index>$0Index</ReservedKeyword0Index>
-  <Begin>{{</Begin>
-  <End>}}</End>
-  <Delimiter>,</Delimiter>
-  <ParamBegin>(</ParamBegin>
-  <ParamEnd>)</ParamEnd>
-  <CategorizedNameBegin>(</CategorizedNameBegin>
-  <CategorizedNameEnd>)</CategorizedNameEnd>
-  <KeywordsBegin>[</KeywordsBegin>
-  <KeywordsEnd>]</KeywordsEnd>
-  <SyntaxErrorCategoryNotFound>SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config</SyntaxErrorCategoryNotFound>
+    <XmlTemplatorAttributeName>bindings</XmlTemplatorAttributeName>
+    <ReservedKeywordParent>$$P$$</ReservedKeywordParent>
+    <ReservedKeywordIndex>$Index</ReservedKeywordIndex>
+    <ReservedKeyword0Index>$0Index</ReservedKeyword0Index>
+    <Begin>{{</Begin>
+    <End>}}</End>
+    <Delimiter>,</Delimiter>
+    <ParamBegin>(</ParamBegin>
+    <ParamEnd>)</ParamEnd>
+    <CategorizedNameBegin>(</CategorizedNameBegin>
+    <CategorizedNameEnd>)</CategorizedNameEnd>
+    <KeywordsBegin>[</KeywordsBegin>
+    <KeywordsEnd>]</KeywordsEnd>
+    <SyntaxErrorCategoryNotFound>SyntaxError: No category defined in Holder, add use Category(Name) to define name or set CategoryOptional=true in config</SyntaxErrorCategoryNotFound>
+    <SyntaxErrorNestedHolders>SyntaxError: Nested Holders Found: '{0}', Prevent nesting or set AllowNested=true</SyntaxErrorNestedHolders>
     <SyntaxErrorOverLappedHolder>SyntaxError: Overlapped TextHolders</SyntaxErrorOverLappedHolder>
     <SyntaxErrorInvalidCategory>SyntaxError: Invalid category : '{0}'</SyntaxErrorInvalidCategory>
     <SyntaxErrorUnmatchedBeginTag>SyntaxError: Reached document end before finding the closing tag</SyntaxErrorUnmatchedBeginTag>
-  <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
-  <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
-  <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
-  <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string: '{0}'</SyntaxErrorUnexpectedString>
-  <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword: '{0}'</SyntaxErrorUnexpectedKeywordParam>
-  <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword: '{0}'</SyntaxErrorUnexpectedKeyword>
-  <TermCategory>Category</TermCategory>
-  <TermName>Name</TermName>
-  <TermValue>ParamValue</TermValue>
-  <TermKeyword>Keyword</TermKeyword>
-  <TermParam>Parameter</TermParam>
-  <KeywordRepeatBegin>CollectionBegin</KeywordRepeatBegin>
-  <KeywordRepeat>Collection</KeywordRepeat>
-  <KeywordRepeatEnd>CollectionEnd</KeywordRepeatEnd>
-  <KeywordNested>Nested</KeywordNested>
-  <KeywordNestedXml>NestedXml</KeywordNestedXml>
-  <KeywordAlignCount>AlignCount</KeywordAlignCount>
-  <KeywordEnum>Enum</KeywordEnum>
-  <KeywordDisplayName>DisplayName</KeywordDisplayName>
-  <KeywordNumber>Number</KeywordNumber>
-  <KeywordDateTime>DateTime</KeywordDateTime>
-  <KeywordFormat>Format</KeywordFormat>
-  <KeywordEven>Even</KeywordEven>
-  <KeywordAwayFromZero>AwayZero</KeywordAwayFromZero>
-  <KeywordMap>Map</KeywordMap>
-  <KeywordBit>Bool</KeywordBit>
-  <KeywordReplace>Replace</KeywordReplace>
-  <KeywordRemoveChar>RemoveChar</KeywordRemoveChar>
-  <KeywordTransform>Transform</KeywordTransform>
-  <KeywordUpper>Upper</KeywordUpper>
-  <KeywordLower>Lower</KeywordLower>
-  <KeywordTruncate>Truncate</KeywordTruncate>
-  <KeywordArray>Array</KeywordArray>
-  <KeywordDefault>Default</KeywordDefault>
-  <KeywordRegex>RegExp</KeywordRegex>
-  <KeywordLength>Length</KeywordLength>
-  <KeywordRefer>Refer</KeywordRefer>
-  <KeywordHolder>Holder</KeywordHolder>
-  <KeywordSelect>Select</KeywordSelect>
-  <KeywordMin>Min</KeywordMin>
-  <KeywordMax>Max</KeywordMax>
-  <KeywordFill>Fill</KeywordFill>
-  <KeywordAppend>Append</KeywordAppend>
-  <KeywordPrefill>Prepend</KeywordPrefill>
-  <KeywordFixedLength>FixedLength</KeywordFixedLength>
-  <KeywordTrim>Trim</KeywordTrim>
-  <KeywordArrayEnd>ArrayEnd</KeywordArrayEnd>
-  <KeywordIfnot>Ifnot</KeywordIfnot>
-  <KeywordAttributeIfnot>AttributeIfnot</KeywordAttributeIfnot>
-  <KeywordIf>If</KeywordIf>
-  <KeywordAttributeIf>AttributeIf</KeywordAttributeIf>
-  <KeywordThen>Then</KeywordThen>
-  <KeywordAttributeThen>AttributeThen</KeywordAttributeThen>
-  <KeywordEnumElement>EnumElement</KeywordEnumElement>
-  <KeywordElementName>ElementName</KeywordElementName>
-  <KeywordAttributeName>AttributeName</KeywordAttributeName>
-  <KeywordSeekup>Inherited</KeywordSeekup>
-  <KeywordAverage>Avg</KeywordAverage>
-  <KeywordSum>Sum</KeywordSum>
-  <KeywordCount>Count</KeywordCount>
-  <KeywordMulti>Multi</KeywordMulti>
-  <KeywordMathMax>MathMax</KeywordMathMax>
-  <KeywordMathMin>MathMin</KeywordMathMin>
-  <KeywordOptional>Optional</KeywordOptional>
-  <KeywordJs>Js</KeywordJs>
-  <KeywordComments>Tips</KeywordComments>
-  <KeywordCsv>Csv</KeywordCsv>
-  <KeywordEncode>Encode</KeywordEncode>
-  <KeywordDecode>Decode</KeywordDecode>
-  <KeywordBase64>Base64</KeywordBase64>
-  <KeywordBase32>Base32</KeywordBase32>
-  <KeywordUrl>Url</KeywordUrl>
-  <KeywordHtml>Html</KeywordHtml>
-  <KeywordExpression>Expression</KeywordExpression>
-  <KeywordMath>Math</KeywordMath>
-  <KeywordJoin>Join</KeywordJoin>
-  <KeywordWrap>Wrap</KeywordWrap>
-  <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames><!--Allow multiple, used for build task to validate-->
-  <AvailableCategories>User</AvailableCategories>
-  <AvailableCategories>Data</AvailableCategories>
-  <MaxErrorCount>1000</MaxErrorCount>
-  <XmlFieldElementName>Field</XmlFieldElementName>
-  <XmlValueNodeName>Value</XmlValueNodeName>
-  <XmlNameNodeName>Name</XmlNameNodeName>
-  <XmlCollectionNodeName>CollectionItem</XmlCollectionNodeName>
-  <KeyHolders>$Fields</KeyHolders>
-  <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
-  <IgnoreUnknownParam>true</IgnoreUnknownParam>
+    <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
+    <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
+    <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
+    <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string: '{0}'</SyntaxErrorUnexpectedString>
+    <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword: '{0}'</SyntaxErrorUnexpectedKeywordParam>
+    <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword: '{0}'</SyntaxErrorUnexpectedKeyword>
+    <TermCategory>Category</TermCategory>
+    <TermBeginEnd>BeginEnd</TermBeginEnd>
+    <TermCategorizedNameBeginEnd>CBeginEnd</TermCategorizedNameBeginEnd>
+    <TermParamBeginEnd>PBeginEnd</TermParamBeginEnd>
+    <TermKeywordsBeginEnd>KBeginEnd</TermKeywordsBeginEnd>
+    <TermName>Name</TermName>
+    <TermValue>ParamValue</TermValue>
+    <TermKeyword>Keyword</TermKeyword>
+    <TermParam>Parameter</TermParam>
+    <TermDelimiter>Delimeter</TermDelimiter>
+    <KeywordRepeatBegin>CollectionBegin</KeywordRepeatBegin>
+    <KeywordRepeat>Collection</KeywordRepeat>
+    <KeywordRepeatEnd>CollectionEnd</KeywordRepeatEnd>
+    <KeywordNested>Nested</KeywordNested>
+    <KeywordNestedXml>NestedXml</KeywordNestedXml>
+    <KeywordAlignCount>AlignCount</KeywordAlignCount>
+    <KeywordEnum>Enum</KeywordEnum>
+    <KeywordDisplayName>DisplayName</KeywordDisplayName>
+    <KeywordNumber>Number</KeywordNumber>
+    <KeywordDateTime>DateTime</KeywordDateTime>
+    <KeywordFormat>Format</KeywordFormat>
+    <KeywordEven>Even</KeywordEven>
+    <KeywordAwayFromZero>AwayZero</KeywordAwayFromZero>
+    <KeywordMap>Map</KeywordMap>
+    <KeywordBit>Bool</KeywordBit>
+    <KeywordReplace>Replace</KeywordReplace>
+    <KeywordRemoveChar>RemoveChar</KeywordRemoveChar>
+    <KeywordTransform>Transform</KeywordTransform>
+    <KeywordUpper>Upper</KeywordUpper>
+    <KeywordLower>Lower</KeywordLower>
+    <KeywordTruncate>Truncate</KeywordTruncate>
+    <KeywordArray>Array</KeywordArray>
+    <KeywordDefault>Default</KeywordDefault>
+    <KeywordRegex>RegExp</KeywordRegex>
+    <KeywordLength>Length</KeywordLength>
+    <KeywordRefer>Refer</KeywordRefer>
+    <KeywordHolder>Holder</KeywordHolder>
+    <KeywordSelect>Select</KeywordSelect>
+    <KeywordMin>Min</KeywordMin>
+    <KeywordMax>Max</KeywordMax>
+    <KeywordFill>Fill</KeywordFill>
+    <KeywordAppend>Append</KeywordAppend>
+    <KeywordPrefill>Prepend</KeywordPrefill>
+    <KeywordFixedLength>FixedLength</KeywordFixedLength>
+    <KeywordTrim>Trim</KeywordTrim>
+    <KeywordArrayEnd>ArrayEnd</KeywordArrayEnd>
+    <KeywordIfnot>Ifnot</KeywordIfnot>
+    <KeywordAttributeIfnot>AttributeIfnot</KeywordAttributeIfnot>
+    <KeywordIf>If</KeywordIf>
+    <KeywordAttributeIf>AttributeIf</KeywordAttributeIf>
+    <KeywordThen>Then</KeywordThen>
+    <KeywordAttributeThen>AttributeThen</KeywordAttributeThen>
+    <KeywordEnumElement>EnumElement</KeywordEnumElement>
+    <KeywordElementName>ElementName</KeywordElementName>
+    <KeywordAttributeName>AttributeName</KeywordAttributeName>
+    <KeywordSeekup>Inherited</KeywordSeekup>
+    <KeywordAverage>Avg</KeywordAverage>
+    <KeywordSum>Sum</KeywordSum>
+    <KeywordCount>Count</KeywordCount>
+    <KeywordMulti>Multi</KeywordMulti>
+    <KeywordMathMax>MathMax</KeywordMathMax>
+    <KeywordMathMin>MathMin</KeywordMathMin>
+    <KeywordOptional>Optional</KeywordOptional>
+    <KeywordJs>Js</KeywordJs>
+    <KeywordComments>Tips</KeywordComments>
+    <KeywordCsv>Csv</KeywordCsv>
+    <KeywordEncode>Encode</KeywordEncode>
+    <KeywordDecode>Decode</KeywordDecode>
+    <KeywordBase64>Base64</KeywordBase64>
+    <KeywordBase32>Base32</KeywordBase32>
+    <KeywordUrl>Url</KeywordUrl>
+    <KeywordHtml>Html</KeywordHtml>
+    <KeywordExpression>Expression</KeywordExpression>
+    <KeywordMath>Math</KeywordMath>
+    <KeywordJoin>Join</KeywordJoin>
+    <KeywordWrap>Wrap</KeywordWrap>
+    <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames>
+    <!--Allow multiple, used for build task to validate-->
+    <AvailableCategories>User</AvailableCategories>
+    <AvailableCategories>Data</AvailableCategories>
+    <MaxErrorCount>1000</MaxErrorCount>
+    <AllowNested>true</AllowNested>
+    <EmptyAsNulls>true</EmptyAsNulls>
+    <IgnoreUnknownKeyword>true</IgnoreUnknownKeyword>
+    <IgnoreUnknownParam>true</IgnoreUnknownParam>
+    <XmlFieldElementName>Field</XmlFieldElementName>
+    <XmlValueNodeName>Value</XmlValueNodeName>
+    <XmlNameNodeName>Name</XmlNameNodeName>
+    <XmlCollectionNodeName>CollectionItem</XmlCollectionNodeName>
+    <KeyHolders>$Fields</KeyHolders>
     <!--for build task configurations-->
     <CustomOptions Key="Filters" Value=".xml,.csv,.txt" Category="SyntaxBuildTask"></CustomOptions>
     <CustomOptions Key="Path" Value="Templates" Category="SyntaxBuildTask"></CustomOptions>

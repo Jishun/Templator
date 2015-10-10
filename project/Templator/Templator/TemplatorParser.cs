@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using DotNetUtils;
@@ -17,8 +15,6 @@ namespace Templator
         public bool Csv;
         public TemplatorConfig Config;
         public TemplatorKeyword ParsingKeyword;
-        public TextHolder ParsingHolder;
-        public HolderParseState State;
         public IList<XElement> RemovingElements = new List<XElement>();
 
         public IDictionary<string, TextHolder> Holders = new Dictionary<string, TextHolder>();
@@ -93,7 +89,6 @@ namespace Templator
         public virtual IDictionary<string, TextHolder> GrammarCheck(string template, string fileName)
         {
             _syntaxCheckFileName = fileName;
-            ParsingHolder = null;
             ParsingKeyword = null;
             PushContext(null, null, null);
             Config.ContinueOnError = true;
@@ -278,13 +273,13 @@ namespace Templator
 
         public virtual IList<TextHolder> ParseTextInternal()
         {
-            State = new HolderParseState();
+            Context.State = new HolderParseState();
             var ret = new List<TextHolder>();
-            while (!Context.Text.Eof || State.End) 
+            while (!Context.Text.Eof || Context.State.End) 
             {
-                if (HolderParsingStates.States.ContainsKey(State))
+                if (HolderParsingStates.States.ContainsKey(Context.State))
                 {
-                    var fun = HolderParsingStates.States[State];
+                    var fun = HolderParsingStates.States[Context.State];
                     var holder = fun(this);
                     if (holder != null)
                     {
@@ -378,7 +373,7 @@ namespace Templator
             {
                 Input = input,
                 ParentHolder = parentHolder,
-                Logger = disableLogging ? null : Config.Logger,
+                Logger = disableLogging ? null : (Context != null && Context.Nesting) ? new TemplatorLogger() : Config.Logger,
                 Text = text ?? (Context == null ? null : Context.Text),
                 PreparsedHolders = holderDefinitions == null ? null : holderDefinitions.Children
             };
@@ -416,9 +411,28 @@ namespace Templator
             Context = Stack.Pop();
             if (c.ParentHolder != null)
             {
-                c.ParentHolder.Children = TemplatorUtil.MergeHolders(c.ParentHolder.Children, c.Holders.Values);
+                if (Context.Nesting)
+                {
+                    Context.ChildLogger = c.Logger;
+                    Context.Holders = TemplatorUtil.MergeHolders(Context.Holders, c.Holders.Values);
+                }
+                else
+                {
+                    c.ParentHolder.Children = TemplatorUtil.MergeHolders(c.ParentHolder.Children, c.Holders.Values);
+                }
             }
-            AppendResult(c.Result);
+            if (Context.NestingBefore)
+            {
+                Context.ChildResultBefore.Append(c.Result);
+            }
+            else if (Context.NestingAfter)
+            {
+                Context.ChildResultAfter.Append(c.Result);
+            }
+            else
+            {
+                AppendResult(c.Result);
+            }
         }
 
         public void PopXmlContext()

@@ -11,6 +11,7 @@
         public bool KeywordsEnd;
         public bool End;
         public bool Error;
+
         public override int GetHashCode()
         {
             if (Error)
