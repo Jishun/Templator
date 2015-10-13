@@ -109,4 +109,8 @@
   <XmlNameNodeName>Name</XmlNameNodeName>
   <XmlCollectionNodeName>CollectionItem</XmlCollectionNodeName>
   <KeyHolders>$Fields</KeyHolders>
+  <CustomKeywordNames>AnotherKeywordName</CustomKeywordNames>
+  <CustomOptions Key="Filters" Value=".xml,.csv,.txt" Category="SyntaxBuildTask" />
+  <CustomOptions Key="Path" Value="Templates" Category="SyntaxBuildTask" />
+  <CustomOptions Key="Depth" Value="3" Category="SyntaxBuildTask" />
 </TemplatorConfig>

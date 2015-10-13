@@ -256,6 +256,13 @@
             <li>Check the logger object (((TemplatorLogger)config.TemplatorLogger).Errors by default) for parsing errors</li>
             <li>parser.Holders will give out the holders defined inside the template</li>
           </ul>
+          <h5>Helper tools:</h5>
+          <ul>
+            <li>Build phase validation task for msbuild/vs is ready on new get, search for  <a href="https://www.nuget.org/packages/TemplatorSyntaxBuildTask/">'TemplatorSyntaxBuildTask'</a> and install it to your project which contains the template. it will check syntax for you.</li>
+            <li>
+              <a href="Templator.Vs.Extension-beta-0.0.3.vsix">Vs syntax highlighing extension is ready for download. click, install, and enjoy ^_^</a>
+            </li>
+          </ul>
           <h3 id="Sec_Get Started">Get Started</h3>
           <h5>Search for 'Templator' in nuget package manager, current version 1.0.0.5</h5>
           <h3 id="Sec_Philosophy">Philosophy</h3>
@@ -311,7 +318,25 @@
             </li>
           </ul>
           <h3 id="Sec_Editor SyntaxHighlighting">Editor SyntaxHighlighting</h3>
-          <h5>Working in progress, The project 'TemplatorVsExtension' is going to provide syntax highlighting in visual studio. based on TemplatorConfig.xml in the project, in order to get less impact to vs performace in regular work, the extension will only try to parse the active document if the project contains a valid 'TemplatorConfig.xml'</h5>
+          <h5>Beta ready, The project 'TemplatorVsExtension' is providing syntax highlighting in visual studio. based on TemplatorConfig.xml in the project</h5>
+          <ul>
+            <li>
+              <h4>Version:</h4>
+              <h5>0.0.3-beta, now only supports vs2013.</h5>
+            </li>
+            <li>
+              <h4>Strategy:</h4>
+              <h5>In order to get less impact to vs performace in regular work, the extension will only try to parse the active document(xml,csv,txt) if the active project contains a valid 'TemplatorConfig.xml'</h5>
+            </li>
+            <li>
+              <h4>Multiple Projects:</h4>
+              <h5>Templates contained in multiple projects will be parsed based on each project's 'TemplatorConfig.xml', which enables different format highlighting for different project needs</h5>
+            </li>
+            <li>
+              <h4>Config changes:</h4>
+              <h5>If the 'TemplatorConfig.xml' is changed, the extension will get the change, and the opened template documents needs to be reopened to get fully renewed.</h5>
+            </li>
+          </ul>
           <h3 id="Sec_Extensibility">Extensibility</h3>
           <h5>Implement an TemplatorKeyWord and use AddKeyword method to add it to config object before passing it to the parser(or if after, call PrepareKeywords() to refresh the keywords), See below for the options:</h5>
           <ul>
