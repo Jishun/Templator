@@ -42,6 +42,11 @@
                 <li>Check the logger object (((TemplatorLogger)config.TemplatorLogger).Errors by default) for parsing errors</li>
                 <li>parser.Holders will give out the holders defined inside the template</li>
             </ul>
+            <h5>Helper tools:</h5>
+            <ul>
+                <li>Build phase validation task for msbuild/vs is ready on new get, search for  <a href="https://www.nuget.org/packages/TemplatorSyntaxBuildTask/">'TemplatorSyntaxBuildTask'</a> and install it to your project which contains the template. it will check syntax for you.</li>
+                <li><a href="Templator.Vs.Extension-{{ExtensionVersion}}.vsix">Vs syntax highlighing extension is ready for download. click to download, install, and enjoy ^_^</a></li>
+            </ul>
             <h3 id="Sec_{{Name}}" bindings="{{Sections[CollectionBegin(Group)]}}">{{Name}}</h3>
             <h5>{{Description}}</h5>
             <ul bindings="{{Sections[CollectionEnd(Group)]}}">

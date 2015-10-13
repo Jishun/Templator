@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using DotNetUtils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Templator;
 
 namespace DocGenerate
@@ -13,6 +13,7 @@ namespace DocGenerate
     public static class TemplatorHelpDoc
     {
         private static readonly TemplatorConfig Config = TemplatorConfig.DefaultInstance;
+        private static string _extensionVersion = "0.0.3-beta";
 
         public static string Title = "Templator";
         public static string Description = "-- An Advanced text templating engine";
@@ -23,7 +24,7 @@ namespace DocGenerate
             new Triple<string, string, IDictionary<string, object>[]>("Template Usage", "Simply put the a place holder at the position of the text which you what to output, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value", null),
             new Triple<string, string, IDictionary<string, object>[]>("Syntax of a TextHolder", "With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object. See examples below:", GetSyntaxExamples().ToArray()),
             new Triple<string, string, IDictionary<string, object>[]>("Build phase validation", "Nuget Search for package 'TemplatorSyntaxBuildTask', install it to the project which contains your templates, the task will add a 'TemplatorConfig.xml' into the project and load configurations from it:", GetBuildTaskConfigurations()),
-            new Triple<string, string, IDictionary<string, object>[]>("Editor SyntaxHighlighting", "Working in progress, The project 'TemplatorVsExtension' is going to provide syntax highlighting in visual studio. based on TemplatorConfig.xml in the project, in order to get less impact to vs performace in regular work, the extension will only try to parse the active document if the project contains a valid 'TemplatorConfig.xml'", null),
+            new Triple<string, string, IDictionary<string, object>[]>("Editor SyntaxHighlighting", "Beta ready, The project 'TemplatorVsExtension' is providing syntax highlighting in visual studio. based on TemplatorConfig.xml in the project", GetVsExtensionDescriptions()),
             new Triple<string, string, IDictionary<string, object>[]>("Extensibility", "Implement an TemplatorKeyWord and use AddKeyword method to add it to config object before passing it to the parser(or if after, call PrepareKeywords() to refresh the keywords), See below for the options:", GetKeywordsProperties().ToArray()),
             new Triple<string, string, IDictionary<string, object>[]>("Configuration", "Templator allows to be fully customized through config object, see the following options for details:", GetConfiguableProperties().ToArray()),
         };
@@ -38,12 +39,25 @@ namespace DocGenerate
             };
         }
 
-        public static IDictionary<string, object> GetInputDict()
+        private static IDictionary<string, object>[] GetVsExtensionDescriptions()
         {
+            return new IDictionary<string, object>[]
+            {
+                new Dictionary<string, object>(){{"Name", "Version"}, {"Description", "{0}, now only supports vs2013.".FormatInvariantCulture(_extensionVersion)}}, 
+                new Dictionary<string, object>(){{"Name", "Strategy"}, {"Description", "In order to get less impact to vs performace in regular work, the extension will only try to parse the active document(xml,csv,txt) if the active project contains a valid 'TemplatorConfig.xml'"}}, 
+                new Dictionary<string, object>(){{"Name", "Multiple Projects"}, {"Description", "Templates contained in multiple projects will be parsed based on each project's 'TemplatorConfig.xml', which enables different format highlighting for different project needs"}}, 
+                new Dictionary<string, object>(){{"Name", "Config changes"}, {"Description", "If the 'TemplatorConfig.xml' is changed, the extension will get the change, and the opened template documents needs to be reopened to get fully renewed."}}, 
+            };
+        }
+
+        public static IDictionary<string, object> GetInputDict(string outputPath)
+        {
+            _extensionVersion = GetExtensionVersion(outputPath);
             var ret = new Dictionary<string, object>
             {
                 {"Title", Title},
                 {"Description", Description},
+                {"ExtensionVersion", _extensionVersion},
                 {"Sections", Sections.Select(s => new Dictionary<string, object>{{"Name", s.First}, {"Description", s.Second}, {"Details", s.Third}}).ToArray()},
                 {
                     "Keywords", Config.Keywords.Values.Where(k => k.Description != null).Select(k => new Dictionary<string, object>()
@@ -74,11 +88,32 @@ namespace DocGenerate
         }
         private static IEnumerable<IDictionary<string, object>> GetKeywordsProperties()
         {
-            return (from p in typeof(TemplatorKeyword).GetFields(BindingFlags.Public | BindingFlags.Instance) let d = p.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>() where d != null select new Dictionary<string, object> { { "Name", p.Name }, { "Description", d.Description } }).Cast<IDictionary<string, object>>();
+            return (from p in typeof(TemplatorKeyword).GetFields(BindingFlags.Public | BindingFlags.Instance) let d = p.GetCustomAttribute<DescriptionAttribute>() where d != null select new Dictionary<string, object> { { "Name", p.Name }, { "Description", d.Description } }).Cast<IDictionary<string, object>>();
         }
         private static IEnumerable<IDictionary<string, object>> GetConfiguableProperties()
         {
-            return (from p in typeof(TemplatorConfig).GetFields(BindingFlags.Public | BindingFlags.Instance) let d = p.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>() where d != null select new Dictionary<string, object>{{"Name", p.Name}, {"Description", d.Description}}).Cast<IDictionary<string, object>>();
+            return (from p in typeof(TemplatorConfig).GetFields(BindingFlags.Public | BindingFlags.Instance) let d = p.GetCustomAttribute<DescriptionAttribute>() where d != null select new Dictionary<string, object>{{"Name", p.Name}, {"Description", d.Description}}).Cast<IDictionary<string, object>>();
+        }
+
+        private static string GetExtensionVersion(string outputPath)
+        {
+            const string extensionPath = "../../../TemplatorVsExtension/bin/Release/";
+            const string extensionConfigName = "source.extension.vsixmanifest";
+            const string extensionName = "Templator.Vs.Extension{0}.vsix";
+            if (!File.Exists(extensionPath+extensionName.FormatInvariantCulture("")))
+            {
+                throw new FileNotFoundException("Extension release build is not ready");
+            }
+            var xml = XDocument.Load(extensionPath + extensionConfigName);
+            foreach (var x in xml.Root.DescendantsAndSelf())
+            {
+                x.Name = x.Name.LocalName;
+                x.ReplaceAttributes((from xattrib in x.Attributes().Where(xa => !xa.IsNamespaceDeclaration) select new XAttribute(xattrib.Name.LocalName, xattrib.Value)));
+            }
+            var element = xml.Root.XPathSelectElement("/PackageManifest/Metadata/Identity");
+            var version = "beta-" + element.GetAttributeString("Version");
+            File.Copy(extensionPath + extensionName.FormatInvariantCulture(""), outputPath + extensionName.FormatInvariantCulture("-"+version), true);
+            return version;
         }
     }
 }

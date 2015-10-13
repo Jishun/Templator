@@ -19,7 +19,7 @@ namespace DocGenerate
             config.XmlTemplatorAttributeName = "bindings";
             var parser = new TemplatorParser(config);
             var stream = "DocGenerate.Resources.index.html".GetResourceStreamFromExecutingAssembly();
-            var input = TemplatorHelpDoc.GetInputDict();
+            var input = TemplatorHelpDoc.GetInputDict(docPath);
             var outPut = parser.LoadXmlTemplate(stream, input);
             using (var sw = new StreamWriter(docPath + "index.html", false))
             {
@@ -29,10 +29,19 @@ namespace DocGenerate
             {
                 Assert.Fail(((TemplatorLogger)config.Logger).Errors.First().Message);
             }
+            config = TemplatorConfig.DefaultInstance;
+            config.CustomOptions = new[]
+            {
+                new TemplatorConfig.TemplatorCustomerConfigEntry(){Category = "SyntaxBuildTask", Key = "Filters", Value = ".xml,.csv,.txt"}, 
+                new TemplatorConfig.TemplatorCustomerConfigEntry(){Category = "SyntaxBuildTask", Key = "Path", Value = "Templates"}, 
+                new TemplatorConfig.TemplatorCustomerConfigEntry(){Category = "SyntaxBuildTask", Key = "Depth", Value = "3"}, 
+            };
+            config.CustomKeywordNames = new[] {"AnotherKeywordName"};
             using (var sw = new StreamWriter(docPath + "TemplatorConfig.xml", false))
             {
                 sw.Write(config.ToXElement().ToString());
             }
+
         }
     }
 }
