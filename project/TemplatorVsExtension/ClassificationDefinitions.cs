@@ -15,17 +15,17 @@ namespace Templator.Utils
     internal static class ClassificationDefinitions
     {
         internal const string
-            ClasificationName = "TextTemplate",
-            TextTemplateFieldName = "TextTemplateField.Name",
-            TextTemplateFieldDefault = "TextTemplateField.Default",
-            TextTemplateFieldBrace = "TextTemplateField.Brace",
-            TextTemplateFieldFault = "TextTemplateField.Fault",
-            TextTemplateFieldType = "TextTemplateField.Type",
-            TextTemplateFieldParam = "TextTemplateField.Param",
-            TextTemplateFieldParamBrace = "TextTemplateField.ParamBrace",
-            TextTemplateFieldDescBrace = "TextTemplateField.DescBrace",
-            TextTemplateFieldTypeBrace = "TextTemplateField.TypeBrace",
-            TextTemplateFieldRecognized = "TextTemplateField.Recognized";
+            ClasificationName = "Templator.Template",
+            TextHolderKeyword = "TextHolder.Keyword",
+            TextHolderDefault = "TextHolder.Default",
+            TextHolderBrace = "TextHolder.Brace",
+            TextHolderFault = "TextHolder.Fault",
+            TextHolderCategory = "TextHolder.Category",
+            TextHolderParam = "TextHolder.Param",
+            TextHolderParamBrace = "TextHolder.ParamBrace",
+            TextHolderDescBrace = "TextHolder.DescBrace",
+            TextHolderCategoryBrace = "TextHolder.CategoryBrace",
+            TextHolderRecognized = "TextHolder.Recognized";
 
         #region Content Type and File Extension Definitions
 
@@ -54,43 +54,43 @@ namespace Templator.Utils
 
         #region Classification Type Definitions
         [Export]
-        [Name(TextTemplateFieldName)]
+        [Name(TextHolderKeyword)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition NameDefinition = null;
         [Export]
-        [Name(TextTemplateFieldDefault)]
+        [Name(TextHolderDefault)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition DefaultDefinition = null;
         [Export]
-        [Name(TextTemplateFieldBrace)]
+        [Name(TextHolderBrace)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition BraceDefinition = null;
         [Export]
-        [Name(TextTemplateFieldType)]
+        [Name(TextHolderCategory)]
         [BaseDefinition(ClasificationName)]
-        internal static ClassificationTypeDefinition TypeDefinition = null;
+        internal static ClassificationTypeDefinition CategoryDefinition = null;
         [Export]
-        [Name(TextTemplateFieldParam)]
+        [Name(TextHolderParam)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition ParamDefinition = null;
         [Export]
-        [Name(TextTemplateFieldParamBrace)]
+        [Name(TextHolderParamBrace)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition ParamBraceDefinition = null;
         [Export]
-        [Name(TextTemplateFieldDescBrace)]
+        [Name(TextHolderDescBrace)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition DescBraceDefinition = null;
         [Export]
-        [Name(TextTemplateFieldTypeBrace)]
+        [Name(TextHolderCategoryBrace)]
         [BaseDefinition(ClasificationName)]
-        internal static ClassificationTypeDefinition TypeBraceDefinition = null;
+        internal static ClassificationTypeDefinition CategoryBraceDefinition = null;
         [Export]
-        [Name(TextTemplateFieldFault)]
+        [Name(TextHolderFault)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition FaultDefinition = null;
         [Export]
-        [Name(TextTemplateFieldRecognized)]
+        [Name(TextHolderRecognized)]
         [BaseDefinition(ClasificationName)]
         internal static ClassificationTypeDefinition RecognizedDefinition = null;
 
@@ -99,11 +99,11 @@ namespace Templator.Utils
         #region Classification Format Productions
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldBrace)]
-        [Name(TextTemplateFieldBrace)]
-        internal sealed class TextTemplateFieldStartFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderBrace)]
+        [Name(TextHolderBrace)]
+        internal sealed class TextHolderStartFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldStartFormat()
+            public TextHolderStartFormat()
             {
                 this.ForegroundColor = Colors.DarkGoldenrod;
                 this.IsBold = true;
@@ -111,11 +111,11 @@ namespace Templator.Utils
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldParamBrace)]
-        [Name(TextTemplateFieldParamBrace)]
-        internal sealed class TextTemplateFieldParamBraceFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderParamBrace)]
+        [Name(TextHolderParamBrace)]
+        internal sealed class TextHolderParamBraceFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldParamBraceFormat()
+            public TextHolderParamBraceFormat()
             {
                 this.ForegroundColor = Colors.LightSalmon;
                 this.IsBold = true;
@@ -123,33 +123,33 @@ namespace Templator.Utils
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldType)]
-        [Name(TextTemplateFieldType)]
-        internal sealed class TextTemplateFieldTypeFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderCategory)]
+        [Name(TextHolderCategory)]
+        internal sealed class TextHolderTypeFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldTypeFormat()
+            public TextHolderTypeFormat()
             {
                 this.ForegroundColor = Colors.Blue;
             }
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldParam)]
-        [Name(TextTemplateFieldParam)]
-        internal sealed class TextTemplateFieldParamFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderParam)]
+        [Name(TextHolderParam)]
+        internal sealed class TextHolderParamFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldParamFormat()
+            public TextHolderParamFormat()
             {
                 this.ForegroundColor = Colors.DarkCyan;
             }
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldFault)]
-        [Name(TextTemplateFieldFault)]
-        internal sealed class TextTemplateFieldFaultFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderFault)]
+        [Name(TextHolderFault)]
+        internal sealed class TextHolderFaultFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldFaultFormat()
+            public TextHolderFaultFormat()
             {
                 var c = new TextDecorationCollection();
                 var s = new TextDecoration
@@ -164,33 +164,33 @@ namespace Templator.Utils
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldDescBrace)]
-        [Name(TextTemplateFieldDescBrace)]
-        internal sealed class TextTemplateFieldDescBraceFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderDescBrace)]
+        [Name(TextHolderDescBrace)]
+        internal sealed class TextHolderDescBraceFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldDescBraceFormat()
+            public TextHolderDescBraceFormat()
             {
                 this.IsBold = true;
             }
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldTypeBrace)]
-        [Name(TextTemplateFieldTypeBrace)]
-        internal sealed class TextTemplateFieldTypeBraceFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderCategoryBrace)]
+        [Name(TextHolderCategoryBrace)]
+        internal sealed class TextHolderTypeBraceFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldTypeBraceFormat()
+            public TextHolderTypeBraceFormat()
             {
                 this.IsBold = true;
             }
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldRecognized)]
-        [Name(TextTemplateFieldRecognized)]
-        internal sealed class TextTemplateFieldRecognizedFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderRecognized)]
+        [Name(TextHolderRecognized)]
+        internal sealed class TextHolderRecognizedFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldRecognizedFormat()
+            public TextHolderRecognizedFormat()
             {
                 this.ForegroundColor = Colors.DimGray;
                 this.TextDecorations = System.Windows.TextDecorations.Underline;
@@ -198,22 +198,22 @@ namespace Templator.Utils
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldName)]
-        [Name(TextTemplateFieldName)]
-        internal sealed class TextTemplateFieldNameDefaultFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderKeyword)]
+        [Name(TextHolderKeyword)]
+        internal sealed class TextHolderNameDefaultFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldNameDefaultFormat()
+            public TextHolderNameDefaultFormat()
             {
                 this.ForegroundColor = Colors.Brown;
             }
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [ClassificationType(ClassificationTypeNames = TextTemplateFieldDefault)]
-        [Name(TextTemplateFieldDefault)]
-        internal sealed class TextTemplateFieldDefaultFormat : ClassificationFormatDefinition
+        [ClassificationType(ClassificationTypeNames = TextHolderDefault)]
+        [Name(TextHolderDefault)]
+        internal sealed class TextHolderDefaultFormat : ClassificationFormatDefinition
         {
-            public TextTemplateFieldDefaultFormat()
+            public TextHolderDefaultFormat()
             {
                 this.ForegroundColor = Colors.DimGray;
             }
@@ -222,7 +222,7 @@ namespace Templator.Utils
     }
 
     [Export(typeof(IClassifierProvider))]
-    [ContentType("TextTemplate")]
+    [ContentType(ClassificationDefinitions.ClasificationName)]
     internal class ClassifierProvider : IClassifierProvider
     {
         [Import]

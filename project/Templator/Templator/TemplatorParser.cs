@@ -292,6 +292,10 @@ namespace Templator
                     throw new TemplatorUnexpectedStateException();
                 }
             }
+            if (!_clearedSyntaxError)
+            {
+                OnGrammerTokenCreated(Config.End, Config.TermKeywordsBeginEnd, Config.End);
+            }
             return ret;
         }
 #endregion parsing
@@ -474,7 +478,10 @@ namespace Templator
         {
             if (StackLevel > 0)
             {
+                var cleared = _clearedSyntaxError;
+                //this is an additional check, dont increase errors
                 LogSyntextError("Collection Level not cleared: levels at {0}, possibly missing end holder of a collection/repeat holder", StackLevel);
+                _clearedSyntaxError = cleared;
             }
             TemplatorUtil.MergeHolders(Holders, Context.Holders.Values, mergeInto);
         }

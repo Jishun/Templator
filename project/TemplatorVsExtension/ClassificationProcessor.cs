@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Windows.Controls;
-using System.Xml.Linq;
 using DotNetUtils;
 using EnvDTE;
 using Microsoft.VisualStudio.Text;
@@ -20,13 +14,12 @@ namespace Templator.Utils
     {
         private const string TemplatorConfigFileName = "TemplatorConfig.xml";
 
-        private readonly IClassificationTypeRegistryService _classificationTypeRegistry;
         private readonly DTE _dte;
         private readonly bool _isXml;
         private static readonly object LockObject = new object();
 
         private ProjectItemsEvents _solutionEvents;
-        private IDictionary<string, DocumentEvents> _documentEvents = new Dictionary<string, DocumentEvents>();
+        private readonly IDictionary<string, DocumentEvents> _documentEvents = new Dictionary<string, DocumentEvents>();
         private int _lastPosition = 0;
         private int _start = 0;
         private string _activeProjectName;
@@ -34,36 +27,35 @@ namespace Templator.Utils
         private TemplatorParser _parser;
         private readonly IDictionary<string, TemplatorParser> _parsers = new ConcurrentDictionary<string, TemplatorParser>();
 
-        private static HashSet<string> _standardFields;
         private ITextSnapshot _snapshot;
         private List<ClassificationSpan> _spans;
 
         private readonly IClassificationType _brace;
-        private readonly IClassificationType _name;
+        private readonly IClassificationType _keyword;
         private readonly IClassificationType _default;
         private readonly IClassificationType _fault;
-        private readonly IClassificationType _type;
+        private readonly IClassificationType _category;
         private readonly IClassificationType _param;
         private readonly IClassificationType _paramBrace;
         private readonly IClassificationType _descBrace;
-        private readonly IClassificationType _typeBrace;
+        private readonly IClassificationType _categoryBrace;
         private readonly IClassificationType _recognized;
 
         public ClassificationProcessor(IClassificationTypeRegistryService registry, DTE dte, bool isXml = false)
         {
-            _classificationTypeRegistry = registry;
+            var classificationTypeRegistry = registry;
             _dte = dte;
             _isXml = isXml;
-            _brace = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldBrace);
-            _name = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldName);
-            _default = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldDefault);
-            _fault = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldFault);
-            _type = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldType);
-            _param = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldParam);
-            _paramBrace = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldParamBrace);
-            _descBrace = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldDescBrace);
-            _typeBrace = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldTypeBrace);
-            _recognized = _classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextTemplateFieldRecognized);
+            _brace = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderBrace);
+            _keyword = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderKeyword);
+            _default = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderDefault);
+            _fault = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderFault);
+            _category = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderCategory);
+            _param = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderParam);
+            _paramBrace = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderParamBrace);
+            _descBrace = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderDescBrace);
+            _categoryBrace = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderCategoryBrace);
+            _recognized = classificationTypeRegistry.GetClassificationType(ClassificationDefinitions.TextHolderRecognized);
         }
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
@@ -204,6 +196,7 @@ namespace Templator.Utils
                 }
             }
             _lastPosition = args.Position - args.TokenText.Length;
+            type = _default;
             if (args.TokenName == parser.Config.TermBeginEnd)
             {
                 type = _brace;
@@ -214,11 +207,11 @@ namespace Templator.Utils
             }
             else if (args.TokenName == parser.Config.TermKeyword)
             {
-                type = _name;
+                type = _keyword;
             }
             else if (args.TokenName == parser.Config.TermCategory)
             {
-                type = _type;
+                type = _category;
             }
             else if (args.TokenName == parser.Config.TermParam)
             {
@@ -234,7 +227,7 @@ namespace Templator.Utils
             }
             else if (args.TokenName == parser.Config.TermCategorizedNameBeginEnd)
             {
-                type = _typeBrace;
+                type = _categoryBrace;
             }
             AddSpan(args.TokenText.Length, type);
             _lastPosition = args.Position;
@@ -242,7 +235,7 @@ namespace Templator.Utils
 
         private void ProjectItemChanges(ProjectItem projectItem, string oldName = "")
         {
-            if (oldName.EndsWith(TemplatorConfigFileName) ||  (projectItem.FileCount > 0 && projectItem.FileNames[1].EndsWith(TemplatorConfigFileName) ))
+            if (oldName.EndsWith(TemplatorConfigFileName) || (projectItem.FileCount > 0 && projectItem.FileNames[1] != null && projectItem.FileNames[1].EndsWith(TemplatorConfigFileName)))
             {
                 _activeProjectName = null;
                 if (_parsers.ContainsKey(projectItem.ContainingProject.FullName))
@@ -269,7 +262,7 @@ namespace Templator.Utils
 
         private void AddSpan(int length, IClassificationType classification, string backward = null)
         {
-            if (backward != null)
+            if (backward != null && length > backward.Length)
             {
                 length -= backward.Length;
             }
