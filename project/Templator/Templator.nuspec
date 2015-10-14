@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Templator</id>
-    <version>1.0.1.0</version>
+    <version>1.0.1.1</version>
     <title>Templator</title>
     <authors>Jishun Duan</authors>
     <owners>Jishun Duan</owners>
@@ -12,9 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An addvanced text based replacing-template engin designed for using simplified dictionary input</description>
     <releaseNotes>
-        Support nested TextHolders,
-        Fix install.ps1 issue,
-        Support '!' in conditional keywords
+        Fix missing output when the free tax is between 2 non-nested TextHolder
     </releaseNotes>
     <copyright>Copyright Jishun Duan, 2011-2015</copyright>
     <tags>Template, Parse, String Replace</tags>

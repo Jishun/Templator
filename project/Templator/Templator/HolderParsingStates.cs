@@ -69,6 +69,10 @@ namespace Templator
                             parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         }
                     }
+                    else
+                    {
+                        parser.AppendResult(matched);
+                    }
                     return null;
                 }
             },

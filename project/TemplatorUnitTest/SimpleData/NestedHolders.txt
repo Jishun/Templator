@@ -57,3 +57,9 @@ InOutTextInside
 
 2
 
+
+[{{(Repeat)[Collection,Join( AND )]}}[{{Inside}}]{{(Repeat)[CollectionEnd]}}]
+{Repeat: [ {Inside: "Name"}, {Inside: "Value"}]}
+[[Name] AND [Value]]
+1
+Repeat,Inside
