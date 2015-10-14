@@ -278,7 +278,7 @@ namespace Templator
                 {
                     HandleNullOrEmpty = true,
                     CalculateInput = true,
-                    Description = "Evaluate a piece of JS code based on current input",
+                    //Description = "Evaluate a piece of JS code based on current input",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("The js code", "")
@@ -1361,7 +1361,7 @@ namespace Templator
             var index = 1;
             foreach (var key in Keywords.Values)
             {
-                key.Preority = key.Preority > 0 ? key.Preority : index += KeywordPriorityIncreamental;
+                key.Priority = key.Priority > 0 ? key.Priority : index += KeywordPriorityIncreamental;
             }
             EscapePrefix = EscapePrefix == String.Empty ? null : EscapePrefix;
         }

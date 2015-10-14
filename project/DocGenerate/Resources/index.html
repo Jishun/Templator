@@ -34,17 +34,17 @@
             <h5>To use this libary: </h5>
             <ul>
                 <li>Initialize an instance of Templator Config. cutomize it if necessary</li>
-                <li>Assign an instance of ILogger to the config object, or leave it default an later use ((TemplatorLogger)config.TemplatorLogger).Errors to retrieve parser errors</li>
-                <li>Initialize an instans of TemplatorParser with the config object</li>
+                <li>Assign an instance of ILogger to the config object, or leave it default and later use ((TemplatorLogger)config.TemplatorLogger).Errors to retrieve parser errors</li>
+                <li>Initialize an instance of TemplatorParser with the config object</li>
                 <li>Construct a IDictionary&lt;string, object&gt; as input or use TemplatorUtil.ParseJsonDict(string) method to parse a Json object as input</li>
-                <li>Load text/xml templat as string or stream</li>
+                <li>Load text/xml template as string or stream</li>
                 <li>var outPut = parser.LoadXmlTemplate(stream, input); or parser.ParseXml, or parser.LoadTextTemplate etc.. will generate the parsed string</li>
                 <li>Check the logger object (((TemplatorLogger)config.TemplatorLogger).Errors by default) for parsing errors</li>
                 <li>parser.Holders will give out the holders defined inside the template</li>
             </ul>
             <h5>Helper tools:</h5>
             <ul>
-                <li>Build phase validation task for msbuild/vs is ready on new get, search for  <a href="https://www.nuget.org/packages/TemplatorSyntaxBuildTask/">'TemplatorSyntaxBuildTask'</a> and install it to your project which contains the template. it will check syntax for you.</li>
+                <li>Build phase validation task for msbuild/vs is ready on nuget, search for  <a href="https://www.nuget.org/packages/TemplatorSyntaxBuildTask/">'TemplatorSyntaxBuildTask'</a> and install it to your project which contains the template. it will check syntax for you.</li>
                 <li><a href="Templator.Vs.Extension-{{ExtensionVersion}}.vsix">Vs syntax highlighing extension is ready for download. click to download, install, and enjoy ^_^</a></li>
             </ul>
             <h3 id="Sec_{{Name}}" bindings="{{Sections[CollectionBegin(Group)]}}">{{Name}}</h3>
@@ -63,7 +63,7 @@
                     <div>
                         Parameters:
                         <dl style="padding-left: 30px;">
-                            <dt bindings="{{Params[CollectionBegin, Ifnot(../..)]}}">{{Description}}</dt>
+                            <dt bindings="{{Params[CollectionBegin(Group), Ifnot(../..)]}}">{{Description}}</dt>
                             <dd bindings="{{Params[CollectionEnd]}}">{{Comments}}</dd>
                         </dl>
                     </div>

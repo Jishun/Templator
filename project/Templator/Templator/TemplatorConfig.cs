@@ -28,13 +28,13 @@ namespace Templator
         [Description("The TemplatorLogger object used for parser to log errors")]
         public ILogger Logger = new TemplatorLogger();
         [XmlIgnore]
-        [Description("A event fired by the parser when no input found in the input dictionary to allow additional logic to find the value")]
+        [Description("An event fired by the parser when no input found in the input dictionary to allow additional logic to find the value")]
         public EventHandler<TemplatorEventArgs> OnRequireInput;
         [XmlIgnore]
-        [Description("A event fired by the parser when it finds a token while doing syntax parsing.")]
+        [Description("An event fired by the parser when it finds a token while doing syntax parsing.")]
         public EventHandler<TemplatorSyntaxEventArgs> OnTokenFound;
         [XmlIgnore]
-        [Description("A event fired by the parser when it finds a TextHolder.")]
+        [Description("An event fired by the parser when it finds a TextHolder.")]
         public EventHandler<TemplatorEventArgs> OnHolderFound;
         [XmlIgnore]
         [Description("The deafult text encoding used")]
@@ -90,8 +90,8 @@ namespace Templator
         public string XmlNameNodeName = "Name";
         [Description("The TextHolder Child collection Element name when parsing xml format input")]
         public string XmlCollectionNodeName = "CollectionItem";
-        [Description("The key used by the parser to store preparsed Holder definitions.")]
-        public string KeyHolders = "$Fields";
+        [Description("The key used by the parser to store preparsed Holder definitions when using 2-pass passing, which allows logics inside OnRequireInput event to be able to find unreached TaxHolder's definition")]
+        public string KeyHolders = "$Fields"; 
 
         [XmlElement]
         [Description("List of custom added keyword names to let syntax check task and highlight extension pass the validation")]

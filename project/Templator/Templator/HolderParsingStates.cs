@@ -314,7 +314,7 @@ namespace Templator
                                 .ThenByDescending(k => k.IsValidation && !k.ManipulateOutput)
                                 .ThenByDescending(k => k.IsValidation)
                                 .ThenByDescending(k => k.ManipulateOutput)
-                                .ThenBy(k => k.Preority)
+                                .ThenBy(k => k.Priority)
                                 .ToList();
                         var value = parser.GetValue<object>(ret);
                         if (!value.IsNullOrEmptyValue())
