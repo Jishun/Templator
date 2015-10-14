@@ -13,20 +13,36 @@ namespace DocGenerate
     public static class TemplatorHelpDoc
     {
         private static readonly TemplatorConfig Config = TemplatorConfig.DefaultInstance;
-        private static string _extensionVersion = "0.0.3-beta";
+        private static string _extensionVersion;
 
         public static string Title = "Templator";
         public static string Description = "-- An Advanced text templating engine";
-        public static IList<Triple<string, string, IDictionary<string, object>[]>> Sections = new List<Triple<string, string, IDictionary<string, object>[]>>
+
+        public static IList<Triple<string, string, IDictionary<string, object>[]>> Sections => new List<Triple<string, string, IDictionary<string, object>[]>>
         {
-            new Triple<string, string, IDictionary<string, object>[]>("Get Started", "Search for 'Templator' in nuget package manager, current version 1.0.0.5", null),
-            new Triple<string, string, IDictionary<string, object>[]>("Philosophy", "Try to Create a text processing engine with the ablity to produce all kinds of formated text using a unified input structure, with the ablity to be fully cusomized in order to overcome any possible symbol conflicts.", null),
-            new Triple<string, string, IDictionary<string, object>[]>("Template Usage", "Simply put the a place holder at the position of the text file which you want to output to, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value", null),
-            new Triple<string, string, IDictionary<string, object>[]>("Syntax of a TextHolder", "With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object. See examples below:", GetSyntaxExamples().ToArray()),
-            new Triple<string, string, IDictionary<string, object>[]>("Build phase validation", "Nuget Search for package 'TemplatorSyntaxBuildTask', install it to the project which contains your templates, the task will add a 'TemplatorConfig.xml' into the project and load configurations from it:", GetBuildTaskConfigurations()),
-            new Triple<string, string, IDictionary<string, object>[]>("Editor SyntaxHighlighting", "Beta ready, The project 'TemplatorVsExtension' is providing syntax highlighting in visual studio. based on TemplatorConfig.xml in the project", GetVsExtensionDescriptions()),
-            new Triple<string, string, IDictionary<string, object>[]>("Extensibility", "Implement a TemplatorKeyWord and use AddKeyword method to add it to config object before passing it to the parser(or if after, call PrepareKeywords() to refresh the keywords), See below for the options:", GetKeywordsProperties().ToArray()),
-            new Triple<string, string, IDictionary<string, object>[]>("Configuration", "Templator allows to be fully customized through config object, see the following options for details:", GetConfiguableProperties().ToArray()),
+            new Triple<string, string, IDictionary<string, object>[]>("Get Started",
+                "Search for 'Templator' in nuget package manager, current version 1.0.0.5", null),
+            new Triple<string, string, IDictionary<string, object>[]>("Philosophy",
+                "Try to Create a text processing engine with the ablity to produce all kinds of formated text using a unified input structure, with the ablity to be fully cusomized in order to overcome any possible symbol conflicts.",
+                null),
+            new Triple<string, string, IDictionary<string, object>[]>("Template Usage",
+                "Simply put the a place holder at the position of the text file which you want to output to, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value",
+                null),
+            new Triple<string, string, IDictionary<string, object>[]>("Syntax of a TextHolder",
+                "With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object. See examples below:",
+                GetSyntaxExamples().ToArray()),
+            new Triple<string, string, IDictionary<string, object>[]>("Build phase validation",
+                "Nuget Search for package 'TemplatorSyntaxBuildTask', install it to the project which contains your templates, the task will add a 'TemplatorConfig.xml' into the project and load configurations from it:",
+                GetBuildTaskConfigurations()),
+            new Triple<string, string, IDictionary<string, object>[]>("Editor SyntaxHighlighting",
+                "Beta ready, The project 'TemplatorVsExtension' is providing syntax highlighting in visual studio. based on TemplatorConfig.xml in the project",
+                GetVsExtensionDescriptions()),
+            new Triple<string, string, IDictionary<string, object>[]>("Extensibility",
+                "Implement a TemplatorKeyWord and use AddKeyword method to add it to config object before passing it to the parser(or if after, call PrepareKeywords() to refresh the keywords), See below for the options:",
+                GetKeywordsProperties().ToArray()),
+            new Triple<string, string, IDictionary<string, object>[]>("Configuration",
+                "Templator allows to be fully customized through config object, see the following options for details:",
+                GetConfiguableProperties().ToArray()),
         };
 
         private static IDictionary<string, object>[] GetBuildTaskConfigurations()
@@ -43,7 +59,7 @@ namespace DocGenerate
         {
             return new IDictionary<string, object>[]
             {
-                new Dictionary<string, object>(){{"Name", "Version"}, {"Description", "{0}, now only supports vs2013.".FormatInvariantCulture(_extensionVersion)}}, 
+                new Dictionary<string, object>(){{"Name", "Version"}, {"Description", "{0}, now supports vs2013 and vs2015.".FormatInvariantCulture(_extensionVersion)}}, 
                 new Dictionary<string, object>(){{"Name", "Strategy"}, {"Description", "In order to get less impact to vs performace in regular work, the extension will only try to parse the active document(xml,csv,txt) if the active project contains a valid 'TemplatorConfig.xml'"}}, 
                 new Dictionary<string, object>(){{"Name", "Multiple Projects"}, {"Description", "Templates contained in multiple projects will be parsed based on each project's 'TemplatorConfig.xml', which enables different format highlighting for different project needs"}}, 
                 new Dictionary<string, object>(){{"Name", "Config changes"}, {"Description", "If the 'TemplatorConfig.xml' is changed inside visual studio, the extension will get the change, and the opened template documents needs to be reopened to get fully renewed."}}, 

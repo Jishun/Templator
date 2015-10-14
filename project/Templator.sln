@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{62785A72-493E-4BC2-BDD5-CA5024E1DBED}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplatorVsExtension", "TemplatorVsExtension\TemplatorVsExtension.csproj", "{78957C5A-B6B9-4E20-893B-EAF65A8400FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplatorTest", "..\..\TemplatorTest\UnitTest\TemplatorTest.csproj", "{C4995389-92A1-43E3-8FB7-F24C85547DE2}"
@@ -10,11 +15,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplatorSyntaxBuildTask", "TemplatorMsBuildTaks\TemplatorSyntaxBuildTask.csproj", "{243FE3F7-7611-4E04-9994-64283701DD19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocGenerate", "DocGenerate\DocGenerate.csproj", "{18A2D99C-3FA8-439F-AACC-FF73DC8B5970}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{62785A72-493E-4BC2-BDD5-CA5024E1DBED}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Templator", "Templator\Templator.csproj", "{000DB9F3-9744-43B8-9467-AF79437132E6}"
 EndProject
