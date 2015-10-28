@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TemplatorSyntaxBuildTask</id>
-    <version>1.0.0.1</version>
+    <version>1.0.0.2</version>
     <title>Templator's build time syntax checking task</title>
       <authors>Jishun Duan</authors>
       <owners>Jishun Duan</owners>
@@ -12,7 +12,7 @@
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Msbuild task for Syntax checking against "Templator"'s text template</description>
     <releaseNotes>
-        Support category syntax checking
+        Fix close tag check when doing grammar check (in the scenario of 'NoInput')
     </releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>Templator, Template, Parse, String Replace</tags>

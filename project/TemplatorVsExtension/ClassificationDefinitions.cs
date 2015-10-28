@@ -1,12 +1,12 @@
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Media;
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Templator.Utils
@@ -32,23 +32,23 @@ namespace Templator.Utils
         [Export]
         [Name(ClasificationName)]
         [BaseDefinition("text")]
-        internal static ContentTypeDefinition diffContentTypeDefinition = null;
+        internal static ContentTypeDefinition DiffContentTypeDefinition = null;
 
         [Export]
         [FileExtension(".txt")]
         [ContentType(ClasificationName)]
-        internal static FileExtensionToContentTypeDefinition txtFileExtensionDefinition = null;
+        internal static FileExtensionToContentTypeDefinition TxtFileExtensionDefinition = null;
 
         [Export]
         [FileExtension(".csv")]
         [ContentType(ClasificationName)]
-        internal static FileExtensionToContentTypeDefinition csvFileExtensionDefinition = null;
+        internal static FileExtensionToContentTypeDefinition CsvFileExtensionDefinition = null;
 
         [Export]
         [FileExtension(".xml")]
         [BaseDefinition("XML")]
         [ContentType(ClasificationName)]
-        internal static FileExtensionToContentTypeDefinition xmlFileExtensionDefinition = null;
+        internal static FileExtensionToContentTypeDefinition XmlFileExtensionDefinition = null;
 
         #endregion
 
@@ -105,8 +105,8 @@ namespace Templator.Utils
         {
             public TextHolderStartFormat()
             {
-                this.ForegroundColor = Colors.DarkGoldenrod;
-                this.IsBold = true;
+                ForegroundColor = Colors.DarkGoldenrod;
+                IsBold = true;
             }
         }
 
@@ -117,8 +117,8 @@ namespace Templator.Utils
         {
             public TextHolderParamBraceFormat()
             {
-                this.ForegroundColor = Colors.LightSalmon;
-                this.IsBold = true;
+                ForegroundColor = Colors.LightSalmon;
+                IsBold = true;
             }
         }
 
@@ -129,7 +129,7 @@ namespace Templator.Utils
         {
             public TextHolderTypeFormat()
             {
-                this.ForegroundColor = Colors.Blue;
+                ForegroundColor = Colors.Blue;
             }
         }
 
@@ -140,7 +140,7 @@ namespace Templator.Utils
         {
             public TextHolderParamFormat()
             {
-                this.ForegroundColor = Colors.DarkCyan;
+                ForegroundColor = Colors.DarkCyan;
             }
         }
 
@@ -156,10 +156,10 @@ namespace Templator.Utils
                 {
                     Location = TextDecorationLocation.Underline,
                     Pen = new Pen(Brushes.Red, 2),
-                    PenThicknessUnit = TextDecorationUnit.FontRecommended,
+                    PenThicknessUnit = TextDecorationUnit.FontRecommended
                 };
                 c.Add(s);
-                this.TextDecorations = c;
+                TextDecorations = c;
             }
         }
 
@@ -170,7 +170,7 @@ namespace Templator.Utils
         {
             public TextHolderDescBraceFormat()
             {
-                this.IsBold = true;
+                IsBold = true;
             }
         }
 
@@ -181,7 +181,7 @@ namespace Templator.Utils
         {
             public TextHolderTypeBraceFormat()
             {
-                this.IsBold = true;
+                IsBold = true;
             }
         }
 
@@ -192,8 +192,8 @@ namespace Templator.Utils
         {
             public TextHolderRecognizedFormat()
             {
-                this.ForegroundColor = Colors.DimGray;
-                this.TextDecorations = System.Windows.TextDecorations.Underline;
+                ForegroundColor = Colors.DimGray;
+                TextDecorations = System.Windows.TextDecorations.Underline;
             }
         }
 
@@ -204,7 +204,7 @@ namespace Templator.Utils
         {
             public TextHolderNameDefaultFormat()
             {
-                this.ForegroundColor = Colors.Brown;
+                ForegroundColor = Colors.Brown;
             }
         }
 
@@ -215,7 +215,7 @@ namespace Templator.Utils
         {
             public TextHolderDefaultFormat()
             {
-                this.ForegroundColor = Colors.DimGray;
+                ForegroundColor = Colors.DimGray;
             }
         }
         #endregion

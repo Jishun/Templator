@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Instrumentation;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using CsvEnumerator;
@@ -44,11 +43,11 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
                     PostParse = (parser, parsedHolder) =>
                     {
+                        Keywords[KeywordRepeatBegin].PostParse(parser, parsedHolder);
                         if (parser.NoInput)
                         {
                             return false;
                         }
-                        Keywords[KeywordRepeatBegin].PostParse(parser, parsedHolder);
                         if (parser.InXmlManipulation())
                         {
                             Keywords[KeywordRepeatEnd].PostParse(parser, parsedHolder);
@@ -66,8 +65,10 @@ namespace Templator
                     },
                     PostParse = (parser, parsedHolder) =>
                     {
+                        parser.Context.Holders.AddOrSkip(parsedHolder.Name, parsedHolder);
                         if (parser.NoInput)
                         {
+                            parser.PushContext(null, null, parsedHolder, false, false);
                             return false;
                         }
                         var childInputs = TemplatorUtil.GetChildCollection(parser.Context.Input, parsedHolder.Name, parser.Config);
@@ -105,7 +106,6 @@ namespace Templator
                                 inputCount = (int) TemplatorUtil.GetInputCount(parser, parsedHolder);
                             }
                         }
-                        parser.Context.Holders.AddOrSkip(parsedHolder.Name, parsedHolder);
                         if (parser.InXmlManipulation())
                         {
                             parser.ParentXmlContext.OnAfterParsingElement = null;
@@ -154,15 +154,16 @@ namespace Templator
                     OnGetValue = (holder, parser, value) => String.Empty,
                     PostParse = (parser, parsedHolder) =>
                     {
-                        if (parser.NoInput)
-                        {
-                            return false;
-                        }
+                        
                         if (parser.InXmlManipulation())
                         {
                             parser.ParentXmlContext.OnAfterParsingElement = p =>
                             {
                                 p.PopContext();
+                                if (parser.NoInput)
+                                {
+                                    return;
+                                }
                                 var ll = p.StackLevel + parsedHolder.Name;
                                 if (TemplatorUtil.GetInputCount(p, parsedHolder) > TemplatorUtil.GetInputIndex(p, parsedHolder))
                                 {
@@ -186,12 +187,16 @@ namespace Templator
                         }
                         else
                         {
+                            if (parser.NoInput)
+                            {
+                                parser.PopContext();
+                                return false;
+                            }
                             var position = (int)parser.Context["ParentPosition"];
                             parser.PopContext();
-                            var l = parser.StackLevel + parsedHolder.Name;
                             if (TemplatorUtil.GetInputIndex(parser, parsedHolder) == null)
                             {
-                                parser.LogSyntextError("Probably the CollectionEnd holder didn't use the same name with the beginning Holder, end holder name : '{0}'".FormatInvariantCulture(parsedHolder.Name));
+                                parser.LogSyntaxError("Probably the CollectionEnd holder didn't use the same name with the beginning Holder, end holder name : '{0}'".FormatInvariantCulture(parsedHolder.Name));
                                 parser.Context.State.Error = true;
                                 return false;
                             }
@@ -346,7 +351,7 @@ namespace Templator
                     {
                         var aggregateField = (string)holder[KeywordAverage];
                         // sum/count
-                        var count = (decimal)parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable() ?? 0) + (item is object[] ? ((object[])item).Length : 1));
+                        var count = (decimal)parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable() ?? 0) + ((item as object[])?.Length ?? 1));
                         return count != 0 ? (decimal)parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, num) => (num.ParseDecimalNullable() ?? 0) + (agg.ParseDecimalNullable() ?? 0)) / count : 0;
                     }
                 },
@@ -362,7 +367,7 @@ namespace Templator
                     OnGetValue = (holder, parser, value) =>
                     {
                         var aggregateField = (string) holder[KeywordCount];
-                        return parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable() ?? 0) + (item is object[] ? ((object[])item).Length : 1)).DecimalToString();
+                        return parser.Aggregate(null, holder, aggregateField, parser.Context.Input, (agg, item) => (agg.ParseDecimalNullable() ?? 0) + ((item as object[])?.Length ?? 1)).DecimalToString();
                     }
                 },
                 new TemplatorKeyword(KeywordMulti)
@@ -467,9 +472,8 @@ namespace Templator
                         var regStr = (string) holder[KeywordRegex];
                         if (!regStr.IsNullOrWhiteSpace())
                         {
-                            Regex reg = null;
                             var d = Regexes.ContainsKey(regStr);
-                            reg = d ? Regexes[regStr] : new Regex(regStr, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+                            var reg = d ? Regexes[regStr] : new Regex(regStr, RegexOptions.Compiled | RegexOptions.CultureInvariant);
                             if (!reg.IsMatch(value.SafeToString()))
                             {
                                 parser.LogError("Value '{0}' test failed against pattern '{1}' for field: '{2}'", value, d ? Regexes[regStr].ToString() : regStr, holder.Name);
@@ -503,10 +507,9 @@ namespace Templator
                         {
                             return value;
                         }
-                        string str = null;
-                        str = holder.ContainsKey(KeywordNumber) ? Convert.ToString(value.DecimalToString() ?? value) : value.SafeToString();
+                        var str = holder.ContainsKey(KeywordNumber) ? Convert.ToString(value.DecimalToString() ?? value) : value.SafeToString();
                         var child = isArray ? TemplatorUtil.GetChildCollection(parser.Context.Input, holder.Name, parser.Config) : null;
-                        var length = isArray ? child == null ? 0 : child.Length : str.Length;
+                        var length = isArray ? child?.Length ?? 0 : str.Length;
                         int? maxLength = null;
                         var customLength = (Pair<string, IList<int>>)holder[KeywordLength];
                         if (customLength.Second[0] == -1)
@@ -544,7 +547,7 @@ namespace Templator
                     },
                     Parse = ((parser, str) =>
                     {
-                        IList<int> lengths = null;
+                        IList<int> lengths;
                         if (str.Contains("-"))
                         {
                             lengths = str.Split('-').Select(s => s.ParseIntNullable()).Where(i => i.HasValue && i > 0).Select(i => i.Value).ToList();
@@ -1119,7 +1122,7 @@ namespace Templator
                     Description = "Indicates this TextHolder only required input but will not ouput anything",
                     OnGetValue = (holder, parser, value) =>
                     {
-                        if (parser.XmlContext != null && parser.XmlContext.Element != null)
+                        if (parser.XmlContext?.Element != null)
                         {
                             parser.RemovingElements.Add(parser.XmlContext.Element);
                         }
@@ -1199,7 +1202,7 @@ namespace Templator
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
-                        if (parser.XmlContext != null && parser.XmlContext.Attribute != null)
+                        if (parser.XmlContext?.Attribute != null)
                         {
                             var condition = TemplatorUtil.EvalulateCondition(parser, holder, (string)holder[KeywordAttributeIf], value);
                             if (!condition)
@@ -1221,7 +1224,7 @@ namespace Templator
                             parser.LogError("{0} is required", holder.Name);
                             return null;
                         }
-                        if (parser.XmlContext != null && parser.XmlContext.Attribute != null)
+                        if (parser.XmlContext?.Attribute != null)
                         {
                             var element = parser.XmlContext.Element;
                             var attr = parser.XmlContext.Attribute;
@@ -1258,10 +1261,7 @@ namespace Templator
                             parser.Context.ChildResultAfter.Clear();
                             parser.Context.ChildResultBefore.Clear();
                             var logger = parser.Context.ChildLogger as TemplatorLogger;
-                            if (logger != null)
-                            {
-                                logger.Errors.Clear();
-                            }
+                            logger?.Errors.Clear();
                             if (parser.XmlContext != null)
                             {
                                 parser.RemovingElements.Add(parser.XmlContext.Element);
@@ -1340,11 +1340,10 @@ namespace Templator
                         var childInputs = TemplatorUtil.GetChildCollection(parser.ParentContext.Input, s, parser.Config);
                         if (!childInputs.IsNullOrEmpty())
                         {
-                            var l = parser.StackLevel + parser.Context.Holder.Name;
                             TemplatorUtil.SetInputCount(parser, parser.Context.Holder, childInputs.Max(c =>
                             {
                                 var child = TemplatorUtil.GetChildCollection(c, parser.Context.Holder.Name, parser.Config);
-                                return child == null ? 0 : child.Length;
+                                return child?.Length ?? 0;
                             }));
                         }
                     })

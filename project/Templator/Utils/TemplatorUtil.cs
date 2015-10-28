@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using System.Web.UI;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using DotNetUtils;
@@ -40,8 +36,7 @@ namespace Templator
 
         public static bool InXmlManipulation(this TemplatorParser parser)
         {
-            return parser.XmlContext != null && parser.XmlContext.Attribute != null &&
-                   parser.XmlContext.Attribute.Name == parser.Config.XmlTemplatorAttributeName;
+            return parser.XmlContext?.Attribute != null && parser.XmlContext.Attribute.Name == parser.Config.XmlTemplatorAttributeName;
         }
 
         public static void GrammarCheckDirectory(this TemplatorParser parser, string path, string[] filters, int depth)
@@ -53,7 +48,8 @@ namespace Templator
             {
                 using (var sr = new StreamReader(name))
                 {
-                    parser.GrammarCheck(sr.ReadToEnd(), name);
+                    parser.StartOver();
+                    parser.GrammarCheck(sr.ReadToEnd(), name, name.ToLower().EndsWith(".xml"));
                 }
                 if (parser.ReachedMaxError)
                 {
@@ -113,13 +109,10 @@ namespace Templator
 
         public static IDictionary<string, object> MergeInput(IEnumerable<string> inputs, string fieldName, TemplatorConfig config)
         {
-            if (inputs != null)
+            var ret = inputs?.Select(ParseJsonDict).ToList();
+            if (ret?.Count > 0)
             {
-                var ret = inputs.Select(ParseJsonDict).ToList();
-                if (ret.Count > 0)
-                {
-                    return MergeInput(ret, fieldName, config);
-                }
+                return MergeInput(ret, fieldName, config);
             }
             return null;
         }
@@ -146,7 +139,7 @@ namespace Templator
         
         public static string InputToJson(this IDictionary<string, object> input)
         {
-            var se = JsonSerializer.Create(new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var se = JsonSerializer.Create(new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             using (var wr = new StringWriter())
             {
                 se.Serialize(wr, input);
@@ -228,7 +221,7 @@ namespace Templator
         {
             foreach (var c in aggregateField.Split(Constants.SemiDelimChar))
             {
-                string left = null;
+                string left;
                 var fieldName = c.GetUntil(".", out left);
                 if (!left.IsNullOrWhiteSpace())
                 {
@@ -253,7 +246,7 @@ namespace Templator
                 if (subHolder != null)
                 {
                     value = subHolder.Keywords.EmptyIfNull().Where(k => k.CalculateInput && k.OnGetValue != null)
-                        .Aggregate(value, (current, k) => KeywordPostParse(parser, subHolder, current, k));
+                        .Aggregate((object) null, (current, k) => KeywordPostParse(parser, subHolder, current, k));
                 }
                 if (requireInput)
                 {
@@ -301,7 +294,7 @@ namespace Templator
             if (value == null)
             {
                 value = holder.Keywords.EmptyIfNull().Where(k => k.CalculateInput && k.OnGetValue != null)
-                        .Aggregate(value, (current, k) => KeywordPostParse(parser, holder, current, k));
+                        .Aggregate((object) null, (current, k) => KeywordPostParse(parser, holder, current, k));
             }
             value = value ?? parser.RequireValue(parser, holder, defaultRet, input);
             value = holder.Keywords.EmptyIfNull().Where(key => !key.CalculateInput && key.OnGetValue != null)
@@ -315,10 +308,7 @@ namespace Templator
             {
                 foreach (var en in logger.Errors)
                 {
-                    if (parser.Context.Logger != null)
-                    {
-                        parser.Context.Logger.LogError(en.FileName, en.Line, en.Column, en.EndLineNumber, en.EndColumnNumber, en.Message);
-                    }
+                    parser.Context.Logger?.LogError(en.FileName, en.Line, en.Column, en.EndLineNumber, en.EndColumnNumber, en.Message);
                 }
             }
             if (null == value)

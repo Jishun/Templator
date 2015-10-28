@@ -12,7 +12,7 @@ namespace Templator.Utils
 
         internal TemplatorClassifier(IClassificationTypeRegistryService registry, DTE dte)
         {
-            this._classifier = new ClassificationProcessor(registry, dte);
+            _classifier = new ClassificationProcessor(registry, dte);
         }
 
         #pragma warning disable 67

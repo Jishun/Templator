@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using DotNetUtils;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
@@ -56,7 +53,7 @@ namespace TemplatorSyntaxBuildTask
                     var filter = config.CustomOptions.EmptyIfNull().PropertyOfFirstOrDefault(c => c.Category == ConfigCategory && c.Key == "Filters", pr => pr.Value);
                     Filters = filter ?? Filters;
                     var depth = config.CustomOptions.EmptyIfNull().PropertyOfFirstOrDefault(c => c.Category == ConfigCategory && c.Key == "Depth", pr => pr.Value);
-                    var d = 0;
+                    int d;
                     Depth = int.TryParse(depth, out d) ? d : Depth;
                 }
                 catch (Exception e)

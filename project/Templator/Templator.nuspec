@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Templator</id>
-    <version>1.0.1.1</version>
+    <version>1.0.1.2</version>
     <title>Templator</title>
     <authors>Jishun Duan</authors>
     <owners>Jishun Duan</owners>
@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An addvanced text based replacing-template engin designed for using simplified dictionary input</description>
     <releaseNotes>
-        Fix missing output when the free tax is between 2 non-nested TextHolder
+        Fix close tag check when doing grammar check (in the scenario of 'NoInput')
     </releaseNotes>
     <copyright>Copyright Jishun Duan, 2011-2015</copyright>
     <tags>Template, Parse, String Replace</tags>

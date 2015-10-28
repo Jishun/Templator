@@ -39,7 +39,7 @@ namespace Templator
                     {
                         if (parser.Context.Holder != null)
                         {
-                            parser.LogSyntextError(parser.Config.SyntaxErrorOverLappedHolder);
+                            parser.LogSyntaxError(parser.Config.SyntaxErrorOverLappedHolder);
                         }
                         else
                         {
@@ -66,7 +66,7 @@ namespace Templator
                         }
                         else
                         {
-                            parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                            parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         }
                     }
                     else
@@ -83,14 +83,14 @@ namespace Templator
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.CategorizedNameBegin, parser.Config.KeywordsBegin, parser.Config.End);
                     if (matched == null)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         parser.Context.State.End = true;
                     }
                     else if (matched == parser.Config.CategorizedNameBegin)
                     {
                         if (!parser.Config.AvailableCategories.IsNullOrEmpty() && !parser.Config.AvailableCategories.Contains(str))
                         {
-                            parser.LogSyntextError(parser.Config.SyntaxErrorInvalidCategory, str);
+                            parser.LogSyntaxError(parser.Config.SyntaxErrorInvalidCategory, str);
                         }
                         parser.Context.Holder.Category = str;
                         parser.Context.State.Category = true;
@@ -101,7 +101,7 @@ namespace Templator
                     {
                         if (!parser.Config.CategoryOptional)
                         {
-                            parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                            parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         }
                         parser.Context.Holder.Name = str.Replace(" ", "");
                         parser.Context.State.Name = true;
@@ -110,7 +110,7 @@ namespace Templator
                         {
                             if (str.IsNullOrWhiteSpace())
                             {
-                                parser.LogSyntextError(parser.Config.TermBeginEnd);
+                                parser.LogSyntaxError(parser.Config.TermBeginEnd);
                                 parser.Context.State.End = true;
                             }
                             parser.Context.State.End = true;
@@ -132,12 +132,12 @@ namespace Templator
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.CategorizedNameEnd, parser.Config.End);
                     if (matched == null)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         parser.Context.State.End = true;
                     }
                     else if (matched == parser.Config.End)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginNameTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginNameTag);
                         parser.Context.State.End = true;
                         parser.OnGrammerTokenCreated(parser.Context.Holder.Name, parser.Config.TermName, matched);
                         parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
@@ -159,7 +159,7 @@ namespace Templator
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.Begin, parser.Config.KeywordsBegin, parser.Config.End);
                     if (matched == null)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         parser.Context.State.End = true;
                     }
                     else if (matched == parser.Config.Begin)
@@ -188,13 +188,13 @@ namespace Templator
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.ParamBegin, parser.Config.Delimiter, parser.Config.KeywordsEnd, parser.Config.End);
                     if (matched == parser.Config.End)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedKeywordsBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedKeywordsBeginTag);
                         parser.Context.State.End = true;
                         parser.OnGrammerTokenCreated(matched, parser.Config.TermBeginEnd);
                     }
                     else if (matched == null)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         parser.Context.State.End = true;
                     }
                     str = str.Trim();
@@ -206,7 +206,7 @@ namespace Templator
                             {
                                 if (!parser.Config.IgnoreUnknownParam)
                                 {
-                                    parser.LogSyntextError(parser.Config.SyntaxErrorUnexpectedKeywordParam, str);
+                                    parser.LogSyntaxError(parser.Config.SyntaxErrorUnexpectedKeywordParam, str);
                                 }
                             }
                             parser.ParsingKeyword = parser.Config.Keywords[str].Create();
@@ -218,7 +218,7 @@ namespace Templator
                         {
                             if (!parser.Config.IgnoreUnknownKeyword)
                             {
-                                parser.LogSyntextError(parser.Config.SyntaxErrorUnexpectedKeyword, str);
+                                parser.LogSyntaxError(parser.Config.SyntaxErrorUnexpectedKeyword, str);
                             }
                         }
                     }
@@ -249,13 +249,13 @@ namespace Templator
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.ParamEnd, parser.Config.End);
                     if (matched == parser.Config.End)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedKeywordsBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedKeywordsBeginTag);
                         parser.OnGrammerTokenCreated(parser.Config.End, parser.Config.TermBeginEnd);
                         parser.Context.State.End = true;
                     }
                     else if (matched == null)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                     }
                     if (!(parser.Config.IgnoreUnknownKeyword && parser.ParsingKeyword == null))
                     {
@@ -278,7 +278,7 @@ namespace Templator
                     var str = parser.Context.Text.ReadTo(true, out matched, parser.Config.EscapePrefix, parser.Config.Begin, parser.Config.End);
                     if (matched == null)
                     {
-                        parser.LogSyntextError(parser.Config.SyntaxErrorUnmatchedBeginTag);
+                        parser.LogSyntaxError(parser.Config.SyntaxErrorUnmatchedBeginTag);
                         parser.OnGrammerTokenCreated(parser.Config.End, parser.Config.TermBeginEnd);
                         parser.Context.State.End = true;
                     }
@@ -300,7 +300,7 @@ namespace Templator
                 new HolderParseState(){ End = true}, parser =>
                 {
                     parser.Context.State = new HolderParseState();
-                    if (parser.Context.Holder == null || parser.Context.Holder.Name == null )
+                    if (parser.Context.Holder?.Name == null )
                     {
                         parser.Context.ChildResultBefore.Clear();
                         parser.Context.ChildResultAfter.Clear();
@@ -339,7 +339,7 @@ namespace Templator
         {
             if (!parser.Config.AllowNested)
             {
-                parser.LogSyntextError(parser.Config.SyntaxErrorNestedHolders);
+                parser.LogSyntaxError(parser.Config.SyntaxErrorNestedHolders);
             }
             parser.OnGrammerTokenCreated(parser.Config.Begin, parser.Config.TermBeginEnd);
             parser.PushContext(parser.Context.Input, null, parser.Context.Holder);

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNetUtils;
 
 namespace Templator
@@ -30,12 +27,12 @@ namespace Templator
         }
         public static bool ContainsKey(this TextHolder holder, string key)
         {
-            return holder != null && holder.Params != null && holder.Params.ContainsKey(key);
+            return holder?.Params != null && holder.Params.ContainsKey(key);
         }
 
         public static int? ParseIntParam(this string src, int? defaultValue = null, bool throwIfFail = true)
         {
-            var ret = 0;
+            int ret;
             if (!int.TryParse(src, out ret))
             {
                 if (throwIfFail && defaultValue == null)
@@ -48,7 +45,7 @@ namespace Templator
         }
         public static decimal? ParseNumberParam(this string src, decimal? defaultValue = null, bool throwIfFail = true)
         {
-            var ret = 0m;
+            decimal ret;
             if (!decimal.TryParse(src, out ret))
             {
                 if (throwIfFail)

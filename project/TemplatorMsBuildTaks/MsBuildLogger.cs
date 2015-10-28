@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNetUtils;
 using Microsoft.Build.Framework;
 using ILogger = DotNetUtils.ILogger;

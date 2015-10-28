@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -10,9 +9,11 @@ namespace Templator
     public class TemplatorParser
     {
         private bool _clearedSyntaxError = true;
-        private string _syntaxCheckFileName = null;
+        private string _syntaxCheckFileName;
 
         public bool Csv;
+        public bool Xml;
+
         public TemplatorConfig Config;
         public TemplatorKeyword ParsingKeyword;
         public IList<XElement> RemovingElements = new List<XElement>();
@@ -25,20 +26,11 @@ namespace Templator
         public Stack<TemplatorXmlParsingContext> XmlStack = new Stack<TemplatorXmlParsingContext>();
         public bool NoInput { get; private set; }
 
-        public TemplatorXmlParsingContext ParentXmlContext
-        {
-            get { return XmlStack.Peek(); }
-        }
+        public TemplatorXmlParsingContext ParentXmlContext => XmlStack.Peek();
 
-        public TemplatorParsingContext ParentContext
-        {
-            get { return Stack.Peek(); }
-        }
+        public TemplatorParsingContext ParentContext => Stack.Peek();
 
-        public int StackLevel
-        {
-            get { return Stack == null ? -1 : Stack.Count; }
-        }
+        public int StackLevel => Stack?.Count ?? -1;
 
         public TemplatorParser(TemplatorConfig config)
         {
@@ -50,19 +42,16 @@ namespace Templator
 
         public int ErrorCount { get; private set; }
 
-        public bool ReachedMaxError
-        {
-            get { return ErrorCount > Config.MaxErrorCount; }
-        }
+        public bool ReachedMaxError => ErrorCount > Config.MaxErrorCount;
 
         #region Grammar
 
 
         public virtual void OnHolderCreated(string text, TextHolder holder)
         {
-            if (holder != null && Config.OnHolderFound != null)
+            if (holder != null)
             {
-                Config.OnHolderFound(this, new TemplatorEventArgs(){Holder = holder, Input =  Context.Input});
+                Config.OnHolderFound?.Invoke(this, new TemplatorEventArgs {Holder = holder, Input =  Context.Input});
             }
         }
 
@@ -70,27 +59,24 @@ namespace Templator
         {
             if (token != null)
             {
-                if (Config.OnTokenFound != null)
+                Config.OnTokenFound?.Invoke(this, new TemplatorSyntaxEventArgs
                 {
-                    Config.OnTokenFound(this, new TemplatorSyntaxEventArgs()
-                    {
-                        TokenName = tokenName, 
-                        TokenText = token, 
-                        Line = Context.Text.Line,
-                        Column = Context.Text.Column,
-                        Position = Context.Text.Position - (backwords == null ? 0 : backwords.Length),
-                        HasError = !_clearedSyntaxError
-                    });
-                }
+                    TokenName = tokenName, 
+                    TokenText = token, 
+                    Line = Context.Text.Line,
+                    Column = Context.Text.Column,
+                    Position = Context.Text.Position - (backwords?.Length ?? 0),
+                    HasError = !_clearedSyntaxError
+                });
                 _clearedSyntaxError = true;
             }
         }
 
-        public virtual IDictionary<string, TextHolder> GrammarCheck(string template, string fileName)
+        public virtual IDictionary<string, TextHolder> GrammarCheck(string template, string fileName, bool isXml)
         {
+            Xml = isXml;
             _syntaxCheckFileName = fileName;
             ParsingKeyword = null;
-            PushContext(null, null, null);
             Config.ContinueOnError = true;
             ParseText(template, null);
             return Context.Holders;
@@ -125,7 +111,7 @@ namespace Templator
             dict[recursiveCheckKey] = true;
             if (Config.OnRequireInput != null)
             {
-                var args = new TemplatorEventArgs(){Holder = holder, Input = input ?? Context.Input};
+                var args = new TemplatorEventArgs {Holder = holder, Input = input ?? Context.Input};
                 Config.OnRequireInput(this, args);
                 dict.Remove(recursiveCheckKey);
                 return args.Value ?? defaultRet;
@@ -168,7 +154,7 @@ namespace Templator
 
         public virtual XElement ParseXml(XElement rootElement, IDictionary<string, object> input, IDictionary<string, TextHolder> preparsedHolders = null, string mergeHoldersInto = null)
         {
-            XmlContext = new TemplatorXmlParsingContext(){Element = rootElement};
+            XmlContext = new TemplatorXmlParsingContext {Element = rootElement};
             PushContext(input, null, null);
             Context.PreparsedHolders = preparsedHolders;
             ParseXmlInternal(rootElement);
@@ -178,7 +164,7 @@ namespace Templator
             }
             foreach (var removingElement in RemovingElements)
             {
-                if (removingElement != null && removingElement.Parent != null)
+                if (removingElement?.Parent != null)
                 {
                     removingElement.Remove();//RemoveWithNextWhitespace
                 }
@@ -188,10 +174,7 @@ namespace Templator
         }
         public void ParseXmlInternal(XElement element)
         {
-            if (XmlContext.OnBeforeParsingElement != null)
-            {
-                XmlContext.OnBeforeParsingElement(this);
-            }
+            XmlContext.OnBeforeParsingElement?.Invoke(this);
             PushXmlContext(element);
             foreach (var a in element.Attributes().OrderBy(a => a.Name != Config.XmlTemplatorAttributeName))
             {
@@ -217,10 +200,7 @@ namespace Templator
                     if (xElement != null)
                     {
                         ParseXmlInternal(xElement);
-                        if (XmlContext.OnAfterParsingElement != null)
-                        {
-                            XmlContext.OnAfterParsingElement(this);
-                        }
+                        XmlContext.OnAfterParsingElement?.Invoke(this);
                     }
                     else
                     {
@@ -252,16 +232,13 @@ namespace Templator
                         if (info != null)
                         {
                             var type = info.SchemaType as XmlSchemaSimpleType;
-                            if (type != null)
+                            var content = type?.Content as XmlSchemaSimpleTypeRestriction;
+                            if (content?.Facets != null)
                             {
-                                var content = type.Content as XmlSchemaSimpleTypeRestriction;
-                                if (content != null && content.Facets != null)
+                                foreach (var patternFacet in content.Facets.OfType<XmlSchemaPatternFacet>())
                                 {
-                                    foreach (var patternFacet in content.Facets.OfType<XmlSchemaPatternFacet>())
-                                    {
-                                        holders[0][Config.KeywordRegex] = patternFacet.Value;
-                                        break;
-                                    }
+                                    holders[0][Config.KeywordRegex] = patternFacet.Value;
+                                    break;
                                 }
                             }
                         }
@@ -323,12 +300,12 @@ namespace Templator
 
         public T GetValue<T>(string key, T defaultRet = default(T), int seekUp = 0)
         {
-            return TemplatorUtil.GetValue(this, key, Context.Input, defaultRet, seekUp).SafeConvert<T>(default(T), Config.DateFormat);
+            return TemplatorUtil.GetValue(this, key, Context.Input, defaultRet, seekUp).SafeConvert(default(T), Config.DateFormat);
         }
 
         public T GetValue<T>(TextHolder key, T defaultRet = default(T), int seekUp = 0)
         {
-            return TemplatorUtil.GetValue(this, key, Context.Input, defaultRet).SafeConvert<T>(default(T), Config.DateFormat);
+            return TemplatorUtil.GetValue(this, key, Context.Input, defaultRet).SafeConvert(default(T), Config.DateFormat);
         }
         
         public void CacheValue(string key, object value, bool overWirteIfExists = false, IDictionary<string, object> input = null )
@@ -378,8 +355,8 @@ namespace Templator
                 Input = input,
                 ParentHolder = parentHolder,
                 Logger = disableLogging ? null : (Context != null && Context.Nesting) ? new TemplatorLogger() : Config.Logger,
-                Text = text ?? (Context == null ? null : Context.Text),
-                PreparsedHolders = holderDefinitions == null ? null : holderDefinitions.Children
+                Text = text ?? Context?.Text,
+                PreparsedHolders = holderDefinitions?.Children
             };
 
             if (Stack == null)
@@ -444,14 +421,11 @@ namespace Templator
             XmlContext = XmlStack.Pop();
         }
 #endregion Contexts
-        public void LogSyntextError(string pattern, params object[] args)
+        public void LogSyntaxError(string pattern, params object[] args)
         {
             _clearedSyntaxError = false;
             ErrorCount++;
-            if (Context.Logger != null)
-            {
-                Context.Logger.LogError(_syntaxCheckFileName, Context.Text.PreviousLine, Context.Text.PreviousColumn, Context.Text.Line, Context.Text.Column, pattern.FormatInvariantCulture(args));
-            }
+            Context.Logger?.LogError(_syntaxCheckFileName, Context.Text.PreviousLine, Context.Text.PreviousColumn, Context.Text.Line, Context.Text.Column, pattern.FormatInvariantCulture(args));
             if (!Config.ContinueOnError && ReachedMaxError)
             {
                 throw new TemplatorSyntaxException(pattern.FormatInvariantCulture(args));
@@ -468,10 +442,7 @@ namespace Templator
 #region results
         public void AppendResult(object value)
         {
-            if (Context.Result != null)
-            {
-                Context.Result.Append(value);
-            }
+            Context.Result?.Append(value);
         }
 
         private void CollectHolderResults(string mergeInto = null)
@@ -480,7 +451,11 @@ namespace Templator
             {
                 var cleared = _clearedSyntaxError;
                 //this is an additional check, dont increase errors
-                LogSyntextError("Collection Level not cleared: levels at {0}, possibly missing end holder of a collection/repeat holder", StackLevel);
+                if (!Xml)
+                {
+                    //xml has to be checked as as plain text but it does not have to have a collection end tag as plain text template
+                    LogSyntaxError("Collection Level not cleared: levels at {0}, possibly missing end holder of a collection/repeat holder", StackLevel);
+                }
                 _clearedSyntaxError = cleared;
             }
             TemplatorUtil.MergeHolders(Holders, Context.Holders.Values, mergeInto);

@@ -20,8 +20,8 @@ namespace Templator.Utils
 
         private ProjectItemsEvents _solutionEvents;
         private readonly IDictionary<string, DocumentEvents> _documentEvents = new Dictionary<string, DocumentEvents>();
-        private int _lastPosition = 0;
-        private int _start = 0;
+        private int _lastPosition;
+        private int _start;
         private string _activeProjectName;
         private bool _buildDefaultConfig = true;
         private TemplatorParser _parser;
@@ -82,7 +82,7 @@ namespace Templator.Utils
 
             if (_parser != null)
             {
-                _parser.StartOver(true);
+                _parser.StartOver();
                 _parser.ParseText(span.GetText(), null);
             }
             return _spans;
@@ -146,7 +146,7 @@ namespace Templator.Utils
             _activeProjectName = projectName;
             if (_buildDefaultConfig)
             {
-                if (_dte != null && _dte.Solution != null)
+                if (_dte?.Solution != null)
                 {
                     _solutionEvents = _dte.Solution.DTE.Events.SolutionItemsEvents;
                     _solutionEvents.ItemAdded -= SolutionItemsEvents_ItemChanged;
@@ -168,7 +168,7 @@ namespace Templator.Utils
                 {
                     return TemplatorConfig.FromXml(item.FileNames[1]);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }
@@ -183,7 +183,6 @@ namespace Templator.Utils
             {
                 return;
             }
-            IClassificationType type = null;
             if (args.TokenText.IsNullOrEmpty())
             {
                 return;
@@ -196,7 +195,7 @@ namespace Templator.Utils
                 }
             }
             _lastPosition = args.Position - args.TokenText.Length;
-            type = _default;
+            var type = _default;
             if (args.TokenName == parser.Config.TermBeginEnd)
             {
                 type = _brace;
