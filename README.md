@@ -15,7 +15,7 @@ it's a good helper for handling data processing targeting to multiple document f
 ```
 	{{Field1}}Any Free Text Which doesn't conflict with the text holder reserved marks{{User(Repeat)[Collection]}}{{Field2}} and {{User(Repeat)[CollectionEnd]}}...
 ```
-	* it will generate a list of required input as 
+* it will generate a list of required input as 
 ```
 	[{Name: "Repeat" , Children: [{Name: "Field2"}]}, {Name: "Field1"}]
 ```
@@ -23,7 +23,7 @@ it's a good helper for handling data processing targeting to multiple document f
 ```
 	{Repeat: [{Field2:","},{Field2:"only replaces what's defined"}], Field1:"This will work with "}
 ```
-	* the result string would be:
+* the result string would be:
 ```
 	This will work with Any Free Text Which doesn't conflict with the text holder reserved marks, and only replaces what's defined and ...
 ```
