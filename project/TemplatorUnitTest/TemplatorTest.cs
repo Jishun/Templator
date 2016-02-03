@@ -18,7 +18,7 @@ namespace TemplatorUnitTest
         [TestMethod]
         public void SimpleDataTest()
         {
-            //TTODO: test repeat witn multiple deep collection merge e.g. c{d(e)}, c{d(g)} => c{d(e,g)}
+            //TTODO: test repeat within multiple deep collection merge e.g. c{d(e)}, c{d(g)} => c{d(e,g)}
             _config.Logger = _logs;
             _config.EscapePrefix = "\\";
             var parser = new TemplatorParser(_config);

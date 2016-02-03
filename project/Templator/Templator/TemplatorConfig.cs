@@ -37,7 +37,7 @@ namespace Templator
         [Description("An event fired by the parser when it finds a TextHolder.")]
         public EventHandler<TemplatorEventArgs> OnHolderFound;
         [XmlIgnore]
-        [Description("The deafult text encoding used")]
+        [Description("The default text encoding used")]
         public Encoding Encoding = Encoding.UTF8;
 
         [Description("The maximum number of errors found by parser before it stops parsing.")] 
@@ -45,7 +45,7 @@ namespace Templator
         [Description("The DateTime format used by the parser to parse DateTime values")]
         public string DateFormat;
         [XmlIgnore]
-        [Description("Options to control line breaks in the text file, such as to ensure the file uses windows(CRLF) mode or unix(LF)")]
+        [Description("Options to control line breaks in the text file, such as to ensure the file uses windows(CRLF) mode or Unix(LF)")]
         public LineBreakOption LineBreakOption;
         [Description("Whether to throw exception when parser finds an unknown keyword")]
         public bool IgnoreUnknownKeyword = true;
@@ -79,7 +79,7 @@ namespace Templator
         [XmlIgnore]
         [Description("The Enum types for the parser to use when hitting TextHolder with Enum keyword")]
         public IDictionary<string, Type> Enums = new Dictionary<string, Type>();
-        [Description("Pre-defined regular expressions (stored with a key of its name) for the parser to use, the parser will try to find a match with param string as name in this dict and pull the value otherwise use the param string as the regex ")]
+        [Description("Pre-defined regular expressions (stored with a key of its name) for the parser to use, the parser will try to find a match with param string as name in this dictionary and pull the value otherwise use the param string as the regex ")]
         [XmlIgnore]
         public IDictionary<string, Regex> Regexes = new Dictionary<string, Regex>();
         [Description("The TextHolder Element name when parsing xml format input")]
@@ -90,7 +90,7 @@ namespace Templator
         public string XmlNameNodeName = "Name";
         [Description("The TextHolder Child collection Element name when parsing xml format input")]
         public string XmlCollectionNodeName = "CollectionItem";
-        [Description("The key used by the parser to store preparsed Holder definitions when using 2-pass passing, which allows logics inside OnRequireInput event to be able to find unreached TaxHolder's definition")]
+        [Description("The key used by the parser to store pre-parsed Holder definitions when using 2-pass passing, which allows logics inside OnRequireInput event to be able to find unreached TaxHolder's definition")]
         public string KeyHolders = "$Fields"; 
 
         [XmlElement]

@@ -62,7 +62,7 @@ namespace Templator
 
         public bool IsEmpty()
         {
-            throw new NotImplementedException();
+            return Errors.Count == 0;
         }
 
         public bool IsNullOrEmpty()

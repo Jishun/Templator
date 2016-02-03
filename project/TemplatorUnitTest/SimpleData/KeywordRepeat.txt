@@ -3,7 +3,7 @@
 
 0
 
-'Repeat' is required$$Collection Level not cleared: levels at 2, possibly missing end holder of a collection/repeat holder
+'Repeat' is required$$Collection Level not cleared: levels at 2, possibly missing end holder of a collection/repeat holder, or missed StartOver()
 {{User(Repeat)[Collection()]}}{{ItemName}},{{User(Repeat)[CollectionEnd()]}}
 {Repeat:[{ItemName: "Name1"},{ItemName: "Name2"}]}
 Name1,Name2,

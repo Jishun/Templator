@@ -20,9 +20,9 @@
     <SyntaxErrorUnmatchedKeywordsBeginTag>SyntaxError: Reached document end before finding keywords the closing tag</SyntaxErrorUnmatchedKeywordsBeginTag>
     <SyntaxErrorUnmatchedBeginNameTag>SyntaxError: Reached document end before finding the name closing tag</SyntaxErrorUnmatchedBeginNameTag>
     <SyntaxErrorHolderNameNotFound>SyntaxError: TextHolder's Name not defined</SyntaxErrorHolderNameNotFound>
-    <SyntaxErrorUnexpectedString>SyntaxError: Unexpcted string: '{0}'</SyntaxErrorUnexpectedString>
-    <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpcted param for keyword: '{0}'</SyntaxErrorUnexpectedKeywordParam>
-    <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpcted keyword: '{0}'</SyntaxErrorUnexpectedKeyword>
+    <SyntaxErrorUnexpectedString>SyntaxError: Unexpected string: '{0}'</SyntaxErrorUnexpectedString>
+    <SyntaxErrorUnexpectedKeywordParam>SyntaxError: Unexpected param for keyword: '{0}'</SyntaxErrorUnexpectedKeywordParam>
+    <SyntaxErrorUnexpectedKeyword>SyntaxError: Unexpected keyword: '{0}'</SyntaxErrorUnexpectedKeyword>
     <TermCategory>Category</TermCategory>
     <TermBeginEnd>BeginEnd</TermBeginEnd>
     <TermCategorizedNameBeginEnd>CBeginEnd</TermCategorizedNameBeginEnd>
@@ -32,7 +32,7 @@
     <TermValue>ParamValue</TermValue>
     <TermKeyword>Keyword</TermKeyword>
     <TermParam>Parameter</TermParam>
-    <TermDelimiter>Delimeter</TermDelimiter>
+    <TermDelimiter>Delimiter</TermDelimiter>
     <KeywordRepeatBegin>CollectionBegin</KeywordRepeatBegin>
     <KeywordRepeat>Collection</KeywordRepeat>
     <KeywordRepeatEnd>CollectionEnd</KeywordRepeatEnd>
@@ -75,6 +75,7 @@
     <KeywordAttributeIf>AttributeIf</KeywordAttributeIf>
     <KeywordThen>Then</KeywordThen>
     <KeywordAttributeThen>AttributeThen</KeywordAttributeThen>
+    <KeywordAsXml>AsXml</KeywordAsXml>
     <KeywordEnumElement>EnumElement</KeywordEnumElement>
     <KeywordElementName>ElementName</KeywordElementName>
     <KeywordAttributeName>AttributeName</KeywordAttributeName>

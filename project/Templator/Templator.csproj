@@ -61,6 +61,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapter\CategoryResolver.cs" />
+    <Compile Include="Adapter\HierachyResolver.cs" />
+    <Compile Include="Adapter\CustomResolver.cs" />
+    <Compile Include="Adapter\ITextHolderResolver.cs" />
+    <Compile Include="Adapter\NameResolver.cs" />
+    <Compile Include="Adapter\TemplatorInputMapper.cs" />
+    <Compile Include="Adapter\TextHolderMappingContext.cs" />
     <Compile Include="Exceptions\TempatorException.cs" />
     <Compile Include="Model\HolderParseState.cs" />
     <Compile Include="Model\TemplatorParsingContext.cs" />
@@ -82,6 +89,7 @@
     <Compile Include="Utils\HolderUtils.cs" />
     <Compile Include="Utils\TemplatorLogger.cs" />
     <Compile Include="Utils\TemplatorUtil.cs" />
+    <Compile Include="Adapter\TextHolderResolverBase.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>

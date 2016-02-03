@@ -1,0 +1,34 @@
+﻿xml
+<a><x>{{HolderName[AsXml]}}</x></a>
+{HolderName: "<xx/>"}
+<a><x><xx/></x></a>
+1
+
+
+xml
+<a><x>a{{HolderName[AsXml]}}</x></a>
+{HolderName: "<xx/>"}
+<a><x>a<xx/></x></a>
+1
+
+
+xml
+<a><x>a{{HolderName[AsXml]}}</x></a>
+{HolderName: "<xx></xx>"}
+<a><x>a<xx></xx></x></a>
+1
+
+
+xml
+<a><x>a{{HolderName[AsXml]}}</x></a>
+{HolderName: ""}
+<a><x>a</x></a>
+1
+
+
+xml
+<a><x>a{{HolderName[AsXml, Optional]}}</x></a>
+{}
+<a><x>a</x></a>
+1
+

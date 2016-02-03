@@ -34,7 +34,7 @@ namespace Templator
                 //Structure keywords
                 new TemplatorKeyword(KeywordRepeat){
                     HandleNullOrEmpty = true,
-                    Description = "Indicates an Array/Collection/Repeat, correspoding input should be an array : IDictionary<string,object>[], templator will repeat the template starting from this Holder till the matching '{0}'(in plain text) or the close tag of the element(in xml).".FormatInvariantCulture(KeywordRepeatEnd),
+                    Description = "Indicates an Array/Collection/Repeat, corresponding input should be an array : IDictionary<string,object>[], templator will repeat the template starting from this Holder till the matching '{0}'(in plain text) or the close tag of the element(in xml).".FormatInvariantCulture(KeywordRepeatEnd),
                     Examples = new List<Triple<string, string, string>>
                     {
                         new Triple<string, string, string>("{{HolderName[Collection]}}{{RepeatedHolder}}{{HolderName[CollectionEnd]}}","{HolderName: [{RepeatedHolder:1},{RepeatedHolder:2}]}","12"),
@@ -58,7 +58,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordRepeatBegin){
                     HandleNullOrEmpty = true,
                     OnGetValue = (holder, parser, value) => value == null ? null : parser.InXmlManipulation() ? value : String.Empty, 
-                    Description = "Indicates begining position of an Array/Repeat/Collection (or begining xml element in xml), must match with '{0}', it functions the same as {1} in plain text format".FormatInvariantCulture(KeywordRepeatEnd, KeywordRepeat),
+                    Description = "Indicates beginning position of an Array/Repeat/Collection (or beginning xml element in xml), must match with '{0}', it functions the same as {1} in plain text format".FormatInvariantCulture(KeywordRepeatEnd, KeywordRepeat),
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("Group", "To control the repeat behavior of repeating a group of XElement, e.g: double '<a/><b/>' -> '<a/><b/><a/><b/>' instead of '<a/><a/><b/><b/>'")
@@ -251,7 +251,7 @@ namespace Templator
                     Description = "Allow the parser to seek upper level of the input when current context is inside a child array/repeat/collection loop",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("Number value", "Indicates the number of levels that allowed to seek upwords")
+                        new Pair<string, string>("Number value", "Indicates the number of levels that allowed to seek upwards")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -300,7 +300,7 @@ namespace Templator
                     Description = "Aggregate the max value of given Holder names",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("HolderNames seperated by ';', or hierachy seperated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
+                        new Pair<string, string>("HolderNames separated by ';', or hierarchy separated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -315,7 +315,7 @@ namespace Templator
                     Description = "Aggregate the min value of given Holder names",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("HolderNames seperated by ';', or hierachy seperated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
+                        new Pair<string, string>("HolderNames separated by ';', or hierarchy separated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -330,7 +330,7 @@ namespace Templator
                     Description = "Aggregate the sum value of given Holder names",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("HolderNames seperated by ';', or hierachy seperated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
+                        new Pair<string, string>("HolderNames separated by ';', or hierarchy separated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -345,7 +345,7 @@ namespace Templator
                     Description = "Aggregate the average value of given Holder names",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("HolderNames seperated by ';', or hierachy seperated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
+                        new Pair<string, string>("HolderNames separated by ';', or hierarchy separated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -362,7 +362,7 @@ namespace Templator
                     Description = "Aggregate the count of given Holder which is an Array/Repeat/Collection ",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("HolderNames seperated by ';', or hierachy seperated by '.'", "Something like: 'CollectionName1;CollectionName2.ChildCollectionName'")
+                        new Pair<string, string>("HolderNames separated by ';', or hierarchy separated by '.'", "Something like: 'CollectionName1;CollectionName2.ChildCollectionName'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -377,7 +377,7 @@ namespace Templator
                     Description = "Aggregate the multiplied value of given Holder names",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("HolderNames seperated by ';', or hierachy seperated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
+                        new Pair<string, string>("HolderNames separated by ';', or hierarchy separated by '.'", "Something like: 'Holder1;Holder2;Collection.ChildName'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -390,10 +390,10 @@ namespace Templator
                 {
                     HandleNullOrEmpty = true,
                     ManipulateInput = true,
-                    Description = "Retrieve another 'refered' TextHolder's value as the value",
+                    Description = "Retrieve another 'referred' TextHolder's value as the value",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("The refered Holder's Name", "")
+                        new Pair<string, string>("The referred Holder's Name", "")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -462,7 +462,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordRegex)
                 {
                     IsValidation = true,
-                    Description = "Validate the input with specified regular expresion, this keyword will try to find a preset regex in config using the given string as key. if not found will use the given string as the expression",
+                    Description = "Validate the input with specified regular expression, this keyword will try to find a preset regex in config using the given string as key. if not found will use the given string as the expression",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("The name/key of the expressions in config object, or the regular expression string", "")
@@ -653,12 +653,12 @@ namespace Templator
                 new TemplatorKeyword(KeywordBit)
                 {
                     IsValidation = true,
-                    Description = "Indicates the value is functioning as 'Bit', refered by '{0}', has value means 'true', null indicates 'false'".FormatInvariantCulture(KeywordIf),
+                    Description = "Indicates the value is functioning as 'Bit', referred by '{0}', has value means 'true', null indicates 'false'".FormatInvariantCulture(KeywordIf),
                     OnGetValue = (holder, parser, value) => value == null ? null : String.Empty
                 },
                 new TemplatorKeyword(KeywordEnum){
                     IsValidation = true,
-                    Description = "Indicates the value of this holder is an Enum listed in config object.Enums, with the enum name as key",
+                    Description = "Indicates the value of this holder is an Enum listed in config object.Enums, with the Enum name as key",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("The Enum type name as key in the config object", "")
@@ -735,10 +735,10 @@ namespace Templator
                 new TemplatorKeyword(KeywordFormat)
                 {
                     ManipulateOutput = true,
-                    Description = "Use String.Format to put the value into param string's '{0}' postion",
+                    Description = "Use String.Format to put the value into param string's '{0}' position",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("The string pattern", "E.g.: 'hellow {0}' with value 'world' -> 'hellow world'")
+                        new Pair<string, string>("The string pattern", "E.g.: 'hello {0}' with value 'world' -> 'hello world'")
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -756,7 +756,7 @@ namespace Templator
                     Description = "Map/replace output with the pair provided in the param to transform input",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("Pairs(seperated by ';') of values(seperated by ':') to map with input value", "E.g.: a:1;b:2 with value a -> 1 and b -> 2" )
+                        new Pair<string, string>("Pairs(separated by ';') of values(separated by ':') to map with input value", "E.g.: a:1;b:2 with value a -> 1 and b -> 2" )
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -784,10 +784,10 @@ namespace Templator
                 new TemplatorKeyword(KeywordReplace)
                 {
                     ManipulateOutput = true,
-                    Description = "Replace spcific string with another value in the output",
+                    Description = "Replace specific string with another value in the output",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("Pair of values(seperated by ';')", "E.g.: a;1 with value abc -> 1bc" )
+                        new Pair<string, string>("Pair of values(separated by ';')", "E.g.: a;1 with value abc -> 1bc" )
                     },
                     OnGetValue = (holder, parser, value) =>
                     {
@@ -817,7 +817,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordTransform)
                 {
                     ManipulateOutput = true,
-                    Description = "Transform the output based on paramter options",
+                    Description = "Transform the output based on parameter options",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("Lower/Upper", "Support only to upper or to lower for now" )
@@ -858,7 +858,7 @@ namespace Templator
                 new TemplatorKeyword(KeywordTrim)
                 {
                     ManipulateOutput = true,
-                    Description = "Trim the ouput string",
+                    Description = "Trim the output string",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("'Begin'/'End' or none", "Trim Begin or End or no param for both" )
@@ -1052,7 +1052,7 @@ namespace Templator
                 {
                     ManipulateOutput = true,
                     HandleNullOrEmpty = true,
-                    Description = "Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third paramter) is not empty, condition accepts '!' operator",
+                    Description = "Wrap the collection with begin/end tags if the collection (itself or another field name if supplied in the third parameter) is not empty, condition accepts '!' operator",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("If specified at a non-collection item : The begin tag + ';' + end tag + ';' + optional conditional holder name", "E.g.: Wrap([) or Wrap([;]) or Wrap(;]) or Wrap([;];AnotherHolder)" ),
@@ -1119,7 +1119,7 @@ namespace Templator
                 {
                     ManipulateOutput = true,
                     HandleNullOrEmpty = true,
-                    Description = "Indicates this TextHolder only required input but will not ouput anything",
+                    Description = "Indicates this TextHolder only required input but will not output anything",
                     OnGetValue = (holder, parser, value) =>
                     {
                         if (parser.XmlContext?.Element != null)
@@ -1129,7 +1129,7 @@ namespace Templator
                         return value == null ? null : String.Empty;
                     }
                 },
-                //document manupulation keywords
+                //document manipulation keywords
                 new TemplatorKeyword(KeywordIfnot)
                 {
                     HandleNullOrEmpty = true,
@@ -1166,6 +1166,32 @@ namespace Templator
                         parser.Context.Holder.Keywords.Add(Keywords[KeywordElementName].Create());
                     }
                 },
+                new TemplatorKeyword(KeywordAsXml)
+                {
+                    Description = "Output the value of this field as an xml Element into the xml template, only working in xml template",
+                    Parse = (parser, str) =>
+                    {
+                        if (parser.InXmlManipulation())
+                        {
+                            if (parser.XmlContext.Attribute != null)
+                            {
+                                throw new TemplatorUnexpectedKeywordException("AsXml cannot be placed as xml attribute value");
+                            }
+                        }
+                    },
+                    OnGetValue = (holder, parser, value) =>
+                    {
+                        if (!value.IsNullOrEmptyValue())
+                        {
+                            var element = parser.XmlContext.Element;
+                            parser.ParentXmlContext.OnAfterParsingElement = p =>
+                            {
+                                element.Add(XElement.Parse(value.SafeToString()));
+                            };
+                        }
+                        return String.Empty;
+                    }
+                },
                 new TemplatorKeyword(KeywordElementName)
                 {
                     Description = "Use the value as current xml element name instead of value",
@@ -1195,7 +1221,7 @@ namespace Templator
                 {
                     IndicatesOptional = true,
                     HandleNullOrEmpty = true,
-                    Description = "Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied",
+                    Description = "Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specified",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("No Params or another TextHolder's name","Condition accepts '!' operator" )
@@ -1248,7 +1274,7 @@ namespace Templator
                 {
                     HandleNullOrEmpty = true,
                     IndicatesOptional = true,
-                    Description = "Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specied",
+                    Description = "Only keep current xml attribute when value is provided and is not null, the value used is from another TextHolder specified in the param or the current Holder's value if no param specified",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("No Params or another TextHolder's name","condition accepts '!' operator" )
@@ -1270,7 +1296,7 @@ namespace Templator
                         return value ?? string.Empty;
                     },
                 },
-                //discriptors
+                //descriptors
                 new TemplatorKeyword(KeywordComments)
                 {
                     Description = "Put a comment of the TextHolder in the parsed result holder list",
@@ -1285,17 +1311,17 @@ namespace Templator
                     Description = "A display name for the TextHolder",
                     Params = new List<Pair<string, string>>
                     {
-                        new Pair<string, string>("The displayname string","" )
+                        new Pair<string, string>("The display name string","" )
                     },
                 },
                 //Keyword Expand
                 new TemplatorKeyword(KeywordTruncate)
                 {
-                    Description = "If a value string's length is longer than the max value of keyword '{0}' and this keyword exists, the string will be trucated to that length without producing an error".FormatInvariantCulture(KeywordLength),
+                    Description = "If a value string's length is longer than the max value of keyword '{0}' and this keyword exists, the string will be truncated to that length without producing an error".FormatInvariantCulture(KeywordLength),
                 },
                 new TemplatorKeyword(KeywordFill)
                 {
-                    Description = "Specifies a character used to append to the ouput if keyword '{0}' is specified and the length is less than the fixed-length.".FormatInvariantCulture(KeywordFixedLength),
+                    Description = "Specifies a character used to append to the output if keyword '{0}' is specified and the length is less than the fixed-length.".FormatInvariantCulture(KeywordFixedLength),
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("The char used to fill","" )
@@ -1303,7 +1329,7 @@ namespace Templator
                 },
                 new TemplatorKeyword(KeywordPrefill)
                 {
-                    Description = "Specifies a character used to fill the ouput if keyword '{0}' is specified and the length is less than the fixed-length, this will pre-fill the string instead of append".FormatInvariantCulture(KeywordFixedLength),
+                    Description = "Specifies a character used to fill the output if keyword '{0}' is specified and the length is less than the fixed-length, this will pre-fill the string instead of append".FormatInvariantCulture(KeywordFixedLength),
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("The char used to fill","" )
@@ -1316,7 +1342,7 @@ namespace Templator
                 //Align minCount
                 new TemplatorKeyword(KeywordAlignCount)
                 {
-                    Description = "If multiple arraies/repeat/collections are provided in the input and this option exists, the ouput will make sure evey array/repeat/collecion's length is the same as the max length of the input, the empty part will be filled with null values without producing errors",
+                    Description = "If multiple arrays/repeat/collections are provided in the input and this option exists, the output will make sure every array/repeat/collection's length is the same as the max length of the input, the empty part will be filled with null values without producing errors",
                     Params = new List<Pair<string, string>>
                     {
                         new Pair<string, string>("The holder name of the parent array/repeat/collection","" )

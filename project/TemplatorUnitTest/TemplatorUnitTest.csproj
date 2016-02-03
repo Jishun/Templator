@@ -58,6 +58,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TemplatorInputMapperTest.cs" />
     <Compile Include="TemplatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -104,6 +105,7 @@
       <Link>TemplatorConfig.xml</Link>
       <SubType>Designer</SubType>
     </Content>
+    <EmbeddedResource Include="SimpleData\KeywordAsXml.txt" />
     <EmbeddedResource Include="SimpleData\KeywordSelect.txt" />
     <EmbeddedResource Include="SimpleData\NestedHolders.txt" />
     <EmbeddedResource Include="SimpleData\KeywordJoin.txt" />

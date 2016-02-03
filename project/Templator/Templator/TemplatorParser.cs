@@ -200,7 +200,6 @@ namespace Templator
                     if (xElement != null)
                     {
                         ParseXmlInternal(xElement);
-                        XmlContext.OnAfterParsingElement?.Invoke(this);
                     }
                     else
                     {
@@ -210,7 +209,7 @@ namespace Templator
                             Context.Text = new SeekableString(text.Value, Config.LineBreakOption);
                             Context.ClearResult();
                             var holders = ParseTextInternal();
-                            if (holders.Count > 0)
+                            if (holders.Count > 0 )
                             {
                                 text.Value = Context.GetResult();
                             }
@@ -246,6 +245,7 @@ namespace Templator
                 }
             }
             PopXmlContext();
+            XmlContext.OnAfterParsingElement?.Invoke(this);
         }
 
         public virtual IList<TextHolder> ParseTextInternal()
@@ -454,7 +454,7 @@ namespace Templator
                 if (!Xml)
                 {
                     //xml has to be checked as as plain text but it does not have to have a collection end tag as plain text template
-                    LogSyntaxError("Collection Level not cleared: levels at {0}, possibly missing end holder of a collection/repeat holder", StackLevel);
+                    LogSyntaxError("Collection Level not cleared: levels at {0}, possibly missing end holder of a collection/repeat holder, or missed StartOver()", StackLevel);
                 }
                 _clearedSyntaxError = cleared;
             }

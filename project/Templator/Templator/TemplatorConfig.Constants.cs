@@ -8,28 +8,28 @@ namespace Templator
         public string XmlTemplatorAttributeName = "Bindings";
         [Description("When goes deeper level into an Array/Repeat/Collection, the parent input will be stored in the current input with this string as key")]
         public string ReservedKeywordParent = "$$P$$";
-        [Description("When looping arries/repeat/collection, retrieve the 1 based index with this name")]
+        [Description("When looping arrays/repeat/collection, retrieve the 1 based index with this name")]
         public string ReservedKeywordIndex = "$Index";
-        [Description("When looping arries/repeat/collection, retrieve the 0 based index with this name")]
+        [Description("When looping arrays/repeat/collection, retrieve the 0 based index with this name")]
         public string ReservedKeyword0Index = "$0Index";
 
         [Description("An escape character when parsing template")] 
         public string EscapePrefix = null;//"\\";
-        [Description("The begginng of a TextHolder, configurable in case of symbol conflict, default '{{'")]
+        [Description("The beginning of a TextHolder, configurable in case of symbol conflict, default '{{'")]
         public string Begin = "{{";
         [Description("The ending of a TextHolder, configurable in case of symbol conflict, default '}}'")]
         public string End = "}}";
         [Description("The delimiter of keywords, configurable in case of symbol conflict, default ','")]
         public string Delimiter = ",";
-        [Description("The begginng of a keyword's param, configurable in case of symbol conflict, default '('")]
+        [Description("The beginning of a keyword's param, configurable in case of symbol conflict, default '('")]
         public string ParamBegin = "(";
         [Description("The ending of a keyword's param, configurable in case of symbol conflict, default ')'")]
         public string ParamEnd = ")";
-        [Description("The begginng of the TextHolders' name if category exists, configurable in case of symbol conflict, default '('")]
+        [Description("The beginning of the TextHolders' name if category exists, configurable in case of symbol conflict, default '('")]
         public string CategorizedNameBegin = "(";
         [Description("The ending of the TextHolders' name if category exists, configurable in case of symbol conflict, default ')'")]
         public string CategorizedNameEnd = ")";
-        [Description("The begginng of the keyword collection, configurable in case of symbol conflict, default '['")]
+        [Description("The beginning of the keyword collection, configurable in case of symbol conflict, default '['")]
         public string KeywordsBegin = "[";
         [Description("The ending of the keyword collection, configurable in case of symbol conflict, default ']'")]
         public string KeywordsEnd = "]";
@@ -42,9 +42,9 @@ namespace Templator
         public string SyntaxErrorUnmatchedKeywordsBeginTag = "SyntaxError: Reached document end before finding keywords the closing tag";
         public string SyntaxErrorUnmatchedBeginNameTag = "SyntaxError: Reached document end before finding the name closing tag";
         public string SyntaxErrorHolderNameNotFound = "SyntaxError: TextHolder's Name not defined";
-        public string SyntaxErrorUnexpectedString = "SyntaxError: Unexpcted string";
-        public string SyntaxErrorUnexpectedKeywordParam = "SyntaxError: Unexpcted param for keyword";
-        public string SyntaxErrorUnexpectedKeyword = "SyntaxError: Unexpcted keyword";
+        public string SyntaxErrorUnexpectedString = "SyntaxError: Unexpected string";
+        public string SyntaxErrorUnexpectedKeywordParam = "SyntaxError: Unexpected param for keyword";
+        public string SyntaxErrorUnexpectedKeyword = "SyntaxError: Unexpected keyword";
 
         public string TermBeginEnd = "BeginEnd";
         public string TermCategorizedNameBeginEnd = "CBeginEnd";
@@ -55,7 +55,7 @@ namespace Templator
         public string TermValue = "ParamValue";
         public string TermKeyword = "Keyword";
         public string TermParam = "Parameter";
-        public string TermDelimiter = "Delimeter";
+        public string TermDelimiter = "Delimiter";
 
         public string KeywordRepeatBegin = "CollectionBegin";
         public string KeywordRepeat = "Collection";
@@ -99,6 +99,7 @@ namespace Templator
         public string KeywordAttributeIf = "AttributeIf";
         public string KeywordThen = "Then";
         public string KeywordAttributeThen = "AttributeThen";
+        public string KeywordAsXml = "AsXml";
         public string KeywordEnumElement = "EnumElement";
         public string KeywordElementName = "ElementName";
         public string KeywordAttributeName = "AttributeName";

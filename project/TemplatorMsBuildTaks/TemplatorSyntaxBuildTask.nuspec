@@ -12,7 +12,7 @@
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Msbuild task for Syntax checking against "Templator"'s text template</description>
     <releaseNotes>
-        Fix close tag check when doing grammar check (in the scenario of 'NoInput')
+        Add AsXml Keyword
     </releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>Templator, Template, Parse, String Replace</tags>

@@ -23,13 +23,13 @@ namespace DocGenerate
             new Triple<string, string, IDictionary<string, object>[]>("Get Started",
                 "Search for 'Templator' in nuget package manager, current version 1.0.0.5", null),
             new Triple<string, string, IDictionary<string, object>[]>("Philosophy",
-                "Try to Create a text processing engine with the ablity to produce all kinds of formated text using a unified input structure, with the ablity to be fully cusomized in order to overcome any possible symbol conflicts.",
+                "Try to Create a text processing engine with the ability to produce all kinds of formated text using a unified input structure, with the ability to be fully customized in order to overcome any possible symbol conflicts.",
                 null),
             new Triple<string, string, IDictionary<string, object>[]>("Template Usage",
                 "Simply put the a place holder at the position of the text file which you want to output to, put the desired value inside the input dictionary with the name of the holder as Key, further, the usage of the rich keywords will enable programmer to calculated/validate/re-format against the input value",
                 null),
             new Triple<string, string, IDictionary<string, object>[]>("Syntax of a TextHolder",
-                "With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizeable in the config object. See examples below:",
+                "With the format of {{HolderName}} or {{Category(HolderName)}} or {{Category(HolderName)[Keyword1(Param1),Keyword2()]}}, simply wrap the holder name with in the begin tag({{) and end tag(}}) will produce a TextHolder, the tags are all customizable in the config object. See examples below:",
                 GetSyntaxExamples().ToArray()),
             new Triple<string, string, IDictionary<string, object>[]>("Build phase validation",
                 "Nuget Search for package 'TemplatorSyntaxBuildTask', install it to the project which contains your templates, the task will add a 'TemplatorConfig.xml' into the project and load configurations from it:",
@@ -51,7 +51,7 @@ namespace DocGenerate
             {
                 new Dictionary<string, object>(){{"Name", "Path"}, {"Description", "The path which the task will only look into, default 'Templates'"}}, 
                 new Dictionary<string, object>(){{"Name", "Filters"}, {"Description", "The file extension filters, default '.xml,.csv,.txt' "}}, 
-                new Dictionary<string, object>(){{"Name", "Depth"}, {"Description", "The the depth inside the directory the task will look into, default 3"}}, 
+                new Dictionary<string, object>(){{"Name", "Depth"}, {"Description", "The depth inside the directory the task will look into, default 3"}}, 
             };
         }
 
@@ -60,7 +60,7 @@ namespace DocGenerate
             return new IDictionary<string, object>[]
             {
                 new Dictionary<string, object>(){{"Name", "Version"}, {"Description", "{0}, now supports vs2013 and vs2015.".FormatInvariantCulture(_extensionVersion)}}, 
-                new Dictionary<string, object>(){{"Name", "Strategy"}, {"Description", "In order to get less impact to vs performace in regular work, the extension will only try to parse the active document(xml,csv,txt) if the active project contains a valid 'TemplatorConfig.xml'"}}, 
+                new Dictionary<string, object>(){{"Name", "Strategy"}, {"Description", "In order to get less impact to vs performance in regular work, the extension will only try to parse the active document(xml,csv,txt) if the active project contains a valid 'TemplatorConfig.xml'"}}, 
                 new Dictionary<string, object>(){{"Name", "Multiple Projects"}, {"Description", "Templates contained in multiple projects will be parsed based on each project's 'TemplatorConfig.xml', which enables different format highlighting for different project needs"}}, 
                 new Dictionary<string, object>(){{"Name", "Config changes"}, {"Description", "If the 'TemplatorConfig.xml' is changed inside visual studio, the extension will get the change, and the opened template documents needs to be reopened to get fully renewed."}}, 
             };
