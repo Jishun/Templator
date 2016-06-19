@@ -6,9 +6,9 @@
     <title>Templator</title>
     <authors>Jishun Duan</authors>
     <owners>Jishun Duan</owners>
-    <licenseUrl>https://github.com/djsxp/Templator/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://djsxp.github.io/Templator/</projectUrl>
-    <iconUrl>https://github.com/djsxp/Templator</iconUrl>
+    <licenseUrl>https://github.com/jishun/Templator/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://jishun.github.io/Templator/</projectUrl>
+    <iconUrl>https://github.com/jishun/Templator</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An advanced text based replacing-template engine designed for using simplified dictionary input</description>
     <releaseNotes>
