@@ -1,4 +1,4 @@
-# [Templator](http://djsxp.github.io/Templator)
+# [Templator](http://jishun.github.io/Templator)
 An advanced text replacing template engine designed for using simplified dictionary as input
 it's a good helper for handling data processing targeting to multiple document formats
 
