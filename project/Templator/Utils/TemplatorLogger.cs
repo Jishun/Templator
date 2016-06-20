@@ -60,6 +60,11 @@ namespace Templator
         {
         }
 
+        public bool Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsEmpty()
         {
             return Errors.Count == 0;

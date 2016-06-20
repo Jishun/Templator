@@ -52,6 +52,11 @@ namespace TemplatorMsBuildTaks
             throw new NotImplementedException();
         }
 
+        public bool Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsEmpty()
         {
             throw new NotImplementedException();

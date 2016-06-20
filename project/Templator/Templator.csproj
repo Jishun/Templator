@@ -44,7 +44,7 @@
     </Reference>
     <Reference Include="DotNetUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DotNetUtils.1.0.0.8\lib\net45\DotNetUtils.dll</HintPath>
+      <HintPath>..\packages\DotNetUtils.1.0.1.1\lib\net45\DotNetUtils.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

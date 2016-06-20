@@ -54,16 +54,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetUtils">
-      <HintPath>..\packages\DotNetUtils.1.0.0.8\lib\net45\DotNetUtils.dll</HintPath>
+      <HintPath>..\packages\DotNetUtils.1.0.1.1\lib\net45\DotNetUtils.dll</HintPath>
     </Reference>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Irony">
-      <HintPath>..\packages\Irony.0.9.0\lib\net45\Irony.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.CoreUtility">
