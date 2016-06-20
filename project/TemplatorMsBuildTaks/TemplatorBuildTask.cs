@@ -39,7 +39,7 @@ namespace TemplatorSyntaxBuildTask
             if (ConfigFilePath.IsNullOrWhiteSpace())
             {
                 config = TemplatorConfig.DefaultInstance;
-                const string url = "https://github.com/djsxp/Templator/blob/master/project/Templator/TemplatorConfig.xml";
+                const string url = "https://github.com/Jishun/Templator/blob/master/project/Templator/TemplatorConfig.xml";
                 msg = new BuildMessageEventArgs("Unable to find '{0}', using defaults, for a config file, please find; '{1}'".FormatInvariantCulture(TemplatorConfig.DefaultConfigFileName, url), "", "TemplatorSyntaxChecker", MessageImportance.Normal);
                 BuildEngine.LogMessageEvent(msg);
             }

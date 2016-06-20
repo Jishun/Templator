@@ -1,7 +1,7 @@
 [submodule "DotNetUtils"]
 	path = DotNetUtils
-	url = git@github.com:djsxp/DotNetUtils.git
+	url = git@github.com:Jishun/DotNetUtils.git
 [submodule "doc"]
 	path = doc
-	url = git@github.com:djsxp/Templator.git
+	url = git@github.com:Jishun/Templator.git
 	branch = gh-pages
